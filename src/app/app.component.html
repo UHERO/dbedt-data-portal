@@ -1,3 +1,15 @@
-<h1>
-  {{title}}
-</h1>
+<div id="wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-1 col-md-4 col-lg-3 col-xl-2">
+              <app-category-sidebar (selectedCatIds)="getSelected($event)"></app-category-sidebar>
+            </div>
+            <div class="col-xs-12 col-md-8 col-lg-9 col-xl-10 content-col">
+            </div>
+        </div>
+        <div class="row">
+          <app-freq-selector></app-freq-selector>
+          <app-geo-selector></app-geo-selector>
+        </div>
+   </div>
+</div>
