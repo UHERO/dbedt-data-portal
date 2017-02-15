@@ -17,6 +17,7 @@ export class ApiService {
   private headers: Headers;
   private cachedCategories;
   private cachedGeos = [];
+  private cachedFreqs = [];
   private cachedExpanded = [];
   private cachedSelectedCategory = [];
   private cachedGeoSeries = [];
@@ -68,6 +69,21 @@ export class ApiService {
     }
   }
 
+  fetchCatFreqs(id: number): Observable<Frequency[]> {
+    if (this.cachedFreqs[id]) {
+      return Observable.of(this.cachedFreqs[id]);
+    } else {
+      let freqs$ = this.http.get(`${this.baseUrl}/category/freq?id=` + id, this.requestOptionsArgs)
+        .map(mapData)
+        .do(val => {
+          this.cachedFreqs[id] = val;
+          freqs$ = null;
+        });
+      return freqs$;
+    }
+  }
+
+
   // Gets observations for series in a (sub) category
   fetchExpanded(id: number, geo: string, freq: string): Observable<any> {
     if (this.cachedExpanded[id + geo + freq]) {
@@ -98,14 +114,14 @@ export class ApiService {
     }
   }
 
-  fetchSeries(id: number, geo: string, freq: string): Observable<Series[]> {
-    if (this.cachedSeries[id + geo + freq]) {
-      return Observable.of(this.cachedSeries[id + geo + freq]);
+  fetchSeries(id: number): Observable<Series[]> {
+    if (this.cachedSeries[id]) {
+      return Observable.of(this.cachedSeries[id]);
     } else {
-      let series$ = this.http.get(`${this.baseUrl}/category/series?id=` + id + `&geo=` + geo + `&freq=` + freq, this.requestOptionsArgs)
+      let series$ = this.http.get(`${this.baseUrl}/category/series?id=` + id, this.requestOptionsArgs)
         .map(mapData)
         .do(val => {
-          this.cachedSeries[id + geo + freq] = val;
+          this.cachedSeries[id] = val;
           series$ = null;
         });
       return series$;

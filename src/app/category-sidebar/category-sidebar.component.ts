@@ -19,13 +19,13 @@ export class CategorySidebarComponent implements OnInit {
   private categories: CategoryTree;
   private ids: Array<any> = [];
   private error: string;
+  // Emit ids of selected categories to app.component
   @Output() selectedCatIds = new EventEmitter();
 
   constructor(private _apiService: ApiService) { }
 
   ngOnInit() {
     this._apiService.fetchCategories().subscribe((cats) => {
-      console.log('categories', cats);
       this.categories = cats;
     },
     (error) => {
@@ -37,11 +37,20 @@ export class CategorySidebarComponent implements OnInit {
     actionMapping
   }
 
-  onEvent(e) {
-    console.log('active node event', e);
+  activateNode(e) {
     if (!e.node.hasChildren) {
       this.ids.push(e.node.id);
       this.selectedCatIds.emit(this.ids);
+    }
+  }
+
+  deactivateNode(e) {
+    if (!e.node.hasChildren) {
+      let idIndex = this.ids.indexOf(e.node.id);
+      if (idIndex > -1) {
+        this.ids.splice(idIndex, 1);
+        this.selectedCatIds.emit(this.ids);
+      }
     }
   }
 }
