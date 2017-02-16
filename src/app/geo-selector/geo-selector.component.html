@@ -1,1 +1,1 @@
-<ss-multiselect-dropdown [options]="regions" [settings]="selectSettings"></ss-multiselect-dropdown>
+<ss-multiselect-dropdown [options]="regions" [texts]="selectText" [settings]="selectSettings" [(ngModel)]="selectedGeos" (ngModelChange)="onChange($event)"></ss-multiselect-dropdown>

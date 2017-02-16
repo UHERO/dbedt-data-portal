@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
-import { IMultiSelectOption, IMultiSelectSettings } from 'angular-2-dropdown-multiselect/src/multiselect-dropdown';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from 'angular-2-dropdown-multiselect/src/multiselect-dropdown';
 import { Geography } from '../geography';
 
 @Component({
@@ -9,19 +9,25 @@ import { Geography } from '../geography';
 })
 export class GeoSelectorComponent implements OnInit {
   @Input() regions: Array<Geography>;
+  @Input() selectedGeos;
+  @Output() selectedGeoList = new EventEmitter()
+  // private selectedGeo: string[];
   private selectSettings: IMultiSelectSettings = {
     showCheckAll: true,
     showUncheckAll: true,
     buttonClasses: 'btn btn-default',
     checkedStyle: 'fontawsome'
   }
+  private selectText: IMultiSelectTexts = {
+    defaultTitle: 'Select Region'
+  }
+
   constructor() { }
 
   ngOnInit() {
   }
 
-  ngAfterViewInit() {
-    //let regions = this.regions;
-    //console.log('input regions', regions);
+  onChange(e) {
+    this.selectedGeoList.emit(e);
   }
 }
