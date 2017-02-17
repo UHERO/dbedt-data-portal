@@ -9,12 +9,14 @@
         </div>
         <div class="row">
           <app-freq-selector [freqs]="frequencies" [(selectedFreqs)]="selectedFreqs" (selectedFreqList)="freqChange($event)"></app-freq-selector>
-          <p *ngIf="annualSelected">From Year</p>
-          <p *ngIf="quarterSelected">Quarter</p>
-          <p *ngIf="monthSelected">Month</p>
-          <p *ngIf="annualSelected">To Year</p>
-          <p *ngIf="quarterSelected">Quarter</p>
-          <p *ngIf="monthSelected">Month</p>
+          <p *ngIf="selectedFreqs.length > 0">From&nbsp;</p>
+          <app-year-selector *ngIf="selectedFreqs.length > 0" [years]="years" [(selectedYear)]="selectedStartYear" (selectedYearChange)="fromYearChange($event)"></app-year-selector>
+          <app-quarter-selector *ngIf="quarterSelected" [quarters]="quarters"></app-quarter-selector>
+          <app-month-selector *ngIf="monthSelected" [months]="months"></app-month-selector>
+          <p *ngIf="selectedFreqs.length > 0">To&nbsp;</p>
+          <app-year-selector *ngIf="selectedFreqs.length > 0" [years]="years" [(selectedYear)]="selectedEndYear" (selectedYearChange)="toYearChange($event)"></app-year-selector>
+          <app-quarter-selector *ngIf="quarterSelected" [quarters]="quarters"></app-quarter-selector>
+          <app-month-selector *ngIf="monthSelected" [months]="months"></app-month-selector>
           <app-geo-selector [regions]="regions" [(selectedGeos)]="selectedGeos" (selectedGeoList)="geoChange($event)"></app-geo-selector>
         </div>
    </div>

@@ -1,3 +1,6 @@
-<p>
-  year-selector works!
-</p>
+<div class="form-group">
+  <label>Year</label>
+  <select [ngModel]="selectedYear" ngModelChange="onChange($event)" class="custom-select">
+    <option [ngValue]="year" *ngFor="let year of years">{{year}}</option>
+  </select>
+</div>

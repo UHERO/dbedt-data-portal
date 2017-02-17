@@ -1,8 +1,7 @@
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
-
+import { Observable } from 'rxjs/Observable';
 import { ApiService } from './api.service';
 import { HelperService } from './helper.service';
-import { dateWrapper } from './date-wrapper';
 import { Geography } from './geography';
 import { Frequency } from './frequency';
 
@@ -12,6 +11,7 @@ import { Frequency } from './frequency';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  private errorMsg: string;
   // List of series selected from category-tree
   private selectedSeries: Array<number>;
 
@@ -29,52 +29,74 @@ export class AppComponent {
   private quarterSelected: Boolean = false;
   private monthSelected: Boolean = false;
 
-  private startDates: Array<string>;
-  private endDates: Array<string>;
-  private dateWrapper: dateWrapper = { firstDate: '', endDate: '' };
+  private startDate: string;
+  private endDate: string;
+  private selectedStartYear;
+  private selectedEndYear;
+  private years = [];
+  private quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+  private months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
 
   constructor(private _apiService: ApiService, private _helper: HelperService) { }
 
   getSelectedSeries(e) {
     this.geoList = [];
     this.freqList = [];
-    this.startDates = [];
-    this.endDates = [];
+    this.startDate = '';
+    this.endDate = '';
     this.selectedSeries = e;
     if (!this.selectedSeries.length) {
       // Clear selections when all series/categories are deselected
       this.selectedGeos = [];
       this.selectedFreqs = [];
     }
+    let i = 0;
     this.selectedSeries.forEach((el, index) => {
       this._apiService.fetchSelectedCategory(el).subscribe((category) => {
+        i += 1;
         let geo_freqs = category.geo_freqs;
         let freq_geos = category.freq_geos;
         let obsStart = category.observationStart.substr(0, 10);
         let obsEnd = category.observationEnd.substr(0, 10);
-        this.startDates.push(obsStart);
-        this.endDates.push(obsEnd);
+        if (this.startDate === '' || this.startDate > obsStart) {
+          this.startDate = obsStart;
+        }
+        if (this.endDate === '' || this.endDate < obsEnd) {
+          this.endDate = obsEnd;
+        }
         geo_freqs.forEach((geo, index) => {
           this._helper.uniqueGeos(geo, this.geoList);
         });
         freq_geos.forEach((freq, index) => {
           this._helper.uniqueFreqs(freq, this.freqList);
         });
+      },
+      (error) => {
+        this.errorMsg = error;
+      },
+      () => {
+        if (i === this.selectedSeries.length) {
+          this.frequencies = this.freqList;
+          this.regions = this.geoList;
+          if (this.selectedFreqs.length) {
+            this.yearArray(this.startDate, this.endDate);
+          }
+        }
       });
     });
-    this.regions = this.geoList;
-    this.frequencies = this.freqList;
-    this.startDates.forEach((date, index) => {
-      if (this.dateWrapper.firstDate === '' || this.dateWrapper.firstDate > date) {
-        this.dateWrapper.firstDate = date;
-      }
-    });
-    this.endDates.forEach((date, index) => {
-      if (this.dateWrapper.endDate === '' || this.dateWrapper.endDate < date) {
-        this.dateWrapper.endDate = date;
-      }
-    });
-    console.log('date wrapper', this.dateWrapper);
+  }
+
+  yearArray(start, end) {
+    this.years = [];
+    let startYear = +start.substr(0, 4);
+    let endYear = +end.substr(0, 4);
+    while (startYear <= endYear) {
+      this.years.push(startYear.toString());
+      startYear +=1;
+    }
+    this.years = this.years.reverse();
+    this.selectedStartYear = this.years[this.years.length - 1];
+    this.selectedEndYear = this.years[0];
   }
 
   geoChange(e) {
@@ -120,6 +142,9 @@ export class AppComponent {
       this.annualSelected = aIndex > -1 ? true : false;
       this.quarterSelected = qIndex > -1 ? true : false;
       this.monthSelected = mIndex > -1 ? true : false;
+      if (this.selectedFreqs) {
+        this.yearArray(this.startDate, this.endDate);
+      }
     } else {
       // If no geographies are selected, reset list of regions
       this.selectedGeos = [];

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-month-selector',
@@ -6,7 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./month-selector.component.scss']
 })
 export class MonthSelectorComponent implements OnInit {
-
+  @Input() months;
+  
   constructor() { }
 
   ngOnInit() {

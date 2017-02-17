@@ -275,7 +275,13 @@ function mapCategories(response: Response): CategoryTree {
       categoryTree.push(value);
     }
   });
-  return categoryTree;
+  let result = categoryTree;
+  categoryTree.forEach((category) => {
+    if (category.id === 59) {
+      result = category.children;
+    }
+  })
+  return result;
 }
 
 function mapData(response: Response): any {
