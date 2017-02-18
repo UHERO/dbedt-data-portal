@@ -1,3 +1,6 @@
-<p>
-  quarter-selector works!
-</p>
+<div class="form-group">
+  <label>Quarter</label>
+  <select [ngModel]="selectedQuarter" (ngModelChange)="onChange($event)" class="custom-select">
+    <option [ngValue]="quarter" *ngFor="let quarter of quarters">{{quarter}}</option>
+  </select>
+</div>

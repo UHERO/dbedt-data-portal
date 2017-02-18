@@ -2,11 +2,146 @@ import { Injectable } from '@angular/core';
 
 import { Geography } from './geography';
 import { Frequency } from './frequency';
+import { DatesSelected } from './dates-selected';
 
 @Injectable()
 export class HelperService {
 
   constructor() { }
+
+  yearsSelected(selectedDates, start, end, selectedYearStart?, selectedYearEnd?) {
+    let allYears = [];
+    let startYear = +start.substr(0, 4);
+    let endYear = +end.substr(0, 4);
+    while (startYear <= endYear) {
+      allYears.push(startYear.toString());
+      startYear += 1;
+    }
+
+    allYears = allYears.reverse();
+    let minYear = allYears[allYears.length - 1];
+    let maxYear = allYears[0];
+    selectedDates.selectedStartYear = selectedYearStart ? selectedYearStart : minYear;
+    selectedDates.selectedEndYear = selectedYearEnd ? selectedYearEnd : maxYear;
+    selectedDates.fromYearList = allYears.slice(allYears.indexOf(selectedDates.selectedEndYear), allYears.length);
+    selectedDates.toYearList = allYears.slice(0, allYears.indexOf(selectedDates.selectedStartYear) + 1);
+  }
+
+  quartersSelected(selectedDates, start, end, selectedQuarterStart?, selectedQuarterEnd?) {
+    let allQuarters = ['Q4', 'Q3', 'Q2', 'Q1'];
+    let minYear = start.substr(0, 4);
+    let maxYear = end.substr(0, 4);
+    selectedDates.fromQuarterList = allQuarters;
+    selectedDates.toQuarterList = allQuarters;
+    this.minMaxYearQuarters(selectedDates, minYear, maxYear, start, end);
+    let minQuarter = selectedDates.fromQuarterList[selectedDates.fromQuarterList.length - 1];
+    let maxQuarter = selectedDates.toQuarterList[0];
+    selectedDates.selectedStartQuarter = selectedQuarterStart ? selectedQuarterStart : minQuarter;
+    selectedDates.selectedEndQuarter = selectedQuarterEnd ? selectedQuarterEnd : maxQuarter;
+    this.sameYearQuarters(selectedDates);
+  }
+
+  monthsSelected(selectedDates, start, end, selectedMonthStart?, selectedMonthEnd?) {
+    let allMonths = ['12', '11', '10', '09', '08', '07', '06', '05', '04', '03', '02', '01'];
+    let minYear = start.substr(0, 4);
+    let maxYear = end.substr(0, 4);
+    selectedDates.fromMonthList = allMonths;
+    selectedDates.toMonthList = allMonths;
+    this.minMaxYearMonths(selectedDates, minYear, maxYear, start, end, allMonths);
+    let minMonth = selectedDates.fromMonthList[selectedDates.fromMonthList.length - 1];
+    let maxMonth = selectedDates.toMonthList[0];
+    selectedDates.selectedStartMonth = selectedMonthStart ? selectedMonthStart : minMonth;
+    selectedDates.selectedEndMonth = selectedMonthEnd ? selectedMonthEnd : maxMonth;
+    this.sameYearMonths(selectedDates);
+  }
+
+  sameYearQuarters(selectedDates) {
+    // If selected start and end years are the same
+    // Prevent user from selecting a start quarter later than the selected end quarter
+    // Prevent user from selecting an end quarter earlier than the selected start quarter
+    let fromList = selectedDates.fromQuarterList;
+    let toList = selectedDates.toQuarterList;
+    if (selectedDates.selectedStartYear === selectedDates.selectedEndYear) {
+      selectedDates.fromQuarterList = fromList.slice(fromList.indexOf(selectedDates.selectedEndQuarter), fromList.length);
+      selectedDates.toQuarterList = toList.slice(0, toList.indexOf(selectedDates.selectedStartQuarter) + 1);
+    }
+  }
+
+  sameYearMonths(selectedDates) {
+    // If selected start and end years are the same
+    // Prevent user from selecting a start month later than the selected end month
+    // Prevent user from selecting an end month earlier than the selected start month
+    let fromList = selectedDates.fromMonthList;
+    let toList = selectedDates.toMonthList;
+    if (selectedDates.selectedStartYear === selectedDates.selectedEndYear) {
+      selectedDates.fromMonthList = fromList.slice(fromList.indexOf(selectedDates.selectedEndMonth), fromList.length);
+      selectedDates.toMonthList = toList.slice(0, toList.indexOf(selectedDates.selectedStartMonth) + 1);
+    }
+  }
+
+  minMaxYearMonths(selectedDates, minYear, maxYear, startDate, endDate, allMonths) {
+    // If selectedStartYear is set to earliest possible year, set month list based on earlier month available
+    // If selectedEndYear is set to latest possible year, set month list based on latest month available
+    let startMonth = startDate.substr(5, 2);
+    let endMonth = endDate.substr(5, 2);
+    if (selectedDates.selectedStartYear === minYear) {
+      selectedDates.fromMonthList = allMonths.slice(0, allMonths.indexOf(startMonth) + 1);
+    }
+    if (selectedDates.selectedStartYear === maxYear) {
+      selectedDates.fromMonthList = allMonths.slice(allMonths.indexOf(endMonth), allMonths.length);
+    }
+    if (selectedDates.selectedEndYear === maxYear) {
+      selectedDates.toMonthList = allMonths.slice(allMonths.indexOf(endMonth), allMonths.length);
+    }
+    if (selectedDates.selectedEndYear === minYear) {
+      selectedDates.toMonthList = allMonths.slice(0, allMonths.indexOf(startMonth) + 1);
+    }
+  }
+
+  minMaxYearQuarters(selectedDates, minYear, maxYear, startDate, endDate) {
+    // If selectedStartYear is set to earliest possible year, set quarter list based on earliest month available
+    // If selectedStartYear is set to latest possible year, set quarter list based on latest month available
+    let startMonth = +startDate.substr(5, 2);
+    let endMonth = +endDate.substr(5, 2);
+    if (selectedDates.selectedStartYear === minYear) {
+      selectedDates.fromQuarterList = this.minYearQuarters(startMonth);
+    }
+    if (selectedDates.selectedStartYear === maxYear) {
+      selectedDates.fromQuarterList = this.maxYearQuarters(endMonth);
+    }
+    if (selectedDates.selectedEndYear === maxYear) {
+      selectedDates.toQuarterList = this.maxYearQuarters(endMonth);
+    }
+    if (selectedDates.selectedEndYear === minYear) {
+      selectedDates.toQuarterList = this.minYearQuarters(startMonth);
+    }
+  }
+
+  minYearQuarters(month) {
+    if (4 <= month && month < 7) {
+      return ['Q4', 'Q3', 'Q2'];
+    }
+    if (7 <= month && month < 10) {
+      return ['Q4', 'Q3'];
+    }
+    if (10 <= month) {
+      return ['Q4'];
+    }
+    return ['Q4', 'Q3', 'Q2', 'Q1'];
+  }
+
+  maxYearQuarters(month) {
+    if (1 <= month && month < 4) {
+      return ['Q1'];
+    }
+    if (4 <= month && month < 7) {
+      return ['Q2', 'Q1'];
+    }
+    if (7 <= month && month < 10) {
+      return ['Q3', 'Q2', 'Q1'];
+    }
+    return ['Q4', 'Q3', 'Q2', 'Q1'];
+  }
 
   checkSelectedGeoFreqs(selected: string, geoList: Array<any>, frequencies: Array<any>) {
     geoList.forEach((geo, index) => {

@@ -1,3 +1,6 @@
-<p>
-  month-selector works!
-</p>
+<div class="form-group">
+  <label>Month</label>
+  <select [ngModel]="selectedMonth" (ngModelChange)="onChange($event)" class="custom-select">
+    <option [ngValue]="month" *ngFor="let month of months">{{month}}</option>
+  </select>
+</div>
