@@ -4,6 +4,7 @@ import { ApiService } from './api.service';
 import { HelperService } from './helper.service';
 import { Geography } from './geography';
 import { Frequency } from './frequency';
+import { DatesSelected } from './dates-selected';
 
 @Component({
   selector: 'app-root',
@@ -31,11 +32,7 @@ export class AppComponent {
 
   private startDate: string;
   private endDate: string;
-  private selectedStartYear;
-  private selectedEndYear;
-  private years = [];
-  private quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
-  private months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+  private datesSelected: DatesSelected;
 
   constructor(private _apiService: ApiService, private _helper: HelperService) { }
 
@@ -45,6 +42,7 @@ export class AppComponent {
     this.startDate = '';
     this.endDate = '';
     this.selectedSeries = e;
+    this.datesSelected = <DatesSelected>{};
     if (!this.selectedSeries.length) {
       // Clear selections when all series/categories are deselected
       this.selectedGeos = [];
@@ -78,26 +76,57 @@ export class AppComponent {
         if (i === this.selectedSeries.length) {
           this.frequencies = this.freqList;
           this.regions = this.geoList;
-          if (this.selectedFreqs.length) {
-            this.yearArray(this.startDate, this.endDate);
-          }
+          this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
+          this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
+          this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
         }
       });
     });
   }
 
-  yearArray(start, end) {
-    this.years = [];
-    let startYear = +start.substr(0, 4);
-    let endYear = +end.substr(0, 4);
-    while (startYear <= endYear) {
-      this.years.push(startYear.toString());
-      startYear +=1;
-    }
-    this.years = this.years.reverse();
-    this.selectedStartYear = this.years[this.years.length - 1];
-    this.selectedEndYear = this.years[0];
+  startYearChange(e) {
+    let selectedStartYear = e;
+    this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, selectedStartYear, this.datesSelected.selectedEndYear);
+    this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
+    this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
   }
+  
+  startQuarterChange(e) {
+    let selectedStartQuarter = e;
+    this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
+    this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, selectedStartQuarter, this.datesSelected.selectedEndQuarter);
+    this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+  }
+
+  startMonthChange(e) {
+    let selectedStartMonth = e;
+    this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
+    this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
+    this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, selectedStartMonth, this.datesSelected.selectedEndMonth);
+  }
+
+  endYearChange(e) {
+    let selectedEndYear = e;
+    this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, selectedEndYear);
+    this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
+    this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+  }
+
+  endQuarterChange(e) {
+    let selectedEndQuarter = e;
+    this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
+    this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, selectedEndQuarter);
+    this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+  }
+
+  endMonthChange(e) {
+    let selectedEndMonth = e;
+    this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
+    this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
+    this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, selectedEndMonth);
+  }
+
+
 
   geoChange(e) {
     this.frequencies = [];
@@ -143,7 +172,7 @@ export class AppComponent {
       this.quarterSelected = qIndex > -1 ? true : false;
       this.monthSelected = mIndex > -1 ? true : false;
       if (this.selectedFreqs) {
-        this.yearArray(this.startDate, this.endDate);
+        //this.datesSelected = this._helper.dateSelection(this.startDate, this.endDate);
       }
     } else {
       // If no geographies are selected, reset list of regions

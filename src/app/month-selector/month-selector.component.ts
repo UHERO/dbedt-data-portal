@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-month-selector',
@@ -7,10 +7,16 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class MonthSelectorComponent implements OnInit {
   @Input() months;
-  
+  @Input() selectedMonth;
+  @Output() selectedMonthChange = new EventEmitter();
+
   constructor() { }
 
   ngOnInit() {
   }
 
+  onChange(newMonth) {
+    this.selectedMonth = this.months.find(month => month === newMonth);
+    this.selectedMonthChange.emit(this.selectedMonth);
+  }
 }
