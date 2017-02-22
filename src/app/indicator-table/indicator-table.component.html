@@ -1,0 +1,44 @@
+<table datatable [dtOptions]="dtOptions">
+</table>
+<!-- <div class="table">
+  <table class="category-table">
+    <tr>
+      <th class="fixed-indicator"><b>Indicator</b></th>
+      <th class="fixed-region"><b>Region</b></th>
+      <th class="fixed-units"><b>Units</b></th>
+      <template ngFor let-date [ngForOf]="dateArray" let-i="index">
+        <td><b>{{date.tableDate}}</b></td>
+      </template>
+      <th><b>Source</b></th>
+    </tr>
+    <template ngFor let-serie [ngForOf]="seriesData">
+      <tr>
+        <td class="fixed-indicator">{{serie.title}}</td>
+        <td class="fixed-region">{{serie.geography.name}}</td>
+        <td class="fixed-units">{{serie.unitsLabelShort}}</td>
+      <template ngFor let-date [ngForOf]="dateArray" let-i="index">
+        <td><b>{{date.tableDate}}</b></td>
+      </template>
+        <template ngFor let-item [ngForOf]="serie.categoryTable">
+          <td *ngIf="item.date >= series.dateWrapper.firstDate && item.date <= series.dateWrapper.endDate">{{item.level}}</td>
+        </template>
+      </tr>
+      <tr *ngIf="serie.seriesInfo.seasonallyAdjusted !== false && serie.categoryTable && yoyIsActive || series.hasSeasonallyAdjusted === false && serie.categoryTable && yoyIsActive">
+        <th class = "{{serie.seriesInfo.indent ? 'indent' + serie.seriesInfo.indent : ''}}">
+          {{(serie.seriesInfo.percent === true) ? '&emsp; YOY (ch.)' : '&emsp; YOY (%)'}}
+        </th>
+        <template ngFor let-item [ngForOf]="serie.categoryTable">
+          <td *ngIf="item.date >= series.dateWrapper.firstDate && item.date <= series.dateWrapper.endDate">{{item.yoy}}</td>
+        </template>
+      </tr>
+      <tr *ngIf="serie.seriesInfo.seasonallyAdjusted !== false && serie.categoryTable && ytdIsActive || series.hasSeasonallyAdjusted === false && serie.categoryTable && ytdIsActive">
+        <th class = "{{serie.seriesInfo.indent ? 'indent' + serie.seriesInfo.indent : ''}}">
+          {{(serie.seriesInfo.percent === true)? '&emsp; YTD (ch.)' : '&emsp; YTD (%)'}}
+        </th>
+        <template ngFor let-item [ngForOf]="serie.categoryTable">
+          <td *ngIf="item.date >= series.dateWrapper.firstDate && item.date <= series.dateWrapper.endDate">{{item.ytd}}</td>
+        </template>
+      </tr>
+    </template>
+  </table>
+</div> -->

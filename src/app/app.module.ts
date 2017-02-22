@@ -15,6 +15,8 @@ import { FreqSelectorComponent } from './freq-selector/freq-selector.component';
 import { YearSelectorComponent } from './year-selector/year-selector.component';
 import { QuarterSelectorComponent } from './quarter-selector/quarter-selector.component';
 import { MonthSelectorComponent } from './month-selector/month-selector.component';
+import { IndicatorTableComponent } from './indicator-table/indicator-table.component';
+import { DataTablesModule } from 'angular-datatables';
 
 @NgModule({
   declarations: [
@@ -26,6 +28,7 @@ import { MonthSelectorComponent } from './month-selector/month-selector.componen
     YearSelectorComponent,
     QuarterSelectorComponent,
     MonthSelectorComponent,
+    IndicatorTableComponent,
   ],
   imports: [
     BrowserModule,
@@ -33,7 +36,8 @@ import { MonthSelectorComponent } from './month-selector/month-selector.componen
     HttpModule,
     TreeModule,
     MultiSelectModule,
-    MultiselectDropdownModule
+    MultiselectDropdownModule,
+    DataTablesModule
   ],
   providers: [ApiService, HelperService],
   bootstrap: [AppComponent]

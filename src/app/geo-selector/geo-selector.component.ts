@@ -10,7 +10,7 @@ import { Geography } from '../geography';
 export class GeoSelectorComponent implements OnInit {
   @Input() regions: Array<Geography>;
   @Input() selectedGeos;
-  @Output() selectedGeoList = new EventEmitter()
+  @Output() selectedGeoList = new EventEmitter();
   // private selectedGeo: string[];
   private selectSettings: IMultiSelectSettings = {
     showCheckAll: true,

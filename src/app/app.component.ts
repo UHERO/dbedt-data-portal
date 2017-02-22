@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ApiService } from './api.service';
 import { HelperService } from './helper.service';
@@ -33,10 +33,14 @@ export class AppComponent {
   private startDate: string;
   private endDate: string;
   private datesSelected: DatesSelected;
+  private dateArray: Array<any>;
+  private tableDates;
+  private seriesData;
 
   constructor(private _apiService: ApiService, private _helper: HelperService) { }
 
   getSelectedSeries(e) {
+    this.dateArray = [];
     this.geoList = [];
     this.freqList = [];
     this.startDate = '';
@@ -79,6 +83,11 @@ export class AppComponent {
           this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
           this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
           this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+          this.getSeries(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
+          this.selectedGeos.forEach((selected, index) => {
+            // Update list of selected geographies if selection does not exist in dropdown
+            this._helper.checkSelectedList(selected, index, this.regions, this.selectedGeos);
+          });
         }
       });
     });
@@ -172,6 +181,9 @@ export class AppComponent {
       this.quarterSelected = qIndex > -1 ? true : false;
       this.monthSelected = mIndex > -1 ? true : false;
       if (this.selectedFreqs) {
+        this.dateArray = [];
+        console.log(this.dateArray)
+        this._helper.categoryDateArray(this.startDate, this.endDate, this.dateArray, this.selectedFreqs);
         //this.datesSelected = this._helper.dateSelection(this.startDate, this.endDate);
       }
     } else {
@@ -185,14 +197,18 @@ export class AppComponent {
   }
 
   getSeries(selectedSeries, selectedGeos, selectedFreqs) {
+    this.seriesData = [];
     selectedSeries.forEach((serie, index) => {
       selectedGeos.forEach((geo, index) => {
         selectedFreqs.forEach((freq, index) => {
           this._apiService.fetchExpanded(serie, geo, freq).subscribe((series) => {
-            console.log('series', series);
+            series.forEach((serie) => {
+              this.seriesData.push(serie);
+            })
           });
         });
       });
     });
+    console.log(this.seriesData)
   }
 }

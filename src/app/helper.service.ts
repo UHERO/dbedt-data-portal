@@ -9,6 +9,33 @@ export class HelperService {
 
   constructor() { }
 
+  categoryDateArray(dateStart: string, dateEnd: string, dateArray: Array<any>, selectedFreqs: Array<string>) {
+    console.log(selectedFreqs)
+    let startYear = +dateStart.substr(0, 4);
+    let endYear = +dateEnd.substr(0, 4);
+    let startMonth = +dateStart.substr(5, 2);
+    let endMonth = +dateEnd.substr(5, 2);
+    let m = { 1: '01', 2: '02', 3: '03', 4: '04', 5: '05', 6: '06', 7: '07', 8: '08', 9: '09', 10: '10', 11: '11', 12: '12' };
+    let q = { 1: 'Q1', 4: 'Q2', 7: 'Q3', 10: 'Q4' };
+    while (startYear + '-' + m[startMonth] + '-01' <= endYear + '-' + m[endMonth] + '-01') {
+      if (startMonth === 1 || dateArray.length === 0) {
+        dateArray.push({date: startYear.toString() + '-01-01', tableDate: startYear.toString()});
+      }
+      // If quarterly frequency is selected, add to table dates
+      if (q[startMonth] && selectedFreqs.indexOf('Q') > -1) {
+        dateArray.push({date: startYear.toString() + '-' + m[startMonth] + '-01', tableDate: startYear.toString() + ' ' + q[startMonth]});
+      }
+      // If monthly frequency is selected, add to table dates
+      if (m[startMonth] && selectedFreqs.indexOf('M') > -1) {
+        dateArray.push({date: startYear.toString() + '-' + m[startMonth] + '-01', tableDate: startYear.toString() + '-' + m[startMonth]});
+      }
+      startYear = startMonth === 12 ? startYear += 1 : startYear;
+      startMonth = startMonth === 12 ? 1 : startMonth += 1;
+    }
+
+    return dateArray;
+  }
+
   yearsSelected(selectedDates, start, end, selectedYearStart?, selectedYearEnd?) {
     let allYears = [];
     let startYear = +start.substr(0, 4);
@@ -80,8 +107,8 @@ export class HelperService {
   }
 
   minMaxYearMonths(selectedDates, minYear, maxYear, startDate, endDate, allMonths) {
-    // If selectedStartYear is set to earliest possible year, set month list based on earlier month available
-    // If selectedEndYear is set to latest possible year, set month list based on latest month available
+    // If selectedStartYear is set to earliest/latest possible year, set month list based on earliest/latest month available
+    // If selectedEndYear is set to earliest/latest possible year, set month list based on earliest/latest month available
     let startMonth = startDate.substr(5, 2);
     let endMonth = endDate.substr(5, 2);
     if (selectedDates.selectedStartYear === minYear) {
@@ -99,8 +126,8 @@ export class HelperService {
   }
 
   minMaxYearQuarters(selectedDates, minYear, maxYear, startDate, endDate) {
-    // If selectedStartYear is set to earliest possible year, set quarter list based on earliest month available
-    // If selectedStartYear is set to latest possible year, set quarter list based on latest month available
+    // If selectedStartYear is set to earliest/latest possible year, set quarter list based on earliest/latest month available
+    // If selectedStartYear is set to earliest/latest possible year, set quarter list based on earliest/latest month available
     let startMonth = +startDate.substr(5, 2);
     let endMonth = +endDate.substr(5, 2);
     if (selectedDates.selectedStartYear === minYear) {
