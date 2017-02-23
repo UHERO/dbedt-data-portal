@@ -16,13 +16,15 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    console.log('on changes', this.dateArray);
+    let tableColumns = [{title: 'Indicator', data: 'indicator'}, {title: 'Region', data: 'region'}, {title: 'Units', data: 'units'}];
+    this.dateArray.forEach((date) => {
+      // tableColumns.push({title: date.tableDate});
+    });
+    tableColumns.push({title: 'Source', data: 'source'});
+    console.log(this.seriesData)
     this.dtOptions = {
-      columns: [
-        { title: 'Indicator' },
-        { title: 'Region' },
-        { title: 'Units' },
-      ],
+      columns: tableColumns,
+      data: this.seriesData
     }
   }
 }

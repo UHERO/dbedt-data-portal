@@ -34,7 +34,7 @@ export class AppComponent {
   private endDate: string;
   private datesSelected: DatesSelected;
   private dateArray: Array<any>;
-  private tableDates;
+  private tableData;
   private seriesData;
 
   constructor(private _apiService: ApiService, private _helper: HelperService) { }
@@ -73,23 +73,23 @@ export class AppComponent {
           this._helper.uniqueFreqs(freq, this.freqList);
         });
       },
-      (error) => {
-        this.errorMsg = error;
-      },
-      () => {
-        if (i === this.selectedSeries.length) {
-          this.frequencies = this.freqList;
-          this.regions = this.geoList;
-          this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
-          this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
-          this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
-          this.getSeries(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
-          this.selectedGeos.forEach((selected, index) => {
-            // Update list of selected geographies if selection does not exist in dropdown
-            this._helper.checkSelectedList(selected, index, this.regions, this.selectedGeos);
-          });
-        }
-      });
+        (error) => {
+          this.errorMsg = error;
+        },
+        () => {
+          if (i === this.selectedSeries.length) {
+            this.frequencies = this.freqList;
+            this.regions = this.geoList;
+            this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
+            this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
+            this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+            this.getSeries(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
+            this.selectedGeos.forEach((selected, index) => {
+              // Update list of selected geographies if selection does not exist in dropdown
+              this._helper.checkSelectedList(selected, index, this.regions, this.selectedGeos);
+            });
+          }
+        });
     });
   }
 
@@ -99,7 +99,7 @@ export class AppComponent {
     this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
     this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
   }
-  
+
   startQuarterChange(e) {
     let selectedStartQuarter = e;
     this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
@@ -198,17 +198,51 @@ export class AppComponent {
 
   getSeries(selectedSeries, selectedGeos, selectedFreqs) {
     this.seriesData = [];
+    this.tableData = [];
     selectedSeries.forEach((serie, index) => {
       selectedGeos.forEach((geo, index) => {
         selectedFreqs.forEach((freq, index) => {
           this._apiService.fetchExpanded(serie, geo, freq).subscribe((series) => {
             series.forEach((serie) => {
               this.seriesData.push(serie);
-            })
+            });
+          },
+          (error) => {
+            error = this.errorMsg;
+          },
+          () => {
+            console.log('seriesdata', this.seriesData);
+            this.seriesData.forEach((series) => {
+              // Check if a series' title and region already exists
+              let exist = this.tableData.filter(data => {return data.indicator === series.title && data.region === series.geography.name});
+              // If exists, add observations corresponding to the series frequency
+              if (exist.length) {
+                let existIndex = this.tableData.indexOf(exist[0]);
+                console.log('exist', exist);
+                if (series.frequencyShort === 'Q') {
+                  this.tableData[existIndex].observations.quarterly = series.seriesObservations;
+                }
+                if (series.frequencyShort === 'M') {
+                  this.tableData[existIndex].observations.monthly = series.seriesObservations;
+                }
+              } else {
+                this.tableData.push({ 
+                  indicator: series.title,
+                  region: series.geography.name,
+                  units: series.unitsLabelShort,
+                  source: series.source_description,
+                  observations: {
+                    annual: series.frequencyShort === 'A' ? series.seriesObservations : null,
+                    quarterly: series.frequencyShort === 'Q' ? series.seriesObservations : null,
+                    monthly: series.frequencyShort === 'M' ? series.seriesObservations : null
+                  }
+                });
+              }
+            });
           });
         });
       });
     });
-    console.log(this.seriesData)
+    console.log(this.tableData);
   }
 }
