@@ -170,6 +170,30 @@ export class HelperService {
     return ['Q4', 'Q3', 'Q2', 'Q1'];
   }
 
+  formatTableData(seriesObservations, frequency: string, results: Object) {
+    let obs = seriesObservations;
+    let level = obs.transformationResults[0].observations;
+
+    if (level) {
+      level.forEach((entry, i) => {
+        if (frequency === 'A') {
+          let tableDate = entry.date.substr(0, 4);
+          results[tableDate] = entry.value;
+        }
+        if (frequency === 'Q') {
+          let q = {'01': 'Q1', '04': 'Q2', '07': 'Q3', '10': 'Q4'};
+          let tableDate = entry.date.substr(0, 4) + ' ' + q[entry.date.substr(5, 2)];
+          results[tableDate] = entry.value;
+        }
+        if (frequency === 'M') {
+          let tableDate = entry.date.substr(0, 7);
+          results[tableDate] = entry.value;
+        }
+      });
+    }
+    return results;
+  }
+
   checkSelectedGeoFreqs(selected: string, geoList: Array<any>, frequencies: Array<any>) {
     geoList.forEach((geo, index) => {
       if (selected === geo.id) {

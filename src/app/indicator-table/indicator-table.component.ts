@@ -1,4 +1,6 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { HelperService } from '../helper.service';
+import 'datatables.net-fixedcolumns';
 
 @Component({
   selector: 'app-indicator-table',
@@ -7,10 +9,10 @@ import { Component, OnInit, Input, OnChanges } from '@angular/core';
 })
 export class IndicatorTableComponent implements OnInit, OnChanges {
   @Input() dateArray;
-  @Input() seriesData;
+  @Input() tableData;
   private dtOptions: any = {};
 
-  constructor() { }
+  constructor(private _helper: HelperService) { }
 
   ngOnInit() {
   }
@@ -18,13 +20,19 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   ngOnChanges() {
     let tableColumns = [{title: 'Indicator', data: 'indicator'}, {title: 'Region', data: 'region'}, {title: 'Units', data: 'units'}];
     this.dateArray.forEach((date) => {
-      // tableColumns.push({title: date.tableDate});
+      tableColumns.push({title: date.tableDate, data: 'observations.' + date.tableDate });
     });
     tableColumns.push({title: 'Source', data: 'source'});
-    console.log(this.seriesData)
     this.dtOptions = {
       columns: tableColumns,
-      data: this.seriesData
+      data: this.tableData,
+      'scrollY': '450px',
+      'scrollX': true,
+      'scrollCollapse': true,
+      'paging': false,
+      'fixedColumns': {
+        'leftColumns': 3
+      }
     }
   }
 }

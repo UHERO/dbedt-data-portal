@@ -204,45 +204,64 @@ export class AppComponent {
         selectedFreqs.forEach((freq, index) => {
           this._apiService.fetchExpanded(serie, geo, freq).subscribe((series) => {
             series.forEach((serie) => {
-              this.seriesData.push(serie);
+              // this.seriesData.push(serie);
+              let exist = this.seriesData.findIndex(data => data.indicator === serie.title && data.region === serie.geography.name);
+              if (exist !== -1) {
+                if (serie.frequencyShort === 'A') {
+                  this._helper.formatTableData(serie.seriesObservations, serie.frequencyShort, this.seriesData[exist].observations);
+                }
+                if (serie.frequencyShort === 'Q') {
+                  this._helper.formatTableData(serie.seriesObservations, serie.frequencyShort, this.seriesData[exist].observations);
+                }
+                if (serie.frequencyShort === 'M') {
+                  this._helper.formatTableData(serie.seriesObservations, serie.frequencyShort, this.seriesData[exist].observations);
+                }
+              } else {
+                this.seriesData.push({
+                  indicator: serie.title,
+                  region: serie.geography.name,
+                  units: serie.unitsLabelShort,
+                  source: serie.source_description ? serie.source_description : ' ',
+                  observations: this._helper.formatTableData(serie.seriesObservations, serie.frequencyShort, {})
+                });
+              }
             });
           },
           (error) => {
             error = this.errorMsg;
           },
           () => {
-            console.log('seriesdata', this.seriesData);
-            this.seriesData.forEach((series) => {
+
+            /* this.seriesData.forEach((series) => {
               // Check if a series' title and region already exists
-              let exist = this.tableData.filter(data => {return data.indicator === series.title && data.region === series.geography.name});
+              // let exist = this.tableData.filter(data => {return data.indicator === series.title && data.region === series.geography.name});
+              let exist = this.tableData.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
               // If exists, add observations corresponding to the series frequency
-              if (exist.length) {
-                let existIndex = this.tableData.indexOf(exist[0]);
-                console.log('exist', exist);
+               if (exist !== -1) {
+                // let existIndex = this.tableData.indexOf(exist[0]);
+                if (series.frequencyShort === 'A') {
+                  this._helper.formatTableData(series.seriesObservations, series.frequencyShort, this.tableData[exist].observations);
+                }
                 if (series.frequencyShort === 'Q') {
-                  this.tableData[existIndex].observations.quarterly = series.seriesObservations;
+                  this._helper.formatTableData(series.seriesObservations, series.frequencyShort, this.tableData[exist].observations);
                 }
                 if (series.frequencyShort === 'M') {
-                  this.tableData[existIndex].observations.monthly = series.seriesObservations;
+                  this._helper.formatTableData(series.seriesObservations, series.frequencyShort, this.tableData[exist].observations);
                 }
               } else {
                 this.tableData.push({ 
                   indicator: series.title,
                   region: series.geography.name,
                   units: series.unitsLabelShort,
-                  source: series.source_description,
-                  observations: {
-                    annual: series.frequencyShort === 'A' ? series.seriesObservations : null,
-                    quarterly: series.frequencyShort === 'Q' ? series.seriesObservations : null,
-                    monthly: series.frequencyShort === 'M' ? series.seriesObservations : null
-                  }
+                  source: series.source_description ? series.source_description : ' ',
+                  observations: this._helper.formatTableData(series.seriesObservations, series.frequencyShort, {})
                 });
               }
             });
+            console.log(this.tableData) */
           });
         });
       });
     });
-    console.log(this.tableData);
   }
 }
