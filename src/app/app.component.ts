@@ -198,67 +198,57 @@ export class AppComponent {
 
   getSeries(selectedSeries, selectedGeos, selectedFreqs) {
     this.seriesData = [];
-    this.tableData = [];
+    // this.tableData = [];
+    let data = [];
+    let counterSeries = 0;
+    let counterGeo = 0;
+    let counterFreq = 0;
     selectedSeries.forEach((serie, index) => {
+      counterSeries += 1;
       selectedGeos.forEach((geo, index) => {
+        counterGeo += 1;
         selectedFreqs.forEach((freq, index) => {
           this._apiService.fetchExpanded(serie, geo, freq).subscribe((series) => {
             series.forEach((serie) => {
-              // this.seriesData.push(serie);
-              let exist = this.seriesData.findIndex(data => data.indicator === serie.title && data.region === serie.geography.name);
-              if (exist !== -1) {
-                if (serie.frequencyShort === 'A') {
-                  this._helper.formatTableData(serie.seriesObservations, serie.frequencyShort, this.seriesData[exist].observations);
-                }
-                if (serie.frequencyShort === 'Q') {
-                  this._helper.formatTableData(serie.seriesObservations, serie.frequencyShort, this.seriesData[exist].observations);
-                }
-                if (serie.frequencyShort === 'M') {
-                  this._helper.formatTableData(serie.seriesObservations, serie.frequencyShort, this.seriesData[exist].observations);
-                }
-              } else {
-                this.seriesData.push({
-                  indicator: serie.title,
-                  region: serie.geography.name,
-                  units: serie.unitsLabelShort,
-                  source: serie.source_description ? serie.source_description : ' ',
-                  observations: this._helper.formatTableData(serie.seriesObservations, serie.frequencyShort, {})
-                });
-              }
+              this.seriesData.push(serie);
             });
           },
           (error) => {
-            error = this.errorMsg;
+              this.errorMsg = error;
           },
           () => {
-
-            /* this.seriesData.forEach((series) => {
-              // Check if a series' title and region already exists
-              // let exist = this.tableData.filter(data => {return data.indicator === series.title && data.region === series.geography.name});
-              let exist = this.tableData.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
-              // If exists, add observations corresponding to the series frequency
-               if (exist !== -1) {
-                // let existIndex = this.tableData.indexOf(exist[0]);
-                if (series.frequencyShort === 'A') {
-                  this._helper.formatTableData(series.seriesObservations, series.frequencyShort, this.tableData[exist].observations);
+            counterFreq += 1;
+            console.log('series', [counterSeries, selectedSeries.length]);
+            console.log('geos', [counterGeo, selectedGeos.length]);
+            console.log('freqs', [counterFreq, selectedFreqs.length]);
+            if (counterSeries === selectedSeries.length && counterGeo === selectedGeos.length && counterFreq === selectedFreqs.length) {
+              console.log('true')
+              this.seriesData.forEach((series) => {
+                let exist = data.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
+                // If exists, add observations corresponding to the series frequency
+                if (exist !== -1) {
+                  // let existIndex = this.tableData.indexOf(exist[0]);
+                  if (series.frequencyShort === 'A') {
+                    this._helper.formatTableData(series.seriesObservations, series.frequencyShort, data[exist].observations);
+                  }
+                  if (series.frequencyShort === 'Q') {
+                    this._helper.formatTableData(series.seriesObservations, series.frequencyShort, data[exist].observations);
+                  }
+                  if (series.frequencyShort === 'M') {
+                    this._helper.formatTableData(series.seriesObservations, series.frequencyShort, data[exist].observations);
+                  }
+                } else {
+                  data.push({
+                    indicator: series.title,
+                    region: series.geography.name,
+                    units: series.unitsLabelShort,
+                    source: series.source_description ? series.source_description : ' ',
+                    observations: this._helper.formatTableData(series.seriesObservations, series.frequencyShort, {})
+                  });
                 }
-                if (series.frequencyShort === 'Q') {
-                  this._helper.formatTableData(series.seriesObservations, series.frequencyShort, this.tableData[exist].observations);
-                }
-                if (series.frequencyShort === 'M') {
-                  this._helper.formatTableData(series.seriesObservations, series.frequencyShort, this.tableData[exist].observations);
-                }
-              } else {
-                this.tableData.push({ 
-                  indicator: series.title,
-                  region: series.geography.name,
-                  units: series.unitsLabelShort,
-                  source: series.source_description ? series.source_description : ' ',
-                  observations: this._helper.formatTableData(series.seriesObservations, series.frequencyShort, {})
-                });
-              }
-            });
-            console.log(this.tableData) */
+              });
+              this.tableData = data;
+            }
           });
         });
       });
