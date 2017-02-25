@@ -30,12 +30,10 @@ export class AppComponent {
   private quarterSelected: Boolean = false;
   private monthSelected: Boolean = false;
 
-  private startDate: string;
-  private endDate: string;
   private datesSelected: DatesSelected;
   private dateArray: Array<any>;
   private tableData;
-  private seriesData;
+  private catGeoFreq;
 
   constructor(private _apiService: ApiService, private _helper: HelperService) { }
 
@@ -43,10 +41,10 @@ export class AppComponent {
     this.dateArray = [];
     this.geoList = [];
     this.freqList = [];
-    this.startDate = '';
-    this.endDate = '';
     this.selectedSeries = e;
     this.datesSelected = <DatesSelected>{};
+    this.datesSelected.startDate = '';
+    this.datesSelected.endDate = '';
     if (!this.selectedSeries.length) {
       // Clear selections when all series/categories are deselected
       this.selectedGeos = [];
@@ -60,11 +58,11 @@ export class AppComponent {
         let freq_geos = category.freq_geos;
         let obsStart = category.observationStart.substr(0, 10);
         let obsEnd = category.observationEnd.substr(0, 10);
-        if (this.startDate === '' || this.startDate > obsStart) {
-          this.startDate = obsStart;
+        if (this.datesSelected.startDate === '' || this.datesSelected.startDate > obsStart) {
+          this.datesSelected.startDate = obsStart;
         }
-        if (this.endDate === '' || this.endDate < obsEnd) {
-          this.endDate = obsEnd;
+        if (this.datesSelected.endDate === '' || this.datesSelected.endDate < obsEnd) {
+          this.datesSelected.endDate = obsEnd;
         }
         geo_freqs.forEach((geo, index) => {
           this._helper.uniqueGeos(geo, this.geoList);
@@ -78,12 +76,20 @@ export class AppComponent {
         },
         () => {
           if (i === this.selectedSeries.length) {
+            this.catGeoFreq = [];
+            this.catGeoFreqCombination(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
             this.frequencies = this.freqList;
             this.regions = this.geoList;
-            this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
-            this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
-            this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
-            this.getSeries(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
+            this._helper.yearsSelected(this.datesSelected, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
+            this._helper.quartersSelected(this.datesSelected, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
+            this._helper.monthsSelected(this.datesSelected, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+            if (this.selectedFreqs) {
+              this.dateArray = [];
+              this._helper.categoryDateArray(this.datesSelected, this.dateArray, this.selectedFreqs);
+            }
+            if (this.catGeoFreq.length) {
+              this.getSeries(this.catGeoFreq);
+            }
             this.selectedGeos.forEach((selected, index) => {
               // Update list of selected geographies if selection does not exist in dropdown
               this._helper.checkSelectedList(selected, index, this.regions, this.selectedGeos);
@@ -93,55 +99,25 @@ export class AppComponent {
     });
   }
 
-  startYearChange(e) {
-    let selectedStartYear = e;
-    this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, selectedStartYear, this.datesSelected.selectedEndYear);
-    this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
-    this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+  catGeoFreqCombination(selectedSeries, selectedGeos, selectedFreqs) {
+    if (selectedSeries && selectedGeos.length && selectedFreqs.length) {
+      selectedSeries.forEach((series) => {
+        selectedGeos.forEach((geo) => {
+          selectedFreqs.forEach((freq) => {
+            this.catGeoFreq.push({cat: series, geo: geo, freq: freq});
+          });
+        });
+      });
+    }
   }
-
-  startQuarterChange(e) {
-    let selectedStartQuarter = e;
-    this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
-    this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, selectedStartQuarter, this.datesSelected.selectedEndQuarter);
-    this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
-  }
-
-  startMonthChange(e) {
-    let selectedStartMonth = e;
-    this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
-    this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
-    this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, selectedStartMonth, this.datesSelected.selectedEndMonth);
-  }
-
-  endYearChange(e) {
-    let selectedEndYear = e;
-    this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, selectedEndYear);
-    this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
-    this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
-  }
-
-  endQuarterChange(e) {
-    let selectedEndQuarter = e;
-    this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
-    this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, selectedEndQuarter);
-    this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
-  }
-
-  endMonthChange(e) {
-    let selectedEndMonth = e;
-    this._helper.yearsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
-    this._helper.quartersSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
-    this._helper.monthsSelected(this.datesSelected, this.startDate, this.endDate, this.datesSelected.selectedStartMonth, selectedEndMonth);
-  }
-
-
 
   geoChange(e) {
     this.frequencies = [];
     this.selectedGeos = e;
-    if (this.selectedFreqs.length) {
-      this.getSeries(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
+    this.catGeoFreq = [];
+    this.catGeoFreqCombination(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
+    if (this.catGeoFreq.length) {
+      this.getSeries(this.catGeoFreq);
     }
     if (this.selectedGeos.length) {
       this.selectedGeos.forEach((selected, index) => {
@@ -162,9 +138,8 @@ export class AppComponent {
   freqChange(e) {
     this.regions = [];
     this.selectedFreqs = e;
-    if (this.selectedGeos.length) {
-      this.getSeries(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
-    }
+    this.dateArray = [];
+    this._helper.categoryDateArray(this.datesSelected, this.dateArray, this.selectedFreqs);
     if (this.selectedFreqs.length) {
       this.selectedFreqs.forEach((selected, index) => {
         // Update list of geographies based on selected frequencies
@@ -174,18 +149,19 @@ export class AppComponent {
         // Update list of selected geographies if selection does not exist in dropdown
         this._helper.checkSelectedList(selected, index, this.regions, this.selectedGeos);
       });
+
       let aIndex = this.selectedFreqs.indexOf('A');
       let qIndex = this.selectedFreqs.indexOf('Q');
       let mIndex = this.selectedFreqs.indexOf('M');
       this.annualSelected = aIndex > -1 ? true : false;
       this.quarterSelected = qIndex > -1 ? true : false;
       this.monthSelected = mIndex > -1 ? true : false;
-      if (this.selectedFreqs) {
-        this.dateArray = [];
-        console.log(this.dateArray)
-        this._helper.categoryDateArray(this.startDate, this.endDate, this.dateArray, this.selectedFreqs);
-        //this.datesSelected = this._helper.dateSelection(this.startDate, this.endDate);
-      }
+
+      this.catGeoFreq = [];
+      this.catGeoFreqCombination(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
+      if (this.catGeoFreq.length) {
+        this.getSeries(this.catGeoFreq);
+      } 
     } else {
       // If no geographies are selected, reset list of regions
       this.selectedGeos = [];
@@ -196,62 +172,96 @@ export class AppComponent {
     }
   }
 
-  getSeries(selectedSeries, selectedGeos, selectedFreqs) {
-    this.seriesData = [];
-    // this.tableData = [];
-    let data = [];
-    let counterSeries = 0;
-    let counterGeo = 0;
-    let counterFreq = 0;
-    selectedSeries.forEach((serie, index) => {
-      counterSeries += 1;
-      selectedGeos.forEach((geo, index) => {
-        counterGeo += 1;
-        selectedFreqs.forEach((freq, index) => {
-          this._apiService.fetchExpanded(serie, geo, freq).subscribe((series) => {
-            series.forEach((serie) => {
-              this.seriesData.push(serie);
-            });
-          },
-          (error) => {
-              this.errorMsg = error;
-          },
-          () => {
-            counterFreq += 1;
-            console.log('series', [counterSeries, selectedSeries.length]);
-            console.log('geos', [counterGeo, selectedGeos.length]);
-            console.log('freqs', [counterFreq, selectedFreqs.length]);
-            if (counterSeries === selectedSeries.length && counterGeo === selectedGeos.length && counterFreq === selectedFreqs.length) {
-              console.log('true')
-              this.seriesData.forEach((series) => {
-                let exist = data.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
-                // If exists, add observations corresponding to the series frequency
-                if (exist !== -1) {
-                  // let existIndex = this.tableData.indexOf(exist[0]);
-                  if (series.frequencyShort === 'A') {
-                    this._helper.formatTableData(series.seriesObservations, series.frequencyShort, data[exist].observations);
-                  }
-                  if (series.frequencyShort === 'Q') {
-                    this._helper.formatTableData(series.seriesObservations, series.frequencyShort, data[exist].observations);
-                  }
-                  if (series.frequencyShort === 'M') {
-                    this._helper.formatTableData(series.seriesObservations, series.frequencyShort, data[exist].observations);
-                  }
-                } else {
-                  data.push({
-                    indicator: series.title,
-                    region: series.geography.name,
-                    units: series.unitsLabelShort,
-                    source: series.source_description ? series.source_description : ' ',
-                    observations: this._helper.formatTableData(series.seriesObservations, series.frequencyShort, {})
-                  });
-                }
-              });
-              this.tableData = data;
-            }
+  getSeries(catGeoFreq) {
+    let seriesData = [];
+    let counter = 0;
+    catGeoFreq.forEach((category) => {
+      this._apiService.fetchExpanded(category.cat, category.geo, category.freq).subscribe((series) =>{
+        if (series) {
+          series.forEach((serie) => {
+            seriesData.push(serie);
           });
-        });
+        }
+      },
+      (error) => {
+        this.errorMsg = error;
+      },
+      () => {
+        counter += 1;
+        if (counter === catGeoFreq.length) {
+          this.formatTableData(seriesData);
+        }
       });
     });
+  }
+  
+  formatTableData(seriesData) {
+    // Format data for datatables module (indicator-table component)
+    this.tableData = [];
+    seriesData.forEach((series) => {
+      let exist = this.tableData.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
+      // If exists, add observations corresponding to the series frequency
+      if (exist !== -1) {
+        if (series.frequencyShort === 'A') {
+          this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, this.tableData[exist].observations);
+        }
+        if (series.frequencyShort === 'Q') {
+          this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, this.tableData[exist].observations);
+        }
+        if (series.frequencyShort === 'M') {
+          this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, this.tableData[exist].observations);
+        }
+      } else {
+        this.tableData.push({
+          indicator: series.title,
+          region: series.geography.name,
+          units: series.unitsLabelShort,
+          source: series.source_description ? series.source_description : ' ',
+          observations: this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, {})
+        });
+      }
+    });
+  }
+
+  startYearChange(e) {
+    let selectedStartYear = e;
+    this._helper.yearsSelected(this.datesSelected, selectedStartYear, this.datesSelected.selectedEndYear);
+    this._helper.quartersSelected(this.datesSelected, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
+    this._helper.monthsSelected(this.datesSelected, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+  }
+
+  startQuarterChange(e) {
+    let selectedStartQuarter = e;
+    this._helper.yearsSelected(this.datesSelected, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
+    this._helper.quartersSelected(this.datesSelected, selectedStartQuarter, this.datesSelected.selectedEndQuarter);
+    this._helper.monthsSelected(this.datesSelected, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+  }
+
+  startMonthChange(e) {
+    let selectedStartMonth = e;
+    this._helper.yearsSelected(this.datesSelected, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
+    this._helper.quartersSelected(this.datesSelected, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
+    this._helper.monthsSelected(this.datesSelected, selectedStartMonth, this.datesSelected.selectedEndMonth);
+  }
+
+  endYearChange(e) {
+    let selectedEndYear = e;
+    this._helper.yearsSelected(this.datesSelected, this.datesSelected.selectedStartYear, selectedEndYear);
+    this._helper.quartersSelected(this.datesSelected, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
+    this._helper.monthsSelected(this.datesSelected, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+  }
+
+  endQuarterChange(e) {
+    let selectedEndQuarter = e;
+    this._helper.yearsSelected(this.datesSelected, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
+    this._helper.quartersSelected(this.datesSelected, this.datesSelected.selectedStartQuarter, selectedEndQuarter);
+    this._helper.monthsSelected(this.datesSelected, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+  }
+
+  endMonthChange(e) {
+    let selectedEndMonth = e;
+    this._helper.yearsSelected(this.datesSelected, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
+    this._helper.quartersSelected(this.datesSelected, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
+    this._helper.monthsSelected(this.datesSelected, this.datesSelected.selectedStartMonth, selectedEndMonth);
   }
 }
