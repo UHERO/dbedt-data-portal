@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { HelperService } from '../helper.service';
+import * as $ from 'jquery';
+import 'datatables.net';
 import 'datatables.net-fixedcolumns';
 
 @Component({
@@ -10,7 +12,8 @@ import 'datatables.net-fixedcolumns';
 export class IndicatorTableComponent implements OnInit, OnChanges {
   @Input() dateArray;
   @Input() tableData;
-  private dtOptions: any = {};
+  //private dtOptions: any = {};
+  private tableWidget: any;
 
   constructor(private _helper: HelperService) { }
 
@@ -18,7 +21,8 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    console.log('indicator table', this.tableData);
+    this.initDatatable();
+    /* console.log('indicator table', this.tableData);
     let tableColumns = [{title: 'Indicator', data: 'indicator'}, {title: 'Region', data: 'region'}, {title: 'Units', data: 'units'}];
     this.dateArray.forEach((date) => {
       tableColumns.push({title: date.tableDate, data: 'observations.' + date.tableDate });
@@ -34,6 +38,11 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
       'fixedColumns': {
         'leftColumns': 3
       }
-    }
+    } */
+  }
+
+  initDatatable(): void {
+    let exampleId: any = $('#example');
+    this.tableWidget = exampleId.DataTable({});
   }
 }

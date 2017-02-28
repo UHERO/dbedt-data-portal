@@ -16,7 +16,6 @@ import { YearSelectorComponent } from './year-selector/year-selector.component';
 import { QuarterSelectorComponent } from './quarter-selector/quarter-selector.component';
 import { MonthSelectorComponent } from './month-selector/month-selector.component';
 import { IndicatorTableComponent } from './indicator-table/indicator-table.component';
-import { DataTablesModule } from 'angular-datatables';
 
 @NgModule({
   declarations: [
@@ -37,7 +36,6 @@ import { DataTablesModule } from 'angular-datatables';
     TreeModule,
     MultiSelectModule,
     MultiselectDropdownModule,
-    DataTablesModule
   ],
   providers: [ApiService, HelperService],
   bootstrap: [AppComponent]
