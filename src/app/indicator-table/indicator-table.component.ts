@@ -12,7 +12,7 @@ import 'datatables.net-fixedcolumns';
 export class IndicatorTableComponent implements OnInit, OnChanges {
   @Input() dateArray;
   @Input() tableData;
-  //private dtOptions: any = {};
+  @Input() datesSelected;
   private tableWidget: any;
 
   constructor(private _helper: HelperService) { }
@@ -22,27 +22,33 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.initDatatable();
-    /* console.log('indicator table', this.tableData);
-    let tableColumns = [{title: 'Indicator', data: 'indicator'}, {title: 'Region', data: 'region'}, {title: 'Units', data: 'units'}];
+  }
+
+  initDatatable(): void {
+    console.log('dates selected', this.datesSelected)
+    let tableColumns = [];
+    let exampleId: any = $('#indicator-table');
+    if (this.tableWidget) {
+      // Destroy table if table has already been initialized
+      this.tableWidget.destroy();
+      exampleId.empty();
+    }
+    tableColumns.push({title: 'Indicator', data: 'indicator'}, {title: 'Region', data: 'region'}, {title: 'Units', data: 'units'})
     this.dateArray.forEach((date) => {
       tableColumns.push({title: date.tableDate, data: 'observations.' + date.tableDate });
     });
     tableColumns.push({title: 'Source', data: 'source'});
-    this.dtOptions = {
-      columns: tableColumns,
+    this.tableWidget = exampleId.DataTable({
       data: this.tableData,
-      'scrollY': '450px',
-      'scrollX': true,
-      'scrollCollapse': true,
-      'paging': false,
-      'fixedColumns': {
+      columns: tableColumns,
+      scrollY: '450px',
+      scrollX: true,
+      paging: false,
+      searching: false,
+      fixedColumns: {
         'leftColumns': 3
-      }
-    } */
-  }
-
-  initDatatable(): void {
-    let exampleId: any = $('#example');
-    this.tableWidget = exampleId.DataTable({});
+      },
+    });
+    this.tableWidget.columns([-1, -2]).visible(false);
   }
 }

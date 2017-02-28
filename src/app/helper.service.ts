@@ -9,7 +9,8 @@ export class HelperService {
 
   constructor() { }
 
-  categoryDateArray(selectedDates, dateArray: Array<any>, selectedFreqs: Array<string>) {
+  categoryDateArray(selectedDates, selectedFreqs: Array<string>) {
+    let dateArray = [];
     let startYear = +selectedDates.startDate.substr(0, 4);
     let endYear = +selectedDates.endDate.substr(0, 4);
     let startMonth = +selectedDates.startDate.substr(5, 2);
@@ -17,7 +18,7 @@ export class HelperService {
     let m = { 1: '01', 2: '02', 3: '03', 4: '04', 5: '05', 6: '06', 7: '07', 8: '08', 9: '09', 10: '10', 11: '11', 12: '12' };
     let q = { 1: 'Q1', 4: 'Q2', 7: 'Q3', 10: 'Q4' };
     while (startYear + '-' + m[startMonth] + '-01' <= endYear + '-' + m[endMonth] + '-01') {
-      if (startMonth === 1 || dateArray.length === 0) {
+      if ((startMonth === 1 && selectedFreqs.indexOf('A') > -1)) {
         dateArray.push({date: startYear.toString() + '-01-01', tableDate: startYear.toString()});
       }
       // If quarterly frequency is selected, add to table dates
@@ -35,7 +36,25 @@ export class HelperService {
     return dateArray;
   }
 
-  yearsSelected(selectedDates, selectedYearStart?, selectedYearEnd?) {
+  yearsSelected(selectedDates) {
+    let allYears = [];
+    let startYear = +selectedDates.startDate.substr(0, 4);
+    let endYear = +selectedDates.endDate.substr(0, 4);
+    while (startYear <= endYear) {
+      allYears.push(startYear.toString());
+      startYear += 1;
+    }
+
+    allYears = allYears.reverse();
+    let minYear = allYears[allYears.length - 1];
+    let maxYear = allYears[0];
+    selectedDates.selectedStartYear = selectedDates.selectedStartYear ? selectedDates.selectedStartYear : minYear;
+    selectedDates.selectedEndYear = selectedDates.selectedEndYear ? selectedDates.selectedEndYear : maxYear;
+    selectedDates.fromYearList = allYears.slice(allYears.indexOf(selectedDates.selectedEndYear), allYears.length);
+    selectedDates.toYearList = allYears.slice(0, allYears.indexOf(selectedDates.selectedStartYear) + 1);
+  }
+
+  /* yearsSelected(selectedDates, selectedYearStart?, selectedYearEnd?) {
     let allYears = [];
     let startYear = +selectedDates.startDate.substr(0, 4);
     let endYear = +selectedDates.endDate.substr(0, 4);
@@ -51,7 +70,7 @@ export class HelperService {
     selectedDates.selectedEndYear = selectedYearEnd ? selectedYearEnd : maxYear;
     selectedDates.fromYearList = allYears.slice(allYears.indexOf(selectedDates.selectedEndYear), allYears.length);
     selectedDates.toYearList = allYears.slice(0, allYears.indexOf(selectedDates.selectedStartYear) + 1);
-  }
+  } */
 
   quartersSelected(selectedDates, selectedQuarterStart?, selectedQuarterEnd?) {
     let allQuarters = ['Q4', 'Q3', 'Q2', 'Q1'];

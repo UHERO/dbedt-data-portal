@@ -5,7 +5,7 @@
               <app-category-sidebar (selectedCatIds)="getSelectedSeries($event)"></app-category-sidebar>
             </div>
             <div class="col-xs-12 col-md-8 col-lg-9 col-xl-10 content-col">
-              <app-indicator-table *ngIf="tableData && tableData.length > 0 && dateArray && dateArray.length > 0" [dateArray]="dateArray" [tableData]="tableData"></app-indicator-table>
+              <app-indicator-table *ngIf="displayTable" [dateArray]="dateArray" [tableData]="tableData" [datesSelected]="datesSelected"></app-indicator-table>
             </div>
         </div>
         <div class="row">

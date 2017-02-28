@@ -1,27 +1,2 @@
-<!-- <table datatable [dtOptions]="dtOptions" class="stripe">
-</table> -->
-<table id="example" class="stripe">
-  <thead>
-    <tr>
-      <th>Indicator</th>
-      <th>Region</th>
-      <th>Units</th>
-      <template ngFor let-date [ngForOf]="dateArray" let-i="index">
-        <th>{{date.tableDate}}</th>
-      </template>
-      <th>Source</th>
-    </tr>
-  </thead>
-  <tbody>
-    <template ngFor let-serie [ngForOf]="tableData">
-      <tr>
-        <td>{{serie.indicator}}</td>
-        <td>{{serie.region}}</td>
-        <td>{{serie.units}}</td>
-        <template ngFor let-date [ngForOf]="dateArray" let-i="index">
-        </template>
-        <td>{{serie.source}}</td>
-      </tr>
-    </template>
-  </tbody>
+<table id="indicator-table" class="stripe">
 </table>
