@@ -54,25 +54,7 @@ export class HelperService {
     selectedDates.toYearList = allYears.slice(0, allYears.indexOf(selectedDates.selectedStartYear) + 1);
   }
 
-  /* yearsSelected(selectedDates, selectedYearStart?, selectedYearEnd?) {
-    let allYears = [];
-    let startYear = +selectedDates.startDate.substr(0, 4);
-    let endYear = +selectedDates.endDate.substr(0, 4);
-    while (startYear <= endYear) {
-      allYears.push(startYear.toString());
-      startYear += 1;
-    }
-
-    allYears = allYears.reverse();
-    let minYear = allYears[allYears.length - 1];
-    let maxYear = allYears[0];
-    selectedDates.selectedStartYear = selectedYearStart ? selectedYearStart : minYear;
-    selectedDates.selectedEndYear = selectedYearEnd ? selectedYearEnd : maxYear;
-    selectedDates.fromYearList = allYears.slice(allYears.indexOf(selectedDates.selectedEndYear), allYears.length);
-    selectedDates.toYearList = allYears.slice(0, allYears.indexOf(selectedDates.selectedStartYear) + 1);
-  } */
-
-  quartersSelected(selectedDates, selectedQuarterStart?, selectedQuarterEnd?) {
+  quartersSelected(selectedDates) {
     let allQuarters = ['Q4', 'Q3', 'Q2', 'Q1'];
     let minYear = selectedDates.startDate.substr(0, 4);
     let maxYear = selectedDates.endDate.substr(0, 4);
@@ -81,8 +63,8 @@ export class HelperService {
     this.minMaxYearQuarters(selectedDates, minYear, maxYear);
     let minQuarter = selectedDates.fromQuarterList[selectedDates.fromQuarterList.length - 1];
     let maxQuarter = selectedDates.toQuarterList[0];
-    selectedDates.selectedStartQuarter = selectedQuarterStart ? selectedQuarterStart : minQuarter;
-    selectedDates.selectedEndQuarter = selectedQuarterEnd ? selectedQuarterEnd : maxQuarter;
+    selectedDates.selectedStartQuarter = selectedDates.selectedStartQuarter ? selectedDates.selectedStartQuarter : minQuarter;
+    selectedDates.selectedEndQuarter = selectedDates.selectedEndQuarter ? selectedDates.selectedEndQuarter : maxQuarter;
     this.sameYearQuarters(selectedDates);
   }
 
@@ -95,8 +77,8 @@ export class HelperService {
     this.minMaxYearMonths(selectedDates, minYear, maxYear, allMonths);
     let minMonth = selectedDates.fromMonthList[selectedDates.fromMonthList.length - 1];
     let maxMonth = selectedDates.toMonthList[0];
-    selectedDates.selectedStartMonth = selectedMonthStart ? selectedMonthStart : minMonth;
-    selectedDates.selectedEndMonth = selectedMonthEnd ? selectedMonthEnd : maxMonth;
+    selectedDates.selectedStartMonth = selectedDates.selectedStartMonth ? selectedDates.selectedStartMonth : minMonth;
+    selectedDates.selectedEndMonth = selectedDates.selectedEndMonth ? selectedDates.selectedEndMonth : maxMonth;
     this.sameYearMonths(selectedDates);
   }
 

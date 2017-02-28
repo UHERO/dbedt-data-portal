@@ -82,8 +82,8 @@ export class AppComponent {
             this.frequencies = this.freqList;
             this.regions = this.geoList;
             this._helper.yearsSelected(this.datesSelected);
-            this._helper.quartersSelected(this.datesSelected, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
-            this._helper.monthsSelected(this.datesSelected, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+            this._helper.quartersSelected(this.datesSelected);
+            this._helper.monthsSelected(this.datesSelected);
             if (this.selectedFreqs) {
               this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.selectedFreqs);
             }
@@ -227,47 +227,44 @@ export class AppComponent {
   }
 
   startYearChange(e) {
-    let selectedStartYear = e;
     this.datesSelected.selectedStartYear = e;
-    // this._helper.yearsSelected(this.datesSelected, selectedStartYear, this.datesSelected.selectedEndYear);
     this._helper.yearsSelected(this.datesSelected);
-    this._helper.quartersSelected(this.datesSelected, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
-    this._helper.monthsSelected(this.datesSelected, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
-    // this.datesSelected.selectedStartYear = e;
+    this._helper.quartersSelected(this.datesSelected);
+    this._helper.monthsSelected(this.datesSelected);
   }
 
   startQuarterChange(e) {
-    let selectedStartQuarter = e;
-    //this._helper.yearsSelected(this.datesSelected, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
-    this._helper.quartersSelected(this.datesSelected, selectedStartQuarter, this.datesSelected.selectedEndQuarter);
-    this._helper.monthsSelected(this.datesSelected, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+    this.datesSelected.selectedStartQuarter = e;
+    this._helper.yearsSelected(this.datesSelected);
+    this._helper.quartersSelected(this.datesSelected);
+    this._helper.monthsSelected(this.datesSelected);
   }
 
   startMonthChange(e) {
-    let selectedStartMonth = e;
-    //this._helper.yearsSelected(this.datesSelected, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
-    this._helper.quartersSelected(this.datesSelected, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
-    this._helper.monthsSelected(this.datesSelected, selectedStartMonth, this.datesSelected.selectedEndMonth);
+    this.datesSelected.selectedStartMonth = e;
+    this._helper.yearsSelected(this.datesSelected);
+    this._helper.quartersSelected(this.datesSelected);
+    this._helper.monthsSelected(this.datesSelected);
   }
 
   endYearChange(e) {
-    let selectedEndYear = e;
-    //this._helper.yearsSelected(this.datesSelected, this.datesSelected.selectedStartYear, selectedEndYear);
-    this._helper.quartersSelected(this.datesSelected, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
-    this._helper.monthsSelected(this.datesSelected, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+    this.datesSelected.selectedEndYear = e;
+    this._helper.yearsSelected(this.datesSelected);
+    this._helper.quartersSelected(this.datesSelected);
+    this._helper.monthsSelected(this.datesSelected);
   }
 
   endQuarterChange(e) {
-    let selectedEndQuarter = e;
-    //this._helper.yearsSelected(this.datesSelected, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
-    this._helper.quartersSelected(this.datesSelected, this.datesSelected.selectedStartQuarter, selectedEndQuarter);
-    this._helper.monthsSelected(this.datesSelected, this.datesSelected.selectedStartMonth, this.datesSelected.selectedEndMonth);
+    this.datesSelected.selectedEndQuarter = e;
+    this._helper.yearsSelected(this.datesSelected);
+    this._helper.quartersSelected(this.datesSelected);
+    this._helper.monthsSelected(this.datesSelected);
   }
 
   endMonthChange(e) {
-    let selectedEndMonth = e;
-    //this._helper.yearsSelected(this.datesSelected, this.datesSelected.selectedStartYear, this.datesSelected.selectedEndYear);
-    this._helper.quartersSelected(this.datesSelected, this.datesSelected.selectedStartQuarter, this.datesSelected.selectedEndQuarter);
-    this._helper.monthsSelected(this.datesSelected, this.datesSelected.selectedStartMonth, selectedEndMonth);
+    this.datesSelected.selectedEndMonth = e;
+    this._helper.yearsSelected(this.datesSelected);
+    this._helper.quartersSelected(this.datesSelected);
+    this._helper.monthsSelected(this.datesSelected);
   }
 }
