@@ -52,7 +52,7 @@ export class AppComponent {
       this.selectedFreqs = [];
     }
     let i = 0;
-    this.selectedSeries.forEach((el, index) => {
+    this.selectedSeries.forEach((el) => {
       this._apiService.fetchSelectedCategory(el).subscribe((category) => {
         i += 1;
         let geo_freqs = category.geo_freqs;
@@ -65,10 +65,10 @@ export class AppComponent {
         if (this.datesSelected.endDate === '' || this.datesSelected.endDate < obsEnd) {
           this.datesSelected.endDate = obsEnd;
         }
-        geo_freqs.forEach((geo, index) => {
+        geo_freqs.forEach((geo) => {
           this._helper.uniqueGeos(geo, this.geoList);
         });
-        freq_geos.forEach((freq, index) => {
+        freq_geos.forEach((freq) => {
           this._helper.uniqueFreqs(freq, this.freqList);
         });
       },
@@ -97,6 +97,10 @@ export class AppComponent {
           }
         });
     });
+    if (!this.selectedSeries.length) {
+      // Remove table if all categories are deselected
+      this.displayTable = false;
+    }
   }
 
   catGeoFreqCombination(selectedSeries, selectedGeos, selectedFreqs) {
@@ -121,7 +125,7 @@ export class AppComponent {
       this.getSeries(this.catGeoFreq);
     }
     if (this.selectedGeos.length) {
-      this.selectedGeos.forEach((selected, index) => {
+      this.selectedGeos.forEach((selected) => {
         // Update list of frequencies based on selected regions
         this._helper.checkSelectedGeoFreqs(selected, this.geoList, this.frequencies);
       });
@@ -133,10 +137,12 @@ export class AppComponent {
       // If no frequencies are selected reset list of frequencies
       this.selectedFreqs = [];
       this.frequencies = this.freqList;
+      this.toggleDateSelectors();
     }
   }
 
   freqChange(e) {
+    this.regions = [];
     this.displayTable = false;
     this.selectedFreqs = e;
     this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.selectedFreqs);
@@ -146,7 +152,7 @@ export class AppComponent {
       this.getSeries(this.catGeoFreq);
     }
     if (this.selectedFreqs.length) {
-      this.selectedFreqs.forEach((selected, index) => {
+      this.selectedFreqs.forEach((selected) => {
         // Update list of geographies based on selected frequencies
         this._helper.checkSelectedFreqGeos(selected, this.freqList, this.regions);
       });
@@ -228,41 +234,36 @@ export class AppComponent {
 
   startYearChange(e) {
     this.datesSelected.selectedStartYear = e;
-    this._helper.yearsSelected(this.datesSelected);
-    this._helper.quartersSelected(this.datesSelected);
-    this._helper.monthsSelected(this.datesSelected);
+    this.getDates();
   }
 
   startQuarterChange(e) {
     this.datesSelected.selectedStartQuarter = e;
-    this._helper.yearsSelected(this.datesSelected);
-    this._helper.quartersSelected(this.datesSelected);
-    this._helper.monthsSelected(this.datesSelected);
+    this.getDates();
   }
 
   startMonthChange(e) {
     this.datesSelected.selectedStartMonth = e;
-    this._helper.yearsSelected(this.datesSelected);
-    this._helper.quartersSelected(this.datesSelected);
-    this._helper.monthsSelected(this.datesSelected);
+    this.getDates();
   }
 
   endYearChange(e) {
     this.datesSelected.selectedEndYear = e;
-    this._helper.yearsSelected(this.datesSelected);
-    this._helper.quartersSelected(this.datesSelected);
-    this._helper.monthsSelected(this.datesSelected);
+    this.getDates();
   }
 
   endQuarterChange(e) {
     this.datesSelected.selectedEndQuarter = e;
-    this._helper.yearsSelected(this.datesSelected);
-    this._helper.quartersSelected(this.datesSelected);
-    this._helper.monthsSelected(this.datesSelected);
+    this.getDates();
   }
 
   endMonthChange(e) {
     this.datesSelected.selectedEndMonth = e;
+    this.getDates();
+  }
+
+  getDates() {
+    this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.selectedFreqs);
     this._helper.yearsSelected(this.datesSelected);
     this._helper.quartersSelected(this.datesSelected);
     this._helper.monthsSelected(this.datesSelected);

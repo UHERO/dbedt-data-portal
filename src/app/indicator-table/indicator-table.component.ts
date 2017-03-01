@@ -13,19 +13,19 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   @Input() dateArray;
   @Input() tableData;
   @Input() datesSelected;
+  differ: any;
   private tableWidget: any;
 
-  constructor(private _helper: HelperService) { }
+  constructor() {}
 
   ngOnInit() {
   }
 
-  ngOnChanges() {
+  ngOnChanges(inputChanges) {
     this.initDatatable();
   }
 
   initDatatable(): void {
-    console.log('dates selected', this.datesSelected)
     let tableColumns = [];
     let exampleId: any = $('#indicator-table');
     if (this.tableWidget) {
@@ -49,6 +49,5 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
         'leftColumns': 3
       },
     });
-    this.tableWidget.columns([-1, -2]).visible(false);
   }
 }
