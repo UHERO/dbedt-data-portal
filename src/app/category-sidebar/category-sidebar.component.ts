@@ -1,19 +1,20 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 
 import { ApiService } from '../api.service';
 import { CategoryTree } from '../category-tree';
 import { TREE_ACTIONS, IActionMapping } from 'angular2-tree-component';
 
-const actionMapping:IActionMapping = {
-    mouse: {
-      click: TREE_ACTIONS.TOGGLE_SELECTED_MULTI
-    }
+const actionMapping: IActionMapping = {
+  mouse: {
+    click: TREE_ACTIONS.TOGGLE_SELECTED_MULTI
+  }
 }
 
 @Component({
   selector: 'app-category-sidebar',
   templateUrl: './category-sidebar.component.html',
-  styleUrls: ['./category-sidebar.component.scss']
+  styleUrls: ['./category-sidebar.component.scss'],
+  encapsulation: ViewEncapsulation.None 
 })
 export class CategorySidebarComponent implements OnInit {
   private categories: CategoryTree;
@@ -28,9 +29,9 @@ export class CategorySidebarComponent implements OnInit {
     this._apiService.fetchCategories().subscribe((cats) => {
       this.categories = cats;
     },
-    (error) => {
-      this.error = error;
-    });
+      (error) => {
+        this.error = error;
+      });
   }
 
   customOptions = {
@@ -38,13 +39,26 @@ export class CategorySidebarComponent implements OnInit {
   }
 
   activateNode(e) {
+    if (e.node.hasChildren) {
+      console.log('parent selected', e)
+      e.node.expand();
+    }
     if (!e.node.hasChildren) {
+      console.log('child selected', e)
       this.ids.push(e.node.id);
       this.selectedCatIds.emit(this.ids);
     }
   }
 
   deactivateNode(e) {
+    if (e.node.hasChildren) {
+      e.node.collapse();
+      e.node.children.forEach((child) => {
+        if (child.isActive) {
+          e.node.focus();
+        }
+      });
+    }
     if (!e.node.hasChildren) {
       let idIndex = this.ids.indexOf(e.node.id);
       if (idIndex > -1) {

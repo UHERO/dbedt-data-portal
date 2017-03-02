@@ -41,10 +41,11 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
     this.tableWidget = exampleId.DataTable({
       data: this.tableData,
       columns: tableColumns,
-      scrollY: '450px',
+      scrollY: '400px',
       scrollX: true,
       paging: false,
       searching: false,
+      info: false,
       fixedColumns: {
         'leftColumns': 3
       },

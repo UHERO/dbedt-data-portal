@@ -27,7 +27,7 @@ import { IndicatorTableComponent } from './indicator-table/indicator-table.compo
     YearSelectorComponent,
     QuarterSelectorComponent,
     MonthSelectorComponent,
-    IndicatorTableComponent,
+    IndicatorTableComponent
   ],
   imports: [
     BrowserModule,
@@ -35,7 +35,7 @@ import { IndicatorTableComponent } from './indicator-table/indicator-table.compo
     HttpModule,
     TreeModule,
     MultiSelectModule,
-    MultiselectDropdownModule,
+    MultiselectDropdownModule
   ],
   providers: [ApiService, HelperService],
   bootstrap: [AppComponent]
