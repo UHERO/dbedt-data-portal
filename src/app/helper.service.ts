@@ -44,7 +44,7 @@ export class HelperService {
       }
     }
     while (startYear + '-' + m[startMonth] + '-01' <= endYear + '-' + m[endMonth] + '-01') {
-      if ((startMonth === 1 && selectedFreqs.indexOf('A') > -1)) {
+      if ((startMonth === 1 && selectedFreqs.indexOf('A') > -1) || dateArray.length === 0) {
         dateArray.push({date: startYear.toString() + '-01-01', tableDate: startYear.toString()});
       }
       // If quarterly frequency is selected, add to table dates
@@ -58,7 +58,6 @@ export class HelperService {
       startYear = startMonth === 12 ? startYear += 1 : startYear;
       startMonth = startMonth === 12 ? 1 : startMonth += 1;
     }
-
     return dateArray;
   }
 
