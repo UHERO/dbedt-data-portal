@@ -19,6 +19,7 @@
           <app-quarter-selector *ngIf="quarterSelected" [quarters]="datesSelected.toQuarterList" [(selectedQuarter)]="datesSelected.selectedEndQuarter" (selectedQuarterChange)="endQuarterChange($event)"></app-quarter-selector>
           <app-month-selector *ngIf="monthSelected" [months]="datesSelected.toMonthList" [(selectedMonth)]="datesSelected.selectedEndMonth" (selectedMonthChange)="endMonthChange($event)"></app-month-selector>
           <app-geo-selector [regions]="regions" [(selectedGeos)]="selectedGeos" (selectedGeoList)="geoChange($event)"></app-geo-selector>
+          <p *ngIf="invalidDates">{{invalidDates}}</p>
         </div>
    </div>
 </div>

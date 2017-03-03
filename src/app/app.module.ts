@@ -8,8 +8,7 @@ import { HelperService } from './helper.service';
 import { AppComponent } from './app.component';
 import { CategorySidebarComponent } from './category-sidebar/category-sidebar.component';
 import { TreeModule } from 'angular2-tree-component';
-import { MultiSelectModule } from 'primeng/primeng';
-import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect/src/multiselect-dropdown';
+import { Select2Module } from 'ng2-select2';
 import { GeoSelectorComponent } from './geo-selector/geo-selector.component';
 import { FreqSelectorComponent } from './freq-selector/freq-selector.component';
 import { YearSelectorComponent } from './year-selector/year-selector.component';
@@ -34,8 +33,7 @@ import { IndicatorTableComponent } from './indicator-table/indicator-table.compo
     FormsModule,
     HttpModule,
     TreeModule,
-    MultiSelectModule,
-    MultiselectDropdownModule
+    Select2Module
   ],
   providers: [ApiService, HelperService],
   bootstrap: [AppComponent]

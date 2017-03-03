@@ -44,7 +44,7 @@ export class HelperService {
       }
     }
     while (startYear + '-' + m[startMonth] + '-01' <= endYear + '-' + m[endMonth] + '-01') {
-      if ((startMonth === 1 && selectedFreqs.indexOf('A') > -1) || dateArray.length === 0) {
+      if ((startMonth === 1 && selectedFreqs.indexOf('A') > -1)) {
         dateArray.push({date: startYear.toString() + '-01-01', tableDate: startYear.toString()});
       }
       // If quarterly frequency is selected, add to table dates
@@ -69,14 +69,13 @@ export class HelperService {
       allYears.push(startYear.toString());
       startYear += 1;
     }
-
     allYears = allYears.reverse();
     let minYear = allYears[allYears.length - 1];
     let maxYear = allYears[0];
     selectedDates.selectedStartYear = selectedDates.selectedStartYear ? selectedDates.selectedStartYear : minYear;
     selectedDates.selectedEndYear = selectedDates.selectedEndYear ? selectedDates.selectedEndYear : maxYear;
-    selectedDates.fromYearList = allYears.slice(allYears.indexOf(selectedDates.selectedEndYear), allYears.length);
-    selectedDates.toYearList = allYears.slice(0, allYears.indexOf(selectedDates.selectedStartYear) + 1);
+    selectedDates.fromYearList = allYears;
+    selectedDates.toYearList = allYears;
   }
 
   quartersSelected(selectedDates) {
@@ -85,21 +84,23 @@ export class HelperService {
     selectedDates.fromQuarterList = allQuarters;
     selectedDates.toQuarterList = allQuarters;
     this.minMaxYearQuarters(selectedDates);
-    /* if (selectedDates.selectedStartMonth) {
-      selectedDates.fromQuarterList = this.minYearQuarters(+selectedDates.selectedStartMonth);
-    }
-    if (selectedDates.selectedEndMonth) {
-      selectedDates.toQuarterList = this.maxYearQuarters(+selectedDates.selectedEndMonth);
-    } */
-    this.sameYearQuarters(selectedDates);
     let minQuarter = selectedDates.fromQuarterList[selectedDates.fromQuarterList.length - 1];
-    console.log(minQuarter);
     let maxQuarter = selectedDates.toQuarterList[0];
-    console.log(selectedDates.fromQuarterList)
     selectedDates.selectedStartQuarter = selectedDates.fromQuarterList.indexOf(selectedDates.selectedStartQuarter) > -1 ? selectedDates.selectedStartQuarter : minQuarter;
     selectedDates.selectedEndQuarter = selectedDates.toQuarterList.indexOf(selectedDates.selectedEndQuarter) > -1 ? selectedDates.selectedEndQuarter : maxQuarter;
-        console.log(selectedDates.selectedStartQuarter)
+  }
 
+  monthsSelected(selectedDates) {
+    let allMonths = ['12', '11', '10', '09', '08', '07', '06', '05', '04', '03', '02', '01'];
+    let q = { '01': 'Q1', '04': 'Q2', '07': 'Q3', '10': 'Q4' };   
+    let startMonth, endMonth;
+    selectedDates.fromMonthList = allMonths;
+    selectedDates.toMonthList = allMonths;
+    this.minMaxYearMonths(selectedDates, allMonths);
+    let minMonth = selectedDates.fromMonthList[selectedDates.fromMonthList.length - 1];
+    let maxMonth = selectedDates.toMonthList[0];
+    selectedDates.selectedStartMonth = selectedDates.fromMonthList.indexOf(selectedDates.selectedStartMonth) > -1 ? selectedDates.selectedStartMonth : minMonth;
+    selectedDates.selectedEndMonth = selectedDates.toMonthList.indexOf(selectedDates.selectedEndMonth) > -1 ? selectedDates.selectedEndMonth : maxMonth;
   }
 
   minMaxYearQuarters(selectedDates) {
@@ -123,42 +124,6 @@ export class HelperService {
     }
   }
 
-  monthsSelected(selectedDates) {
-    let allMonths = ['12', '11', '10', '09', '08', '07', '06', '05', '04', '03', '02', '01'];
-    let q = { '01': 'Q1', '04': 'Q2', '07': 'Q3', '10': 'Q4' };   
-    let startMonth, endMonth;
-    selectedDates.fromMonthList = allMonths;
-    selectedDates.toMonthList = allMonths;
-    this.minMaxYearMonths(selectedDates, allMonths);
-    if (selectedDates.selectedStartQuarter) {
-      let lastMonth;
-      let lastQ = selectedDates.toQuarterList[0];
-      for (let key in q) {
-        if (q[key] === selectedDates.selectedStartQuarter) {
-          startMonth = key;
-        }
-        if (q[key] === lastQ) {
-          lastMonth = key;
-        }
-      }
-      console.log(lastMonth)
-      selectedDates.fromMonthList = selectedDates.fromMonthList.slice(selectedDates.fromMonthList.indexOf(lastMonth) - 2, selectedDates.fromMonthList.indexOf(startMonth) + 1);
-    }
-    if (selectedDates.selectedEndQuarter) {
-      for (let key in q) {
-        if (q[key] === selectedDates.selectedEndQuarter) {
-          endMonth = key;
-        }
-      }
-      selectedDates.toMonthList = selectedDates.toMonthList.slice(selectedDates.toMonthList.indexOf(endMonth) - 2);
-    }
-    this.sameYearMonths(selectedDates);
-    let minMonth = selectedDates.fromMonthList[selectedDates.fromMonthList.length - 1];
-    let maxMonth = selectedDates.toMonthList[0];
-    selectedDates.selectedStartMonth = selectedDates.fromMonthList.indexOf(selectedDates.selectedStartMonth) > -1 ? selectedDates.selectedStartMonth : minMonth;
-    selectedDates.selectedEndMonth = selectedDates.toMonthList.indexOf(selectedDates.selectedEndMonth) > -1 ? selectedDates.selectedEndMonth : maxMonth;
-  }
-
   minMaxYearMonths(selectedDates, allMonths) {
     // If selectedStartYear is set to earliest/latest possible year, set month list based on earliest/latest month available
     // If selectedEndYear is set to earliest/latest possible year, set month list based on earliest/latest month available
@@ -177,52 +142,6 @@ export class HelperService {
     }
     if (selectedDates.selectedEndYear === minYear) {
       selectedDates.toMonthList = allMonths.slice(0, allMonths.indexOf(startMonth) + 1);
-    }
-  }
-
-  quarterMonths(selectedDates) {
-    let q = { '01': 'Q1', '04': 'Q2', '07': 'Q3', '10': 'Q4' };
-    let startMonth, endMonth;
-    if (selectedDates.selectedStartQuarter) {
-      for (let key in q) {
-        if (q[key] === selectedDates.selectedStartQuarter) {
-          startMonth = key;
-        }
-      }
-      selectedDates.fromMonthList = selectedDates.fromMonthList.slice(0, selectedDates.fromMonthList.indexOf(startMonth) + 1);
-    }
-    if (selectedDates.selectedEndQuarter) {
-      for (let key in q) {
-        if (q[key] === selectedDates.selectedEndQuarter) {
-          endMonth = key;
-        }
-      }
-      selectedDates.toMonthList = selectedDates.toMonthList.slice(selectedDates.toMonthList.indexOf(endMonth) - 2, selectedDates.toMonthList.length);
-    }
-  }
-
-  sameYearQuarters(selectedDates) {
-    let allQuarters = ['Q4', 'Q3', 'Q2', 'Q1'];
-    // If selected start and end years are the same
-    // Prevent user from selecting a start quarter later than the selected end quarter
-    // Prevent user from selecting an end quarter earlier than the selected start quarter
-    let fromList = selectedDates.fromQuarterList;
-    let toList = selectedDates.toQuarterList;
-    if (selectedDates.selectedStartYear === selectedDates.selectedEndYear) {
-      selectedDates.fromQuarterList = fromList.slice(fromList.indexOf(selectedDates.selectedEndQuarter), fromList.length);
-      selectedDates.toQuarterList = toList.slice(0, toList.indexOf(selectedDates.selectedStartQuarter) + 1);
-    }
-  }
-
-  sameYearMonths(selectedDates) {
-    // If selected start and end years are the same
-    // Prevent user from selecting a start month later than the selected end month
-    // Prevent user from selecting an end month earlier than the selected start month
-    let fromList = selectedDates.fromMonthList;
-    let toList = selectedDates.toMonthList;
-    if (selectedDates.selectedStartYear === selectedDates.selectedEndYear) {
-      selectedDates.fromMonthList = fromList.slice(fromList.indexOf(selectedDates.selectedEndMonth), fromList.length);
-      selectedDates.toMonthList = toList.slice(0, toList.indexOf(selectedDates.selectedStartMonth) + 1);
     }
   }
 
@@ -252,12 +171,15 @@ export class HelperService {
     return ['Q4', 'Q3', 'Q2', 'Q1'];
   }
 
-  formatLevelData(seriesObservations, frequency: string, results: Object) {
+  formatLevelData(seriesObservations, frequency: string, results: Object, dates) {
     let obs = seriesObservations;
     let level = obs.transformationResults[0].observations;
 
     if (level) {
-      level.forEach((entry, i) => {
+      dates.forEach((date) => {
+        results[date.tableDate] = ''
+      });
+      level.forEach((entry) => {
         if (frequency === 'A') {
           let tableDate = entry.date.substr(0, 4);
           results[tableDate] = entry.value;
@@ -284,6 +206,7 @@ export class HelperService {
         });
       }
     });
+    return frequencies
   }
 
   checkSelectedList(selected: string, index: number, filterList: Array<any>, selectedList: Array<any>) {
@@ -299,13 +222,16 @@ export class HelperService {
   }
 
   checkSelectedFreqGeos(selected: string, freqList: Array<any>, regions: Array<any>) {
+    console.log('freqList', freqList)
     freqList.forEach((freq, index) => {
       if (selected === freq.id) {
         freq.geos.forEach((geo, index) => {
           this.uniqueGeos(geo, regions);
+          //regions.push({text: geo.name ? geo.name : geo.handle, id: geo.handle});
         });
       }
     });
+    return regions;
   }
 
   // Get a unique array of available regions for a category
@@ -326,7 +252,7 @@ export class HelperService {
       }
     }
     if (!exist) {
-      geoList.push({ name: geo.name ? geo.name : geo.handle, id: geo.handle, freqs: geo.freqs });
+      geoList.push({ text: geo.name ? geo.name : geo.handle, id: geo.handle, freqs: geo.freqs });
     }
   }
 
@@ -343,7 +269,7 @@ export class HelperService {
   uniqueFreqs(freq: Frequency, freqList: Array<any>) {
     let exist = false;
     for (let i in freqList) {
-      if (freq.label === freqList[i].name) {
+      if (freq.label === freqList[i].text) {
         exist = true;
         // If frequency already exists, check it's list of regions
         // Get a unique list of regions available for a frequency
@@ -356,7 +282,7 @@ export class HelperService {
       }
     }
     if (!exist) {
-      freqList.push({ name: freq.label, id: freq.freq, geos: freq.geos });
+      freqList.push({ text: freq.label, id: freq.freq, geos: freq.geos });
     }
   }
 

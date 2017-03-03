@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from 'angular-2-dropdown-multiselect/src/multiselect-dropdown';
 import { Frequency } from '../frequency';
 
 @Component({
@@ -11,16 +10,10 @@ export class FreqSelectorComponent implements OnInit {
   @Input() freqs: Array<Frequency>;
   @Input() selectedFreqs;
   @Output() selectedFreqList = new EventEmitter()
-  // private selectedFreq: string[];
-  private selectSettings: IMultiSelectSettings = {
-    showCheckAll: true,
-    showUncheckAll: true,
-    buttonClasses: 'btn btn-default',
-    checkedStyle: 'fontawsome'
-  }
-  private selectText: IMultiSelectTexts = {
-    defaultTitle: 'Select Frequency'
-  }
+  private selectOptions: Object = {
+    multiple: true,
+    placeholder: 'Select Frequency'
+  };
 
   constructor() { }
 
@@ -28,6 +21,6 @@ export class FreqSelectorComponent implements OnInit {
   }
 
   onChange(e) {
-    this.selectedFreqList.emit(e);
+    this.selectedFreqList.emit(e.value);
   }
 }

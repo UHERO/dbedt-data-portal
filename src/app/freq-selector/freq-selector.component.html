@@ -1,1 +1,1 @@
-<ss-multiselect-dropdown [options]="freqs" [texts]="selectText" [settings]="selectSettings" [(ngModel)]="selectedFreqs" (ngModelChange)="onChange($event)"></ss-multiselect-dropdown>
+<select2 [data]="freqs" [value]="selectedFreqs" [options]="selectOptions" [width]="150" (valueChanged)="onChange($event)"></select2>
