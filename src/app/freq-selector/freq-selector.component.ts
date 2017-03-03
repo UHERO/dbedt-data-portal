@@ -1,5 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Frequency } from '../frequency';
+import * as $ from 'jquery';
 
 @Component({
   selector: 'app-freq-selector',
@@ -9,11 +10,11 @@ import { Frequency } from '../frequency';
 export class FreqSelectorComponent implements OnInit {
   @Input() freqs: Array<Frequency>;
   @Input() selectedFreqs;
-  @Output() selectedFreqList = new EventEmitter()
-  private selectOptions: Object = {
+  @Output() selectedFreqList = new EventEmitter();
+  /* private selectOptions = {
     multiple: true,
-    placeholder: 'Select Frequency'
-  };
+    placeholder: 'Select Frequency',
+  }; */
 
   constructor() { }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Geography } from '../geography';
 
 @Component({
@@ -10,9 +10,9 @@ export class GeoSelectorComponent implements OnInit {
   @Input() regions: Array<Geography>;
   @Input() selectedGeos;
   @Output() selectedGeoList = new EventEmitter();
-  private selectOptions: Object = {
+  private selectOptions = {
     multiple: true,
-    placeholder: 'Select Region'
+    placeholder: 'Select Region',
   }
 
   constructor() { }

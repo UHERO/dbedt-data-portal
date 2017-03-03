@@ -73,19 +73,25 @@ export class AppComponent {
         },
         () => {
           if (i === this.selectedSeries.length) {
+            console.log('freqs', this.frequencies)
+            console.log('selected freqs', this.selectedFreqs);
+            this.displayTable = false;
             this.catGeoFreq = [];
             this.catGeoFreqCombination(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
             this.frequencies = this.freqList;
             this.regions = this.geoList;
+            console.log('freqs', this.frequencies)
+            console.log('selected freqs', this.selectedFreqs);
             if (this.selectedFreqs) {
               this.getDates()
             }
             if (this.catGeoFreq.length) {
+              console.log('catgeofreq', this.catGeoFreq)
               this.getSeries(this.catGeoFreq);
             }
             this.selectedGeos.forEach((selected, index) => {
               // Update list of selected geographies if selection does not exist in dropdown
-              this._helper.checkSelectedList(selected, index, this.regions, this.selectedGeos);
+              //this._helper.checkSelectedList(selected, index, this.regions, this.selectedGeos);
             });
           }
         });
@@ -131,7 +137,7 @@ export class AppComponent {
     } else {
       // If no frequencies are selected reset list of frequencies
       // this.selectedFreqs = [];
-      this.frequencies = this.freqList;
+      // this.frequencies = this.freqList;
       this.toggleDateSelectors();
     }
   }
@@ -160,7 +166,7 @@ export class AppComponent {
     } else {
       // If no geographies are selected, reset list of regions
       // this.selectedGeos = [];
-      this.regions = this.geoList;
+      // this.regions = this.geoList;
       this.annualSelected = false;
       this.quarterSelected = false;
       this.monthSelected = false;
@@ -202,7 +208,11 @@ export class AppComponent {
   formatTableData(seriesData) {
     // Format data for datatables module (indicator-table component)
     this.tableData = [];
+    let result = {};
     console.log(this.dateArray)
+    this.dateArray.forEach((date) => {
+      result[date.tableDate] = ''
+    });
     seriesData.forEach((series) => {
       let exist = this.tableData.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
       // If exists, add observations corresponding to the series frequency
@@ -222,12 +232,11 @@ export class AppComponent {
           region: series.geography.name,
           units: series.unitsLabelShort,
           source: series.source_description ? series.source_description : ' ',
-          observations: this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, {}, this.dateArray)
+          observations: this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, result, this.dateArray)
         });
       }
     });
     this.displayTable = true;
-    console.log(this.tableData)
   }
 
   startYearChange(e) {

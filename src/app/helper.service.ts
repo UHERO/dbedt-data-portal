@@ -176,9 +176,6 @@ export class HelperService {
     let level = obs.transformationResults[0].observations;
 
     if (level) {
-      dates.forEach((date) => {
-        results[date.tableDate] = ''
-      });
       level.forEach((entry) => {
         if (frequency === 'A') {
           let tableDate = entry.date.substr(0, 4);
@@ -222,7 +219,6 @@ export class HelperService {
   }
 
   checkSelectedFreqGeos(selected: string, freqList: Array<any>, regions: Array<any>) {
-    console.log('freqList', freqList)
     freqList.forEach((freq, index) => {
       if (selected === freq.id) {
         freq.geos.forEach((geo, index) => {
