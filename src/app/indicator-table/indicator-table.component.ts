@@ -3,6 +3,7 @@ import { HelperService } from '../helper.service';
 import * as $ from 'jquery';
 import 'datatables.net';
 import 'datatables.net-fixedcolumns';
+import 'datatables.net-buttons/js/buttons.html5.js';
 
 @Component({
   selector: 'app-indicator-table',
@@ -40,6 +41,8 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
     tableColumns.push({title: 'Source', data: 'source'});
     this.tableWidget = exampleId.DataTable({
       data: this.tableData,
+      dom: 'Bfrt',
+      buttons: ['excel', 'csv', 'pdf'],
       columns: tableColumns,
       scrollY: '400px',
       scrollX: true,
@@ -50,5 +53,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
         'leftColumns': 3
       },
     });
+    //this.tableWidget.buttons().container().appendTo($('.content-col', this.tableWidget.table().container()))
   }
 }

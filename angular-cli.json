@@ -31,8 +31,9 @@
         "../node_modules/tether/dist/js/tether.js",
         "../node_modules/bootstrap/dist/js/bootstrap.js",
         "../node_modules/datatables.net/js/jquery.dataTables.js",
-        "../node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.js",
-        "../node_modules/select2/dist/js/select2.full.js"
+        "../node_modules/select2/dist/js/select2.full.js",
+        "../node_modules/jszip/dist/jszip.js",
+        "../node_modules/pdfmake/build/pdfmake.min.js"
       ],
       "environments": {
         "source": "environments/environment.ts",
