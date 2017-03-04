@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import { Geography } from '../geography';
 
 @Component({
@@ -21,25 +21,11 @@ export class GeoSelectorComponent implements OnInit {
       data: this.regions,
       placeholder: 'Select Region',
       width: '200px',
-      initSelection: function (element, callback) {
-        let data = [];
-        console.log(element)
-        if (element.val().length) {
-          $(element.val().split(',')).each(function() {
-            data.push({id: this});  
-          });
-          console.log('init', data);
-        }
-        callback(data);
-      }
+      allowClear: true
     });
     $('.select2-region').val(this.selectedGeos).trigger('change');
     $('.select2-region').on('change', e => {
       this.selectedGeoList.emit($(e.target).val());
     });
-  }
-
-  ngOnChanges() {
-    //$('.select2-region').val(this.selectedGeos).trigger('change');
   }
 }

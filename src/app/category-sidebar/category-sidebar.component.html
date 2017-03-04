@@ -7,8 +7,6 @@
     (onActivate)="activateNode($event)"
     (onDeactivate)="deactivateNode($event)">
   <template #treeNodeTemplate let-node="node" let-index="index">
-      <div class="node-content-wrapper {{node.hasChildren && node.isFocused ? 'parent' : ''}}">
     <span class= "{{node.hasChildren ? 'parent' : ''}}">{{ node.data.name }}</span>
-    </div>
   </template>
 </Tree>

@@ -227,12 +227,20 @@ export class HelperService {
     });
   }
 
+  formatGeos(geo) {
+    return { id: geo.handle, text: geo.name ? geo.name : geo.handle, freqs: geo.freqs };
+  }
+
+  formatFreqs(freq) {
+    return { id: freq.freq, text: freq.label, geos: freq.geos };
+  }
+
   // Get a unique array of available regions for a category
   uniqueGeos(geo: Geography, geoList: Array<any>) {
     let exist = false;
     for (let i in geoList) {
       // Multiselect Dropdown Component (geo & freq selectors) requires name and id properties
-      if (geo.handle === geoList[i].id) {
+      if (geo.id === geoList[i].id) {
         exist = true;
         // If region already exists, check it's list of frequencies
         // Get a unique list of frequencies available for a region
@@ -245,7 +253,7 @@ export class HelperService {
       }
     }
     if (!exist) {
-      geoList.push({ text: geo.name ? geo.name : geo.handle, id: geo.handle, freqs: geo.freqs });
+      geoList.push(geo);
     }
   }
 
@@ -262,7 +270,7 @@ export class HelperService {
   uniqueFreqs(freq: Frequency, freqList: Array<any>) {
     let exist = false;
     for (let i in freqList) {
-      if (freq.label === freqList[i].text) {
+      if (freq.text === freqList[i].text) {
         exist = true;
         // If frequency already exists, check it's list of regions
         // Get a unique list of regions available for a frequency
@@ -275,7 +283,7 @@ export class HelperService {
       }
     }
     if (!exist) {
-      freqList.push({ text: freq.label, id: freq.freq, geos: freq.geos });
+      freqList.push(freq);
     }
   }
 

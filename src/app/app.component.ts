@@ -17,10 +17,8 @@ export class AppComponent {
   private selectedSeries: Array<number>;
 
   // List of regions and freqeuencies for the selected series/categories
-  private geoList: Array<Geography>;
-  private freqList: Array<Frequency>;
-  private regions: Array<Geography> = [];
-  private frequencies: Array<Frequency> = [];
+  private regions: Array<Geography>;
+  private frequencies: Array<Frequency>;
 
   // List of selected regions and frequencies
   private selectedGeos: Array<string> = [];
@@ -41,8 +39,8 @@ export class AppComponent {
 
   getSelectedSeries(e) {
     this.dateArray = [];
-    this.geoList = [];
-    this.freqList = [];
+    let geoList = [];
+    let freqList = [];
     this.selectedSeries = e;
     this.datesSelected = <DatesSelected>{};
     this.datesSelected.startDate = '';
@@ -62,10 +60,12 @@ export class AppComponent {
           this.datesSelected.endDate = obsEnd;
         }
         geo_freqs.forEach((geo) => {
-          this._helper.uniqueGeos(geo, this.geoList);
+          geo = this._helper.formatGeos(geo);
+          this._helper.uniqueGeos(geo, geoList);
         });
         freq_geos.forEach((freq) => {
-          this._helper.uniqueFreqs(freq, this.freqList);
+          freq = this._helper.formatFreqs(freq);
+          this._helper.uniqueFreqs(freq, freqList);
         });
       },
         (error) => {
@@ -73,26 +73,17 @@ export class AppComponent {
         },
         () => {
           if (i === this.selectedSeries.length) {
-            console.log('freqs', this.frequencies)
-            console.log('selected freqs', this.selectedFreqs);
             this.displayTable = false;
             this.catGeoFreq = [];
             this.catGeoFreqCombination(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
-            this.frequencies = this.freqList;
-            this.regions = this.geoList;
-            console.log('freqs', this.frequencies)
-            console.log('selected freqs', this.selectedFreqs);
-            if (this.selectedFreqs) {
-              this.getDates()
-            }
+            this.freqSelectorList(freqList);
+            this.geoSelectorList(geoList);
             if (this.catGeoFreq.length) {
-              console.log('catgeofreq', this.catGeoFreq)
               this.getSeries(this.catGeoFreq);
             }
-            this.selectedGeos.forEach((selected, index) => {
-              // Update list of selected geographies if selection does not exist in dropdown
-              this._helper.checkSelectedList(selected, index, this.regions, this.selectedGeos);
-            });
+            if (this.selectedFreqs.length) {
+              this.getDates();
+            }
           }
         });
     });
@@ -103,12 +94,46 @@ export class AppComponent {
     }
   }
 
+  freqSelectorList(freqArray: Array<Frequency>) {
+    // Set list of frequencies for frequency selector
+    if (this.frequencies) {
+      // Check if frequency selection is available for selected categories
+      /* this.frequencies.forEach((frequency, index) => {
+        if (freqArray.indexOf(frequency) === -1) {
+          this.frequencies.splice(index, 1);
+        }
+      }); */
+      freqArray.forEach((freq) => {
+        this._helper.uniqueFreqs(freq, this.frequencies);
+      });
+    } else {
+      this.frequencies = freqArray;
+    }
+  }
+
+  geoSelectorList(geoArray: Array<Geography>) {
+    // Set list of reginos for region selector
+    if (this.regions) {
+      // Check if region selection is available for selected categories
+      /* this.regions.forEach((region, index) => {
+        if (geoArray.indexOf(region) === -1) {
+          this.regions.splice(index, 1);
+        }
+      }); */
+      geoArray.forEach((geo) => {
+        this._helper.uniqueGeos(geo, this.regions);
+      });
+    } else {
+      this.regions = geoArray;
+    }
+  }
+
   catGeoFreqCombination(selectedSeries, selectedGeos, selectedFreqs) {
     if (selectedSeries && selectedGeos.length && selectedFreqs.length) {
       selectedSeries.forEach((series) => {
         selectedGeos.forEach((geo) => {
           selectedFreqs.forEach((freq) => {
-            this.catGeoFreq.push({cat: series, geo: geo, freq: freq});
+            this.catGeoFreq.push({ cat: series, geo: geo, freq: freq });
           });
         });
       });
@@ -124,19 +149,7 @@ export class AppComponent {
       this.getDates();
       this.getSeries(this.catGeoFreq);
     }
-    if (this.selectedGeos.length) {
-      this.selectedGeos.forEach((selected) => {
-        // Update list of frequencies based on selected regions
-        this._helper.checkSelectedGeoFreqs(selected, this.geoList, this.frequencies);
-      });
-      this.selectedFreqs.forEach((selected, index) => {
-        // Update list of selected frequencies if selection does not exist in dropdown
-        this._helper.checkSelectedList(selected, index, this.frequencies, this.selectedFreqs);
-      });
-    } else {
-      // If no frequencies are selected reset list of frequencies
-      this.selectedFreqs = [];
-      this.frequencies = this.freqList;
+    if (!this.selectedGeos.length) {
       this.toggleDateSelectors();
     }
   }
@@ -152,19 +165,7 @@ export class AppComponent {
     }
     if (this.selectedFreqs.length) {
       this.getDates();
-      this.selectedFreqs.forEach((selected) => {
-        // Update list of geographies based on selected frequencies
-        this._helper.checkSelectedFreqGeos(selected, this.freqList, this.regions);
-      });
-      this.selectedGeos.forEach((selected, index) => {
-        // Update list of selected geographies if selection does not exist in dropdown
-        this._helper.checkSelectedList(selected, index, this.regions, this.selectedGeos);
-      });
-      this.toggleDateSelectors();
     } else {
-      // If no geographies are selected, reset list of regions
-      this.selectedGeos = [];
-      this.regions = this.geoList;
       this.annualSelected = false;
       this.quarterSelected = false;
       this.monthSelected = false;
@@ -184,25 +185,25 @@ export class AppComponent {
     let seriesData = [];
     let counter = 0;
     catGeoFreq.forEach((category) => {
-      this._apiService.fetchExpanded(category.cat, category.geo, category.freq).subscribe((series) =>{
+      this._apiService.fetchExpanded(category.cat, category.geo, category.freq).subscribe((series) => {
         if (series) {
           series.forEach((serie) => {
             seriesData.push(serie);
           });
         }
       },
-      (error) => {
-        this.errorMsg = error;
-      },
-      () => {
-        counter += 1;
-        if (counter === catGeoFreq.length) {
-          this.formatTableData(seriesData);
-        }
-      });
+        (error) => {
+          this.errorMsg = error;
+        },
+        () => {
+          counter += 1;
+          if (counter === catGeoFreq.length) {
+            this.formatTableData(seriesData);
+          }
+        });
     });
   }
-  
+
   formatTableData(seriesData) {
     // Format data for datatables module (indicator-table component)
     this.tableData = [];
