@@ -1,1 +1,4 @@
-<select2 [data]="regions" [value]="selectedGeos" [options]="selectOptions" [width]="150" (valueChanged)="onChange($event)"></select2>
+<select class="select2-region" multiple="multiple">
+    <option *ngFor="let region of regions" [value]="region.id">{{region.text}}</option>
+</select>
+

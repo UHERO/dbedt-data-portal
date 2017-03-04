@@ -91,7 +91,7 @@ export class AppComponent {
             }
             this.selectedGeos.forEach((selected, index) => {
               // Update list of selected geographies if selection does not exist in dropdown
-              //this._helper.checkSelectedList(selected, index, this.regions, this.selectedGeos);
+              this._helper.checkSelectedList(selected, index, this.regions, this.selectedGeos);
             });
           }
         });
@@ -125,19 +125,18 @@ export class AppComponent {
       this.getSeries(this.catGeoFreq);
     }
     if (this.selectedGeos.length) {
-      let updateFreqs = [];
       this.selectedGeos.forEach((selected) => {
         // Update list of frequencies based on selected regions
-        //this.frequencies = this._helper.checkSelectedGeoFreqs(selected, this.geoList, updateFreqs);
+        this._helper.checkSelectedGeoFreqs(selected, this.geoList, this.frequencies);
       });
       this.selectedFreqs.forEach((selected, index) => {
         // Update list of selected frequencies if selection does not exist in dropdown
-        //this._helper.checkSelectedList(selected, index, this.frequencies, this.selectedFreqs);
+        this._helper.checkSelectedList(selected, index, this.frequencies, this.selectedFreqs);
       });
     } else {
       // If no frequencies are selected reset list of frequencies
-      // this.selectedFreqs = [];
-      // this.frequencies = this.freqList;
+      this.selectedFreqs = [];
+      this.frequencies = this.freqList;
       this.toggleDateSelectors();
     }
   }
@@ -153,20 +152,19 @@ export class AppComponent {
     }
     if (this.selectedFreqs.length) {
       this.getDates();
-      let updateRegions = []
       this.selectedFreqs.forEach((selected) => {
         // Update list of geographies based on selected frequencies
-        //this.regions = this._helper.checkSelectedFreqGeos(selected, this.freqList, updateRegions);
+        this._helper.checkSelectedFreqGeos(selected, this.freqList, this.regions);
       });
       this.selectedGeos.forEach((selected, index) => {
         // Update list of selected geographies if selection does not exist in dropdown
-        //this._helper.checkSelectedList(selected, index, this.regions, this.selectedGeos);
+        this._helper.checkSelectedList(selected, index, this.regions, this.selectedGeos);
       });
       this.toggleDateSelectors();
     } else {
       // If no geographies are selected, reset list of regions
-      // this.selectedGeos = [];
-      // this.regions = this.geoList;
+      this.selectedGeos = [];
+      this.regions = this.geoList;
       this.annualSelected = false;
       this.quarterSelected = false;
       this.monthSelected = false;

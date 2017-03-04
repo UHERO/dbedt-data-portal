@@ -203,7 +203,6 @@ export class HelperService {
         });
       }
     });
-    return frequencies
   }
 
   checkSelectedList(selected: string, index: number, filterList: Array<any>, selectedList: Array<any>) {
@@ -223,11 +222,9 @@ export class HelperService {
       if (selected === freq.id) {
         freq.geos.forEach((geo, index) => {
           this.uniqueGeos(geo, regions);
-          //regions.push({text: geo.name ? geo.name : geo.handle, id: geo.handle});
         });
       }
     });
-    return regions;
   }
 
   // Get a unique array of available regions for a category
