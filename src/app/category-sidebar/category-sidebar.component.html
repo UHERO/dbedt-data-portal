@@ -3,10 +3,11 @@
     (onActivate)="activateNode($event)"
     (onDeactivate)="deactivateNode($event)">
 </Tree> -->
-<Tree class="catTree" [nodes]="categories" [options]="customOptions"
-    (onActivate)="activateNode($event)"
-    (onDeactivate)="deactivateNode($event)">
-  <template #treeNodeTemplate let-node="node" let-index="index">
-    <span class= "{{node.hasChildren ? 'parent' : ''}}">{{ node.data.name }}</span>
-  </template>
-</Tree>
+
+<div class="sidebar">
+	<Tree class="catTree" [nodes]="categories" [options]="customOptions" (onActivate)="activateNode($event)" (onDeactivate)="deactivateNode($event)">
+		<template #treeNodeTemplate let-node="node" let-index="index">
+			<span class="{{node.hasChildren ? 'parent' : ''}}">{{ node.data.name }}</span>
+		</template>
+	</Tree>
+</div>
