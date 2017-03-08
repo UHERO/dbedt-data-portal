@@ -12,6 +12,7 @@ import 'datatables.net-buttons/js/buttons.print.js';
   selector: 'app-indicator-table',
   templateUrl: './indicator-table.component.html',
   styleUrls: ['./indicator-table.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class IndicatorTableComponent implements OnInit, OnChanges {
   @Input() dateArray;
@@ -46,23 +47,31 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
       data: this.tableData,
       dom: 'Bfrt',
       buttons: [
-        'excel',
-        'csv',
+        {
+          extend: 'excel',
+          text: '<i class="fa fa-file-excel-o" aria-hidden="true" title="Excel"></i>'
+        },
+        {
+          extend: 'csv',
+          text: '<i class="fa fa-file-text-o" aria-hidden="true" title="CSV"></i>'
+        },
         {
           extend: 'pdf',
+          text: '<i class="fa fa-file-pdf-o" aria-hidden="true" title="PDF"></i>',
           orientation: 'landscape',
-          pageSize: 'Tabloid',
+          pageSize: '2A0',
           message: 'Research & Economic Analysis Division, DBEDT',
           customize: function (doc) {
             doc.content[2].table.dontBreakRows = true,
-              doc.content.push({
-                text: 'Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/ \n The Economic Research Organization at the University of Hawaii: http://uhero.hawaii.edu/',
-              });
+            doc.content.push({
+              text: 'Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/ \n The Economic Research Organization at the University of Hawaii: http://uhero.hawaii.edu/',
+            });
             console.log(doc);
           }
         },
         {
           extend: 'print',
+          text: '<i class="fa fa-print" aria-hidden="true" title="Print"></i>',
           message: 'Research & Economic Analysis Division, DBEDT',
           customize: function (win) {
             $(win.document.body).find('tr:nth-child(odd) td').each(function (index) {
