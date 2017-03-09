@@ -1,27 +1,31 @@
 <div id="wrapper">
     <div class="container">
         <div class="row">
-            <div class="col-xs-3 col-md-4 col-lg-3 col-xl-2">
+            <div class="col-xs-3 col-md-4 col-lg-3 col-xl-2 indicators">
               <h5>Indicator</h5>
               <app-category-sidebar (selectedCatIds)="getSelectedSeries($event)"></app-category-sidebar>
             </div>
             <div class="col-xs-12 col-md-8 col-lg-9 col-xl-10 content-col">
-              <div *ngIf="!displayTable && catGeoFreq && catGeoFreq.length > 0"><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i></div>
+              <div class="toggle-table">
+                <button type="button" class="btn btn-secondary" (click)="getSeries()" [disabled]="checkSelections()">Get Data</button>
+                <button type="button" class="btn btn-secondary" (click)="clearSelections()">Clear All Selections</button>
+              </div>
+              <div *ngIf="!displayTable && catGeoFreq && catGeoFreq.length > 0" class="loading"><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i></div>
               <app-indicator-table *ngIf="displayTable" [dateArray]="dateArray" [tableData]="tableData" [datesSelected]="datesSelected"></app-indicator-table>
             </div>
         </div>
         <div class="row selectors">
-          <app-freq-selector [freqs]="frequencies" [(selectedFreqs)]="selectedFreqs" (selectedFreqList)="freqChange($event)"></app-freq-selector>
+          <app-freq-selector class="dropdown" [freqs]="frequencies" [(selectedFreqs)]="selectedFreqs" (selectedFreqList)="freqChange($event)"></app-freq-selector>
           <p *ngIf="selectedFreqs.length > 0">From&nbsp;</p>
-          <app-year-selector *ngIf="selectedFreqs.length > 0" [years]="datesSelected.fromYearList" [(selectedYear)]="datesSelected.selectedStartYear" (selectedYearChange)="startYearChange($event)"></app-year-selector>
-          <app-quarter-selector *ngIf="quarterSelected" [quarters]="datesSelected.fromQuarterList" [(selectedQuarter)]="datesSelected.selectedStartQuarter" (selectedQuarterChange)="startQuarterChange($event)"></app-quarter-selector>
-          <app-month-selector *ngIf="monthSelected" [months]="datesSelected.fromMonthList" [(selectedMonth)]="datesSelected.selectedStartMonth" (selectedMonthChange)="startMonthChange($event)"></app-month-selector>
+          <app-year-selector class="dropdown" *ngIf="selectedFreqs.length > 0" [years]="datesSelected.fromYearList" [(selectedYear)]="datesSelected.selectedStartYear" (selectedYearChange)="startYearChange($event)"></app-year-selector>
+          <app-quarter-selector class="dropdown" *ngIf="quarterSelected" [quarters]="datesSelected.fromQuarterList" [(selectedQuarter)]="datesSelected.selectedStartQuarter" (selectedQuarterChange)="startQuarterChange($event)"></app-quarter-selector>
+          <app-month-selector class="dropdown" *ngIf="monthSelected" [months]="datesSelected.fromMonthList" [(selectedMonth)]="datesSelected.selectedStartMonth" (selectedMonthChange)="startMonthChange($event)"></app-month-selector>
           <p *ngIf="selectedFreqs.length > 0">To&nbsp;</p>
-          <app-year-selector *ngIf="selectedFreqs.length > 0" [years]="datesSelected.toYearList" [(selectedYear)]="datesSelected.selectedEndYear" (selectedYearChange)="endYearChange($event)"></app-year-selector>
-          <app-quarter-selector *ngIf="quarterSelected" [quarters]="datesSelected.toQuarterList" [(selectedQuarter)]="datesSelected.selectedEndQuarter" (selectedQuarterChange)="endQuarterChange($event)"></app-quarter-selector>
-          <app-month-selector *ngIf="monthSelected" [months]="datesSelected.toMonthList" [(selectedMonth)]="datesSelected.selectedEndMonth" (selectedMonthChange)="endMonthChange($event)"></app-month-selector>
-          <app-geo-selector [regions]="regions" [(selectedGeos)]="selectedGeos" (selectedGeoList)="geoChange($event)"></app-geo-selector>
-          <p *ngIf="invalidDates">{{invalidDates}}</p>
+          <app-year-selector class="dropdown" *ngIf="selectedFreqs.length > 0" [years]="datesSelected.toYearList" [(selectedYear)]="datesSelected.selectedEndYear" (selectedYearChange)="endYearChange($event)"></app-year-selector>
+          <app-quarter-selector class="dropdown" *ngIf="quarterSelected" [quarters]="datesSelected.toQuarterList" [(selectedQuarter)]="datesSelected.selectedEndQuarter" (selectedQuarterChange)="endQuarterChange($event)"></app-quarter-selector>
+          <app-month-selector class="dropdown" *ngIf="monthSelected" [months]="datesSelected.toMonthList" [(selectedMonth)]="datesSelected.selectedEndMonth" (selectedMonthChange)="endMonthChange($event)"></app-month-selector>
+          <app-geo-selector class="dropdown" [regions]="regions" [(selectedGeos)]="selectedGeos" (selectedGeoList)="geoChange($event)"></app-geo-selector>
+          <p class="text-danger" *ngIf="invalidDates">{{invalidDates}}</p>
         </div>
    </div>
 </div>

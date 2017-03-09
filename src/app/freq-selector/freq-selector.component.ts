@@ -20,7 +20,7 @@ export class FreqSelectorComponent implements OnInit {
     $('.select2-frequency').select2({
       data: this.freqs,
       placeholder: 'Select Frequency',
-      width: '200px',
+      width: '215px',
       allowClear: true,
     });
     $('.select2-frequency').val(this.selectedFreqs).trigger('change');

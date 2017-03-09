@@ -55,7 +55,8 @@ export class CategorySidebarComponent implements OnInit {
       e.node.collapse();
       e.node.children.forEach((child) => {
         if (child.isActive) {
-          e.node.focus();
+          //e.node.focus();
+          child.treeModel.setFocusedNode(e.node);
         }
       });
     }

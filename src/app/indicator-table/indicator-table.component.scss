@@ -1,10 +1,39 @@
+table.dataTable{
+    thead {
+        th {
+            white-space: nowrap;
+            border-bottom: 0;
+            font-family: 'Lucida Sans', sans-serif;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+    }
+
+    tbody {
+        td {
+            font-family: 'Lucida Sans', sans-serif;
+            font-size: 0.9em;
+        }
+    }
+}
+
+.datatbles_wrapper, .no-footer {
+    height: 0;
+    overflow: visible;
+
+    .dt-buttons {
+        width: 200px;
+
+        .dt-button {
+            font-size: 16pt;
+            color: #000000;
+            padding: 0 0.25em;
+        }
+    }
+}
+
 .dataTables_wrapper.no-footer{
     .dataTables_scrollBody {
         border-bottom: none;
     }
-}
-.dt-button {
-    font-size: 16pt;
-    color: #000000;
-    padding: 0 0.25em;
 }

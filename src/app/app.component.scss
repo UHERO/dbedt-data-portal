@@ -1,7 +1,36 @@
-h5 {
-    margin: 0.5em;
+.indicators {
+    border-right: 1px solid #C3C3C3;
+
+    h5 {
+        margin: 0.5em;
+    }
+}
+
+.loading {
+    font-size: 0.8em;
+    color: #1D667F;
+    position: relative;
+    top: 50%;
+    text-align: center;
+}
+
+.btn {
+    line-height: 1;
+    font-family: 'Lucida Sans', sans-serif;
+    font-size: 0.9em;
+    border-radius: 0;
+    cursor: pointer;
+}
+
+.toggle-table {
+    float: right;
+    margin-bottom: -2em;
 }
 
 .selectors {
-    margin-top: 0.25em;
+    margin-top: 1.25em;
+
+    .dropdown {
+        margin-right: 5px;
+    }
 }

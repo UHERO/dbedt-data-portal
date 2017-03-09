@@ -14,7 +14,7 @@ import { DatesSelected } from './dates-selected';
 export class AppComponent {
   private errorMsg: string;
   // List of series selected from category-tree
-  private selectedSeries: Array<number>;
+  private selectedSeries: Array<number> = [];
 
   // List of regions and freqeuencies for the selected series/categories
   private regions: Array<Geography>;
@@ -23,6 +23,7 @@ export class AppComponent {
   // List of selected regions and frequencies
   private selectedGeos: Array<string> = [];
   private selectedFreqs: Array<string> = [];
+  private resetFreqs: Boolean;
 
   private annualSelected: Boolean = false;
   private quarterSelected: Boolean = false;
@@ -31,7 +32,7 @@ export class AppComponent {
   private datesSelected: DatesSelected;
   private dateArray: Array<any>;
   private tableData;
-  private catGeoFreq;
+  private catGeoFreq = [];
   private displayTable: Boolean = false;
   private invalidDates: String;
 
@@ -74,22 +75,19 @@ export class AppComponent {
         () => {
           if (i === this.selectedSeries.length) {
             this.displayTable = false;
-            this.catGeoFreq = [];
-            this.catGeoFreqCombination(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
             this.freqSelectorList(freqList);
             this.geoSelectorList(geoList);
-            if (this.catGeoFreq.length) {
-              this.getSeries(this.catGeoFreq);
-            }
             if (this.selectedFreqs.length) {
               this.getDates();
+            }
+            if (this.catGeoFreq.length) {
+              this.getSeries();
             }
           }
         });
     });
     if (!this.selectedSeries.length) {
       // Remove table if all categories are deselected and remove date selectors
-      this.displayTable = false;
       this.toggleDateSelectors();
     }
   }
@@ -129,6 +127,7 @@ export class AppComponent {
   }
 
   catGeoFreqCombination(selectedSeries, selectedGeos, selectedFreqs) {
+    this.catGeoFreq = [];
     if (selectedSeries && selectedGeos.length && selectedFreqs.length) {
       selectedSeries.forEach((series) => {
         selectedGeos.forEach((geo) => {
@@ -142,26 +141,19 @@ export class AppComponent {
 
   geoChange(e) {
     this.selectedGeos = e;
-    this.catGeoFreq = [];
-    this.displayTable = false;
-    this.catGeoFreqCombination(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
-    if (this.catGeoFreq.length) {
-      this.getDates();
-      this.getSeries(this.catGeoFreq);
-    }
     if (!this.selectedGeos.length) {
       this.toggleDateSelectors();
+    }
+    if (this.catGeoFreq.length) {
+      this.getSeries();
     }
   }
 
   freqChange(e) {
-    this.displayTable = false;
     this.selectedFreqs = e;
     this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.selectedFreqs);
-    this.catGeoFreq = [];
-    this.catGeoFreqCombination(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
     if (this.catGeoFreq.length) {
-      this.getSeries(this.catGeoFreq);
+      this.getSeries();
     }
     if (this.selectedFreqs.length) {
       this.getDates();
@@ -170,6 +162,7 @@ export class AppComponent {
       this.quarterSelected = false;
       this.monthSelected = false;
     }
+    this.toggleDateSelectors();
   }
 
   toggleDateSelectors() {
@@ -181,10 +174,12 @@ export class AppComponent {
     this.monthSelected = mIndex > -1 ? true : false;
   }
 
-  getSeries(catGeoFreq) {
+  getSeries() {
+    this.getDates();
+    this.catGeoFreqCombination(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
     let seriesData = [];
     let counter = 0;
-    catGeoFreq.forEach((category) => {
+    this.catGeoFreq.forEach((category) => {
       this._apiService.fetchExpanded(category.cat, category.geo, category.freq).subscribe((series) => {
         if (series) {
           series.forEach((serie) => {
@@ -197,7 +192,7 @@ export class AppComponent {
         },
         () => {
           counter += 1;
-          if (counter === catGeoFreq.length) {
+          if (counter === this.catGeoFreq.length) {
             this.formatTableData(seriesData);
           }
         });
@@ -236,6 +231,27 @@ export class AppComponent {
       }
     });
     this.displayTable = true;
+  }
+
+  checkSelections() {
+    let disable = true;
+    // Enable Get Data button is selections have been made in indicators, frequencies, and areas
+    if (this.selectedSeries.length > 0 && this.selectedFreqs.length > 0 && this.selectedGeos.length > 0) {
+      disable = false;
+    }
+    return disable;
+  }
+
+  clearSelections() {
+    this.displayTable = false;
+    this.catGeoFreq = [];
+    this.selectedSeries = [];
+    this.frequencies = [];
+    this.regions = [];
+    this.selectedFreqs = [];
+    this.selectedGeos = [];
+    this.dateArray = [];
+    this.toggleDateSelectors();
   }
 
   startYearChange(e) {
