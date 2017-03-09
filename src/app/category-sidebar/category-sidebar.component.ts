@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 
 import { ApiService } from '../api.service';
 import { CategoryTree } from '../category-tree';
@@ -14,10 +14,11 @@ const actionMapping: IActionMapping = {
   selector: 'app-category-sidebar',
   templateUrl: './category-sidebar.component.html',
   styleUrls: ['./category-sidebar.component.scss'],
-  encapsulation: ViewEncapsulation.None 
+  encapsulation: ViewEncapsulation.None
 })
-export class CategorySidebarComponent implements OnInit {
+export class CategorySidebarComponent implements OnInit, OnDestroy {
   private categories: CategoryTree;
+  private subCategories;
   private ids: Array<any> = [];
   private error: string;
   // Emit ids of selected categories to app.component
@@ -26,12 +27,16 @@ export class CategorySidebarComponent implements OnInit {
   constructor(private _apiService: ApiService) { }
 
   ngOnInit() {
-    this._apiService.fetchCategories().subscribe((cats) => {
+    this.subCategories = this._apiService.fetchCategories().subscribe((cats) => {
       this.categories = cats;
     },
       (error) => {
         this.error = error;
       });
+  }
+
+  ngOnDestroy() {
+    this.subCategories.unsubscribe();
   }
 
   customOptions = {
@@ -55,8 +60,7 @@ export class CategorySidebarComponent implements OnInit {
       e.node.collapse();
       e.node.children.forEach((child) => {
         if (child.isActive) {
-          //e.node.focus();
-          child.treeModel.setFocusedNode(e.node);
+          e.node.focus();
         }
       });
     }
