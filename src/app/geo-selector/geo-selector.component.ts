@@ -1,10 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { Geography } from '../geography';
 
 @Component({
   selector: 'app-geo-selector',
   templateUrl: './geo-selector.component.html',
-  styleUrls: ['./geo-selector.component.scss']
+  styleUrls: ['./geo-selector.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class GeoSelectorComponent implements OnInit {
   @Input() regions: Array<Geography>;

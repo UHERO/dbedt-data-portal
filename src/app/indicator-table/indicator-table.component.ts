@@ -59,10 +59,42 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           extend: 'pdf',
           text: '<i class="fa fa-file-pdf-o" aria-hidden="true" title="PDF"></i>',
           orientation: 'landscape',
-          pageSize: '2A0',
+          pageSize: 'letter',
           message: 'Research & Economic Analysis Division, DBEDT',
           customize: function (doc) {
-            doc.content[2].table.dontBreakRows = true,
+            let currentTable = doc.content[2].table.body;
+            let formattedTable: Array<any> = [];
+            console.log('table', currentTable);
+            // Reformat table to allow for a maximum of 10 columns
+            for (let i = 0; i < currentTable.length; i++) {
+              let newRow = [];
+              let currentRow = currentTable[i];
+              // Prevent ending cells from falling off/Maintain consistant table width
+              let rowDiff = currentRow.length % 10;
+              let addString = 10 - rowDiff;
+              while (addString) {
+                currentRow.push({text: ''});
+                addString -= 1;
+              }
+              let counter = currentTable.length;
+              for (let n = 0; n < currentRow.length; n++) {
+                newRow.push(currentRow[n]);
+                if (newRow.length > 0 && newRow.length % 10 === 0) {
+                  if (!formattedTable[i]) {
+                    formattedTable[i] = newRow;
+                  } else {
+                    formattedTable[i + counter] = newRow;
+                    counter += currentTable.length;
+                  }
+                  newRow = [];
+                }
+              }
+            }
+            console.log('formatted table', formattedTable);
+            doc.content[2].table.dontBreakRows = true;
+            doc.content[2].table.widths = [100, 100, 100, 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'];
+            doc.content[2].table.headerRows = 0;
+            doc.content[2].table.body = formattedTable
             doc.content.push({
               text: 'Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/ \n The Economic Research Organization at the University of Hawaii: http://uhero.hawaii.edu/',
             });
@@ -74,6 +106,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           text: '<i class="fa fa-print" aria-hidden="true" title="Print"></i>',
           message: 'Research & Economic Analysis Division, DBEDT',
           customize: function (win) {
+            console.log('win document', win.document.body)
             $(win.document.body).find('tr:nth-child(odd) td').each(function (index) {
               $(this).css('background-color', '#F9F9F9');
             });
@@ -90,6 +123,5 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
         'leftColumns': 3
       },
     });
-    //this.tableWidget.buttons().container().appendTo($('.content-col', this.tableWidget.table().container()))
   }
 }
