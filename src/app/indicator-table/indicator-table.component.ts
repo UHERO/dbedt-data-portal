@@ -64,7 +64,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           customize: function (doc) {
             let currentTable = doc.content[2].table.body;
             let formattedTable: Array<any> = [];
-            console.log('table', currentTable);
             // Reformat table to allow for a maximum of 10 columns
             for (let i = 0; i < currentTable.length; i++) {
               let newRow = [];
@@ -90,7 +89,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
                 }
               }
             }
-            console.log('formatted table', formattedTable);
             doc.content[2].table.dontBreakRows = true;
             doc.content[2].table.widths = [100, 100, 100, 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'];
             doc.content[2].table.headerRows = 0;
@@ -98,7 +96,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             doc.content.push({
               text: 'Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/ \n The Economic Research Organization at the University of Hawaii: http://uhero.hawaii.edu/',
             });
-            console.log(doc);
           }
         },
         {
@@ -110,6 +107,20 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             $(win.document.body).find('tr:nth-child(odd) td').each(function (index) {
               $(this).css('background-color', '#F9F9F9');
             });
+            let $table = $(win.document.body).find('table');
+            let cols = $('th', $table).length - 1;
+            let maxCols = 10;
+            let n = cols/maxCols;
+            for (let i = 1; i <= n; i++) {
+              $('<br>').appendTo('body');
+              let $newTable = $table.clone().appendTo(win.document.body);
+              for (let j = cols + 1; j > 3; j--) {
+                if (j + maxCols - 1 <= maxCols * i || j > maxCols * i + 1) {
+                  $('td:nth-child(' + j + '), th:nth-child(' + j + ')', $newTable).remove()
+                }
+              }
+              $table.remove();
+            }
             $(win.document.body).find('table').after("<p>Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/ <br> The Economic Research Organization at the University of Hawaii: http://uhero.hawaii.edu/</p>")
           }
         }],
