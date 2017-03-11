@@ -68,6 +68,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             for (let i = 0; i < currentTable.length; i++) {
               let newRow = [];
               let currentRow = currentTable[i];
+
               // Prevent ending cells from falling off/Maintain consistant table width
               let rowDiff = currentRow.length % 10;
               let addString = 10 - rowDiff;
@@ -76,13 +77,15 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
                 addString -= 1;
               }
               let counter = currentTable.length;
+              let indicator = [currentRow[0]];
               for (let n = 0; n < currentRow.length; n++) {
                 newRow.push(currentRow[n]);
-                if (newRow.length > 0 && newRow.length % 10 === 0) {
+                if (newRow.length === 9) {
+                  let r = indicator.concat(newRow);
                   if (!formattedTable[i]) {
-                    formattedTable[i] = newRow;
+                    formattedTable[i] = r;
                   } else {
-                    formattedTable[i + counter] = newRow;
+                    formattedTable[i + counter] = r;
                     counter += currentTable.length;
                   }
                   newRow = [];
@@ -90,7 +93,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               }
             }
             doc.content[2].table.dontBreakRows = true;
-            doc.content[2].table.widths = [100, 100, 100, 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'];
             doc.content[2].table.headerRows = 0;
             doc.content[2].table.body = formattedTable
             doc.content.push({
@@ -103,7 +105,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           text: '<i class="fa fa-print" aria-hidden="true" title="Print"></i>',
           message: 'Research & Economic Analysis Division, DBEDT',
           customize: function (win) {
-            console.log('win document', win.document.body)
             $(win.document.body).find('tr:nth-child(odd) td').each(function (index) {
               $(this).css('background-color', '#F9F9F9');
             });
@@ -114,14 +115,14 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             for (let i = 1; i <= n; i++) {
               $('<br>').appendTo('body');
               let $newTable = $table.clone().appendTo(win.document.body);
-              for (let j = cols + 1; j > 3; j--) {
+              for (let j = cols + 1; j > 1; j--) {
                 if (j + maxCols - 1 <= maxCols * i || j > maxCols * i + 1) {
                   $('td:nth-child(' + j + '), th:nth-child(' + j + ')', $newTable).remove()
                 }
               }
               $table.remove();
             }
-            $(win.document.body).find('table').after("<p>Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/ <br> The Economic Research Organization at the University of Hawaii: http://uhero.hawaii.edu/</p>")
+            $(win.document.body).find('table:last-child').after("<p>Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/ <br> The Economic Research Organization at the University of Hawaii: http://uhero.hawaii.edu/</p>")
           }
         }],
       columns: tableColumns,
