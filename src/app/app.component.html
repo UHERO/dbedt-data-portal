@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-xs-3 col-md-4 col-lg-3 col-xl-2 indicators">
               <h5>Indicator</h5>
-              <app-category-sidebar (selectedCatIds)="getSelectedSeries($event)"></app-category-sidebar>
+              <app-category-sidebar [reset]="reset" (selectedCatIds)="getSelectedSeries($event)"></app-category-sidebar>
             </div>
             <div class="col-xs-12 col-md-8 col-lg-9 col-xl-10 content-col">
               <div class="toggle-table">

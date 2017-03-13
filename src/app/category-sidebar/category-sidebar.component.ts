@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, OnChanges, EventEmitter, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import { ApiService } from '../api.service';
 import { CategoryTree } from '../category-tree';
-import { TREE_ACTIONS, IActionMapping } from 'angular2-tree-component';
+import { TREE_ACTIONS, IActionMapping, TreeComponent } from 'angular2-tree-component';
 
 const actionMapping: IActionMapping = {
   mouse: {
@@ -16,13 +16,16 @@ const actionMapping: IActionMapping = {
   styleUrls: ['./category-sidebar.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class CategorySidebarComponent implements OnInit, OnDestroy {
+export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
   private categories: CategoryTree;
   private subCategories;
   private ids: Array<any> = [];
   private error: string;
   // Emit ids of selected categories to app.component
   @Output() selectedCatIds = new EventEmitter();
+  @Input() reset;
+  @ViewChild(TreeComponent)
+  private tree: TreeComponent
 
   constructor(private _apiService: ApiService) { }
 
@@ -35,6 +38,19 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       });
   }
 
+  ngOnChanges() {
+    // If reset === true, deactivate and unfocus (blur) nodes
+    if (this.reset === true) {
+      let active = this.tree.treeModel.activeNodes;
+      if (active) {
+        active.forEach((node) => {
+          node.setIsActive(false);
+          node.blur();
+        });
+      }
+    }
+  }
+
   ngOnDestroy() {
     this.subCategories.unsubscribe();
   }
@@ -45,11 +61,9 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
 
   activateNode(e) {
     if (e.node.hasChildren) {
-      console.log('parent selected', e)
       e.node.expand();
     }
     if (!e.node.hasChildren) {
-      console.log('child selected', e)
       this.ids.push(e.node.id);
       this.selectedCatIds.emit(this.ids);
     }
@@ -58,11 +72,17 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   deactivateNode(e) {
     if (e.node.hasChildren) {
       e.node.collapse();
+      let activeChild = false;
       e.node.children.forEach((child) => {
         if (child.isActive) {
-          e.node.focus();
+          activeChild = true;
         }
       });
+      if (activeChild) {
+        e.node.focus();
+      } else {
+        e.node.blur();
+      }
     }
     if (!e.node.hasChildren) {
       let idIndex = this.ids.indexOf(e.node.id);

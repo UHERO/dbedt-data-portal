@@ -23,7 +23,7 @@ export class AppComponent {
   // List of selected regions and frequencies
   private selectedGeos: Array<string> = [];
   private selectedFreqs: Array<string> = [];
-  private resetFreqs: Boolean;
+  private reset: Boolean = false;
 
   private annualSelected: Boolean = false;
   private quarterSelected: Boolean = false;
@@ -175,6 +175,7 @@ export class AppComponent {
   }
 
   getSeries() {
+    this.reset = false;
     this.getDates();
     this.catGeoFreqCombination(this.selectedSeries, this.selectedGeos, this.selectedFreqs);
     let seriesData = [];
@@ -203,7 +204,6 @@ export class AppComponent {
     // Format data for datatables module (indicator-table component)
     this.tableData = [];
     let result = {};
-    console.log(this.dateArray)
     this.dateArray.forEach((date) => {
       result[date.tableDate] = ''
     });
@@ -235,7 +235,7 @@ export class AppComponent {
 
   checkSelections() {
     let disable = true;
-    // Enable Get Data button is selections have been made in indicators, frequencies, and areas
+    // Enable Get Data button if selections have been made in indicators, frequencies, and areas
     if (this.selectedSeries.length > 0 && this.selectedFreqs.length > 0 && this.selectedGeos.length > 0) {
       disable = false;
     }
@@ -244,6 +244,7 @@ export class AppComponent {
 
   clearSelections() {
     this.displayTable = false;
+    this.reset = true;
     this.catGeoFreq = [];
     this.selectedSeries = [];
     this.frequencies = [];
