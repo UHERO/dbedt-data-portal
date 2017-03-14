@@ -45,7 +45,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
     tableColumns.push({ title: 'Source', data: 'source' });
     this.tableWidget = exampleId.DataTable({
       data: this.tableData,
-      dom: 'Bfrt',
+      dom: 'Bt',
       buttons: [
         {
           extend: 'excel',
@@ -62,7 +62,9 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           pageSize: 'letter',
           message: 'Research & Economic Analysis Division, DBEDT',
           customize: function (doc) {
+            console.log('doc', doc)
             let currentTable = doc.content[2].table.body;
+            console.log('currentTable', currentTable)
             let formattedTable: Array<any> = [];
             // Reformat table to allow for a maximum of 10 columns
             for (let i = 0; i < currentTable.length; i++) {
@@ -77,11 +79,13 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
                 addString -= 1;
               }
               let counter = currentTable.length;
-              let indicator = [currentRow[0]];
+              let indicator = [{text: currentRow[0].text, style: currentRow[0].style}]
+              // newRow.push(indicator);
               for (let n = 0; n < currentRow.length; n++) {
                 newRow.push(currentRow[n]);
                 if (newRow.length === 9) {
                   let r = indicator.concat(newRow);
+                  //newRow.unshift(indicator)
                   if (!formattedTable[i]) {
                     formattedTable[i] = r;
                   } else {
@@ -92,6 +96,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
                 }
               }
             }
+            console.log('formatted table', formattedTable)
             doc.content[2].table.dontBreakRows = true;
             doc.content[2].table.headerRows = 0;
             doc.content[2].table.body = formattedTable

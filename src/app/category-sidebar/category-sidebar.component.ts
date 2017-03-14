@@ -72,17 +72,15 @@ export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
   deactivateNode(e) {
     if (e.node.hasChildren) {
       e.node.collapse();
-      let activeChild = false;
-      e.node.children.forEach((child) => {
-        if (child.isActive) {
-          activeChild = true;
+      let activeNodes = e.node.treeModel.activeNodes;
+      activeNodes.forEach((node) => {
+        if (!node.hasChildren) {
+          console.log('node', node);
+          console.log('focus');
+          node.treeModel.focusDrillUp();
+          //node.parent.focus(true);
         }
       });
-      if (activeChild) {
-        e.node.focus();
-      } else {
-        e.node.blur();
-      }
     }
     if (!e.node.hasChildren) {
       let idIndex = this.ids.indexOf(e.node.id);
