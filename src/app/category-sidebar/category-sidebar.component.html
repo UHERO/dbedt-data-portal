@@ -1,6 +1,6 @@
 <div class="sidebar">
-	<Tree #tree [nodes]="categories" 
-    	[options]="customOptions"
+	<Tree #tree [nodes]="nodes"
+		[options]="options"
     	(onActivate)="activateNode($event)"
     	(onDeactivate)="deactivateNode($event)">
 	</Tree>

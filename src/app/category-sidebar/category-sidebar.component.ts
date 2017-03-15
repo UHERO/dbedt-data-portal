@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input, Output, OnChanges, EventEmitter, V
 
 import { ApiService } from '../api.service';
 import { CategoryTree } from '../category-tree';
-import { TREE_ACTIONS, IActionMapping, TreeComponent } from 'angular2-tree-component';
+import { TREE_ACTIONS, IActionMapping, TreeComponent, TreeNode } from 'angular2-tree-component';
 
 const actionMapping: IActionMapping = {
   mouse: {
@@ -19,8 +19,10 @@ const actionMapping: IActionMapping = {
 export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
   private categories: CategoryTree;
   private subCategories;
+  private nodes;
   private ids: Array<any> = [];
   private error: string;
+  private options;
   // Emit ids of selected categories to app.component
   @Output() selectedCatIds = new EventEmitter();
   @Input() reset;
@@ -30,12 +32,22 @@ export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
   constructor(private _apiService: ApiService) { }
 
   ngOnInit() {
-    this.subCategories = this._apiService.fetchCategories().subscribe((cats) => {
-      this.categories = cats;
-    },
-      (error) => {
-        this.error = error;
+    this.subCategories = this._apiService.fetchCategories().subscribe((categories) => {
+      categories.forEach((category) => {
+        category.children.forEach((child) => {
+          child.hasChildren = true;
+        });
       });
+      this.nodes = categories
+    });
+
+    this.options = {
+      getChildren: (node: TreeNode) => {
+        let children = [];
+        return this._apiService.fetchSeries(node.id).toPromise();
+      },
+      actionMapping
+    }
   }
 
   ngOnChanges() {
@@ -53,10 +65,6 @@ export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy() {
     this.subCategories.unsubscribe();
-  }
-
-  customOptions = {
-    actionMapping
   }
 
   activateNode(e) {

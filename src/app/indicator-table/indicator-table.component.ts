@@ -81,7 +81,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               let counter = currentTable.length;
               let indicator = [{text: currentRow[0].text, style: currentRow[0].style}]
               // newRow.push(indicator);
-              for (let n = 0; n < currentRow.length; n++) {
+              for (let n = 1; n < currentRow.length; n++) {
                 newRow.push(currentRow[n]);
                 if (newRow.length === 9) {
                   let r = indicator.concat(newRow);
@@ -115,7 +115,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             });
             let $table = $(win.document.body).find('table');
             let cols = $('th', $table).length - 1;
-            let maxCols = 10;
+            let maxCols = 9;
             let n = cols/maxCols;
             for (let i = 1; i <= n; i++) {
               $('<br>').appendTo('body');

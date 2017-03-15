@@ -31,11 +31,11 @@ export class ApiService {
   private cachedSearchFilters = [];
 
   constructor(private http: Http) {
-     // this.baseUrl = 'http://localhost:8080/v1';
-     this.baseUrl = 'http://api.uhero.hawaii.edu/v1';
-     this.headers = new Headers();
-     this.headers.append('Authorization', 'Bearer -VI_yuv0UzZNy4av1SM5vQlkfPK_JKnpGfMzuJR7d0M=');
-     this.requestOptionsArgs = {headers: this.headers};
+    // this.baseUrl = 'http://localhost:8080/v1';
+    this.baseUrl = 'http://api.uhero.hawaii.edu/v1';
+    this.headers = new Headers();
+    this.headers.append('Authorization', 'Bearer -VI_yuv0UzZNy4av1SM5vQlkfPK_JKnpGfMzuJR7d0M=');
+    this.requestOptionsArgs = { headers: this.headers };
   }
 
   //  Get data from API
@@ -82,7 +82,6 @@ export class ApiService {
       return freqs$;
     }
   }
-
 
   // Gets observations for series in a (sub) category
   fetchExpanded(id: number, geo: string, freq: string): Observable<any> {
@@ -192,55 +191,13 @@ export class ApiService {
     if (this.cachedGeoSeries[id + handle]) {
       return Observable.of(this.cachedGeoSeries[id + handle]);
     } else {
-    let geoSeries$ = this.http.get(`${this.baseUrl}/category/series?id=` + id + `&geo=` + handle, this.requestOptionsArgs)
-      .map(mapData)
-      .do(val => {
-        this.cachedGeoSeries[id + handle] = val;
-        geoSeries$ = null;
-      });
-    return geoSeries$;
-    }
-  }
-
-  fetchSearchFilters(search: string) {
-    if (this.cachedSearchFilters[search]) {
-      return Observable.of(this.cachedSearchFilters[search]);
-    } else {
-      let filters$ = this.http.get(`${this.baseUrl}/search?q=` + search, this.requestOptionsArgs)
+      let geoSeries$ = this.http.get(`${this.baseUrl}/category/series?id=` + id + `&geo=` + handle, this.requestOptionsArgs)
         .map(mapData)
         .do(val => {
-          this.cachedSearchFilters[search] = val;
-          filters$ = null;
+          this.cachedGeoSeries[id + handle] = val;
+          geoSeries$ = null;
         });
-      return filters$;
-    }
-  }
-
-  fetchSearchSeries(search: string): Observable<Series[]> {
-    if (this.cachedSearchExpand[search]) {
-      return Observable.of(this.cachedSearchExpand[search]);
-    } else {
-      let search$ = this.http.get(`${this.baseUrl}/search/series?q=` + search, this.requestOptionsArgs)
-        .map(mapData)
-        .do(val => {
-          this.cachedSearchExpand[search] = val;
-          search$ = null;
-        });
-      return search$;
-    }
-  }
-
-  fetchSearchSeriesExpand(search: string, geo: string, freq: string): Observable<Series[]> {
-    if (this.cachedSearchExpand[search + geo + freq]) {
-      return Observable.of(this.cachedSearchExpand[search + geo + freq]);
-    } else {
-      let search$ = this.http.get(`${this.baseUrl}/search/series?q=` + search + `&geo=` + geo + `&freq=` + freq + `&expand=true`, this.requestOptionsArgs)
-        .map(mapData)
-        .do(val => {
-          this.cachedSearchExpand[search + geo + freq] = val;
-          search$ = null;
-        });
-      return search$;
+      return geoSeries$;
     }
   }
 
