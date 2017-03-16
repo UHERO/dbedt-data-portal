@@ -73,6 +73,7 @@ export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
     }
     if (!e.node.hasChildren) {
       this.ids.push(e.node.id);
+      console.log(e.node)
       this.selectedCatIds.emit(this.ids);
     }
   }
