@@ -62,9 +62,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           pageSize: 'letter',
           message: 'Research & Economic Analysis Division, DBEDT',
           customize: function (doc) {
-            console.log('doc', doc)
             let currentTable = doc.content[2].table.body;
-            console.log('currentTable', currentTable)
             let formattedTable: Array<any> = [];
             // Reformat table to allow for a maximum of 10 columns
             for (let i = 0; i < currentTable.length; i++) {
@@ -96,7 +94,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
                 }
               }
             }
-            console.log('formatted table', formattedTable)
             doc.content[2].table.dontBreakRows = true;
             doc.content[2].table.headerRows = 0;
             doc.content[2].table.body = formattedTable

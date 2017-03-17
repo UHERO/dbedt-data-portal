@@ -1,5 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { Geography } from '../geography';
+import 'select2';
+import 'jquery';
+declare var $: any;
 
 @Component({
   selector: 'app-geo-selector',
@@ -21,7 +24,7 @@ export class GeoSelectorComponent implements OnInit {
     $('.select2-region').select2({
       data: this.regions,
       placeholder: 'Select Region',
-      width: '200px',
+      width: '315px',
       allowClear: true
     });
     $('.select2-region').val(this.selectedGeos).trigger('change');

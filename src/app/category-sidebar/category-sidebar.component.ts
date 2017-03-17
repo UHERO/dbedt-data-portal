@@ -44,7 +44,7 @@ export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
     this.options = {
       getChildren: (node: TreeNode) => {
         let children = [];
-        return this._apiService.fetchSeries(node.id).toPromise();
+        return this._apiService.fetchCategoryMeasures(node.id).toPromise();
       },
       actionMapping
     }

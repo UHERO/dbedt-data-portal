@@ -20,6 +20,8 @@ export class ApiService {
   private cachedFreqs = [];
   private cachedExpanded = [];
   private cachedSelectedCategory = [];
+  private cachedCategoryMeasures = [];
+  private cachedMeasurementSeries = [];
   private cachedGeoSeries = [];
   private cachedObservations = [];
   private cachedSeries = [];
@@ -55,31 +57,32 @@ export class ApiService {
     }
   }
 
-  fetchCatGeos(id: number): Observable<Geography[]> {
-    if (this.cachedGeos[id]) {
-      return Observable.of(this.cachedGeos[id]);
+  // Gets measurements belonging to each category
+  fetchCategoryMeasures(id: number) {
+    if (this.cachedCategoryMeasures[id]) {
+      return Observable.of(this.cachedCategoryMeasures[id]);
     } else {
-      let geos$ = this.http.get(`${this.baseUrl}/category/geo?id=` + id, this.requestOptionsArgs)
+      let categoryMeasures$ = this.http.get(`${this.baseUrl}/category/measurements?id=` + id, this.requestOptionsArgs)
         .map(mapData)
         .do(val => {
-          this.cachedGeos[id] = val;
-          geos$ = null;
+          this.cachedCategoryMeasures[id] = val;
+          categoryMeasures$ = null;
         });
-      return geos$;
+      return categoryMeasures$;
     }
   }
 
-  fetchCatFreqs(id: number): Observable<Frequency[]> {
-    if (this.cachedFreqs[id]) {
-      return Observable.of(this.cachedFreqs[id]);
+  fetchMeasurementSeries(id: number) {
+    if (this.cachedMeasurementSeries[id]) {
+      return Observable.of(this.cachedMeasurementSeries[id]);
     } else {
-      let freqs$ = this.http.get(`${this.baseUrl}/category/freq?id=` + id, this.requestOptionsArgs)
+      let measurementSeries$ = this.http.get(`${this.baseUrl}/measurement/series?id=` + id + `&expand=true`, this.requestOptionsArgs)
         .map(mapData)
         .do(val => {
-          this.cachedFreqs[id] = val;
-          freqs$ = null;
+          this.cachedMeasurementSeries[id] = val;
+          measurementSeries$ = null;
         });
-      return freqs$;
+      return measurementSeries$;
     }
   }
 
@@ -139,51 +142,6 @@ export class ApiService {
           seriesDetail$ = null;
         });
       return seriesDetail$;
-    }
-  }
-
-  // Get list of siblings for a particular series
-  fetchSeriesSiblings(seriesId: number): Observable<Series[]> {
-    if (this.cachedSiblings[seriesId]) {
-      return Observable.of(this.cachedSiblings[seriesId]);
-    } else {
-      let seriesSiblings$ = this.http.get(`${this.baseUrl}/series/siblings?id=` + seriesId, this.requestOptionsArgs)
-        .map(mapData)
-        .do(val => {
-          this.cachedSiblings[seriesId] = val;
-          seriesSiblings$ = null;
-        });
-      return seriesSiblings$;
-    }
-  }
-
-  // Get available frequencies for a series' siblings
-  fetchSiblingFreqs(seriesId: number): Observable<Frequency[]> {
-    if (this.cachedSiblingFreqs[seriesId]) {
-      return Observable.of(this.cachedSiblingFreqs[seriesId]);
-    } else {
-      let siblingFreqs$ = this.http.get(`${this.baseUrl}/series/siblings/freq?id=` + seriesId, this.requestOptionsArgs)
-        .map(mapData)
-        .do(val => {
-          this.cachedSiblingFreqs[seriesId] = val;
-          siblingFreqs$ = null;
-        });
-      return siblingFreqs$;
-    }
-  }
-
-  // Get available geographies for a series' siblings
-  fetchSiblingGeos(seriesId: number): Observable<Geography[]> {
-    if (this.cachedSiblingGeos[seriesId]) {
-      return Observable.of(this.cachedSiblingGeos[seriesId]);
-    } else {
-      let siblingGeos$ = this.http.get(`${this.baseUrl}/series/siblings/geo?id=` + seriesId, this.requestOptionsArgs)
-        .map(mapData)
-        .do(val => {
-          this.cachedSiblingGeos[seriesId] = val;
-          siblingGeos$ = null;
-        });
-      return siblingGeos$;
     }
   }
 

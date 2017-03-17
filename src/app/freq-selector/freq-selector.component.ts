@@ -1,5 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, AfterViewInit } from '@angular/core';
 import { Frequency } from '../frequency';
+import 'select2';
+import 'jquery';
+declare var $: any;
 
 @Component({
   selector: 'app-freq-selector',
@@ -20,7 +23,7 @@ export class FreqSelectorComponent implements OnInit {
     $('.select2-frequency').select2({
       data: this.freqs,
       placeholder: 'Select Frequency',
-      width: '215px',
+      width: '230px',
       allowClear: true,
     });
     $('.select2-frequency').val(this.selectedFreqs).trigger('change');
