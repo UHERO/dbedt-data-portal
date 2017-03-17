@@ -32,7 +32,6 @@ export class AppComponent {
   private datesSelected: DatesSelected;
   private dateArray: Array<any>;
   private tableData = [];
-  private catGeoFreq = [];
   private displayTable: Boolean = false;
   private invalidDates: String;
 
@@ -82,6 +81,7 @@ export class AppComponent {
     if (!this.selectedIndicators.length) {
       // Remove table if all categories are deselected and remove date selectors
       this.toggleDateSelectors();
+      this.clearSelections();
     }
   }
 
@@ -110,10 +110,8 @@ export class AppComponent {
   geoChange(e) {
     this.selectedGeos = e;
     if (!this.selectedGeos.length) {
+      this.displayTable = false;
       this.toggleDateSelectors();
-    }
-    if (this.tableData.length) {
-      //this.getSeries();
     }
     if (this.selectedIndicators.length && this.selectedFreqs.length) {
       this.getSeries()
@@ -122,24 +120,24 @@ export class AppComponent {
 
   freqChange(e) {
     this.selectedFreqs = e;
-    this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.selectedFreqs);
-    if (this.tableData.length) {
-      //this.getSeries();
-    }
+    console.log('selectedFreqs', e)
+    // this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.selectedFreqs);
     if (this.selectedIndicators.length && this.selectedGeos.length) {
+      this.toggleDateSelectors();
       this.getSeries();
     }
     if (!this.selectedFreqs.length) {
+      this.displayTable = false;
       this.annualSelected = false;
       this.quarterSelected = false;
       this.monthSelected = false;
     }
-    this.toggleDateSelectors();
   }
 
   toggleDateSelectors() {
     let aIndex = this.selectedFreqs.indexOf('A');
     let qIndex = this.selectedFreqs.indexOf('Q');
+    console.log('q index', qIndex)
     let mIndex = this.selectedFreqs.indexOf('M');
     if (this.displayTable) {
       this.annualSelected = aIndex > -1 ? true : false;
@@ -175,7 +173,6 @@ export class AppComponent {
           seriesCount += 1;
           if (seriesCount === seriesData.length) {
             this.getDates();
-            console.log('start', this.datesSelected.startDate)
             this.formatTableData(seriesData);
           }
         })
@@ -231,7 +228,6 @@ export class AppComponent {
   clearSelections() {
     this.displayTable = false;
     this.reset = true;
-    this.catGeoFreq = [];
     this.selectedIndicators = [];
     this.frequencies = [];
     this.regions = [];
@@ -281,7 +277,6 @@ export class AppComponent {
     let validDates = this.checkValidDates(this.datesSelected);
     if (validDates) {
       this.invalidDates = null;
-      console.log('dates selected', this.datesSelected)
       this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.selectedFreqs);
       this._helper.yearsSelected(this.datesSelected);
       if (this.selectedFreqs.indexOf('Q') > -1) {
@@ -292,6 +287,7 @@ export class AppComponent {
       }
     } else {
       this.invalidDates = "Invalid date selection";
+      this.displayTable = false;
     }
   }
 

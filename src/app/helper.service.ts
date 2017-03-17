@@ -10,6 +10,7 @@ export class HelperService {
   constructor() { }
 
   categoryDateArray(selectedDates, selectedFreqs: Array<string>) {
+    console.log(selectedDates)
     let dateArray = [];
     let m = { 1: '01', 2: '02', 3: '03', 4: '04', 5: '05', 6: '06', 7: '07', 8: '08', 9: '09', 10: '10', 11: '11', 12: '12' };
     let q = { 1: 'Q1', 4: 'Q2', 7: 'Q3', 10: 'Q4' };
@@ -58,6 +59,7 @@ export class HelperService {
       startYear = startMonth === 12 ? startYear += 1 : startYear;
       startMonth = startMonth === 12 ? 1 : startMonth += 1;
     }
+    console.log('date array', dateArray)
     return dateArray;
   }
 

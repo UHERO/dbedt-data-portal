@@ -24,7 +24,23 @@
 
 .toggle-table {
     float: right;
-    margin-bottom: -2em;
+    margin-bottom: -1.75em;
+}
+
+.welcome-msg {
+    p {
+        margin-bottom: 0.5rem;
+    }
+    
+    width: 80%;
+    margin-top: 5%;
+    font-family: 'Lucida Sans', sans-serif;
+    font-size: 0.9em;
+
+    .dbedt {
+        color: #1D667F;
+        font-weight: 600;
+    }
 }
 
 .selectors {
