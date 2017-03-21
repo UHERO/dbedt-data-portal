@@ -18,7 +18,7 @@ const actionMapping: IActionMapping = {
 })
 export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
   private categories: CategoryTree;
-  private subCategories;
+  private subCategories; // Subscription to categories
   private nodes;
   private ids: Array<any> = [];
   private error: string;
@@ -69,7 +69,7 @@ export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   activateNode(e) {
     if (e.node.hasChildren) {
-      e.node.expand();
+      //e.node.expand();
     }
     if (!e.node.hasChildren) {
       this.ids.push(e.node.id);
@@ -79,8 +79,8 @@ export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   deactivateNode(e) {
     if (e.node.hasChildren) {
-      e.node.collapse();
-      let activeNodes = e.node.treeModel.activeNodes;
+      //e.node.collapse();
+      /* let activeNodes = e.node.treeModel.activeNodes;
       activeNodes.forEach((node) => {
         if (!node.hasChildren) {
           console.log('node', node);
@@ -88,7 +88,7 @@ export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
           node.treeModel.focusDrillUp();
           //node.parent.focus(true);
         }
-      });
+      }); */
     }
     if (!e.node.hasChildren) {
       let idIndex = this.ids.indexOf(e.node.id);

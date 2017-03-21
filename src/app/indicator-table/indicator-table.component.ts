@@ -73,11 +73,11 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               let rowDiff = currentRow.length % 10;
               let addString = 10 - rowDiff;
               while (addString) {
-                currentRow.push({text: ''});
+                currentRow.push({ text: '' });
                 addString -= 1;
               }
               let counter = currentTable.length;
-              let indicator = [{text: currentRow[0].text, style: currentRow[0].style}]
+              let indicator = [{ text: currentRow[0].text, style: currentRow[0].style }]
               // newRow.push(indicator);
               for (let n = 1; n < currentRow.length; n++) {
                 newRow.push(currentRow[n]);
@@ -107,23 +107,31 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           text: '<i class="fa fa-print" aria-hidden="true" title="Print"></i>',
           message: 'Research & Economic Analysis Division, DBEDT',
           customize: function (win) {
-            $(win.document.body).find('tr:nth-child(odd) td').each(function (index) {
+            function splitTable(table) {
+              let rows = table.find('tr');
+              $('<table>').insertAfter(table);
+              const limit = 9;
+
+              if (table.find('tr:first-child>th').length > limit) {
+                let newTable = table.next('table');
+                newTable.addClass('stripe dataTable')
+                newTable.append('<tbody>');
+                rows.each(function () {
+                  let tr = $(this);
+                  let clone = tr.clone();
+                  clone.html('');
+                  newTable.find('tbody').append(clone);
+                  let lastTr = newTable.find('tr:last-child');
+                  lastTr.append($('>:gt(' + limit + ')', this));
+                });
+                splitTable(newTable);
+              }
+            }
+            let dtTable = $(win.document.body).find('table');
+            splitTable(dtTable);
+            $(win.document.body).find('table:nth-child(odd) td').each(function (index) {
               $(this).css('background-color', '#F9F9F9');
             });
-            let $table = $(win.document.body).find('table');
-            let cols = $('th', $table).length - 1;
-            let maxCols = 9;
-            let n = cols/maxCols;
-            for (let i = 1; i <= n; i++) {
-              $('<br>').appendTo('body');
-              let $newTable = $table.clone().appendTo(win.document.body);
-              for (let j = cols + 1; j > 1; j--) {
-                if (j + maxCols - 1 <= maxCols * i || j > maxCols * i + 1) {
-                  $('td:nth-child(' + j + '), th:nth-child(' + j + ')', $newTable).remove()
-                }
-              }
-              $table.remove();
-            }
             $(win.document.body).find('table:last-child').after("<p>Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/ <br> The Economic Research Organization at the University of Hawaii: http://uhero.hawaii.edu/</p>")
           }
         }],

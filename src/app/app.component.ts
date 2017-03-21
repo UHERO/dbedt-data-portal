@@ -37,7 +37,7 @@ export class AppComponent {
 
   constructor(private _apiService: ApiService, private _helper: HelperService) { }
 
-  getSelectedSeries(e) {
+  getSelectedIndicators(e) {
     //this.dateArray = [];
     let geoList = [];
     let freqList = [];
@@ -48,22 +48,7 @@ export class AppComponent {
     this.datesSelected.endDate = '';
     selectedMeasurements.forEach((m) => {
       this._apiService.fetchMeasurementSeries(m).subscribe((series) => {
-        let geo_freqs, freq_geos, obsStart, obsEnd;
-        series.forEach((serie) => {
-          this.selectedIndicators.push(serie)
-          geo_freqs = serie.geo_freqs;
-          freq_geos = serie.freq_geos;
-          obsStart = serie.seriesObservations.observationStart.substr(0, 10);
-          obsEnd = serie.seriesObservations.observationEnd.substr(0, 10);
-          geo_freqs.forEach((geo) => {
-            geo = this._helper.formatGeos(geo);
-            this._helper.uniqueGeos(geo, geoList);
-          });
-          freq_geos.forEach((freq) => {
-            freq = this._helper.formatFreqs(freq);
-            this._helper.uniqueFreqs(freq, freqList);
-          });
-        });
+        this.initSettings(series, geoList, freqList);
       },
         (error) => {
           this.errorMsg = error;
@@ -83,6 +68,26 @@ export class AppComponent {
       this.toggleDateSelectors();
       this.clearSelections();
     }
+  }
+
+  initSettings(series: Array<any>, geoList: Array<any>, freqList: Array<any>) {
+    // Iterate through list of series to create list of areas and frequencies and identify observation dates
+    let geo_freqs, freq_geos, obsStart, obsEnd;
+    series.forEach((serie) => {
+      this.selectedIndicators.push(serie)
+      geo_freqs = serie.geo_freqs;
+      freq_geos = serie.freq_geos;
+      obsStart = serie.seriesObservations.observationStart.substr(0, 10);
+      obsEnd = serie.seriesObservations.observationEnd.substr(0, 10);
+      geo_freqs.forEach((geo) => {
+        geo = this._helper.formatGeos(geo);
+        this._helper.uniqueGeos(geo, geoList);
+      });
+      freq_geos.forEach((freq) => {
+        freq = this._helper.formatFreqs(freq);
+        this._helper.uniqueFreqs(freq, freqList);
+      });
+    });
   }
 
   freqSelectorList(freqArray: Array<Frequency>) {
@@ -120,11 +125,9 @@ export class AppComponent {
 
   freqChange(e) {
     this.selectedFreqs = e;
-    console.log('selectedFreqs', e)
-    // this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.selectedFreqs);
     if (this.selectedIndicators.length && this.selectedGeos.length) {
-      this.toggleDateSelectors();
       this.getSeries();
+      this.toggleDateSelectors();
     }
     if (!this.selectedFreqs.length) {
       this.displayTable = false;
@@ -137,13 +140,10 @@ export class AppComponent {
   toggleDateSelectors() {
     let aIndex = this.selectedFreqs.indexOf('A');
     let qIndex = this.selectedFreqs.indexOf('Q');
-    console.log('q index', qIndex)
     let mIndex = this.selectedFreqs.indexOf('M');
-    if (this.displayTable) {
-      this.annualSelected = aIndex > -1 ? true : false;
-      this.quarterSelected = qIndex > -1 ? true : false;
-      this.monthSelected = mIndex > -1 ? true : false;
-    }
+    this.annualSelected = aIndex > -1 ? true : false;
+    this.quarterSelected = qIndex > -1 ? true : false;
+    this.monthSelected = mIndex > -1 ? true : false;
   }
 
   getSeries() {
@@ -175,7 +175,7 @@ export class AppComponent {
             this.getDates();
             this.formatTableData(seriesData);
           }
-        })
+        });
       }
     });
   }

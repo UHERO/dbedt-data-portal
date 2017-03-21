@@ -6,31 +6,15 @@ import 'rxjs/add/operator/mergeMap';
 
 import { Category } from './category';
 import { CategoryTree } from './category-tree';
-import { Series } from './series';
-import { Frequency } from './frequency';
-import { Geography } from './geography';
 
 @Injectable()
 export class ApiService {
   private baseUrl: string;
   private requestOptionsArgs: RequestOptionsArgs;
   private headers: Headers;
-  private cachedCategories;
-  private cachedGeos = [];
-  private cachedFreqs = [];
-  private cachedExpanded = [];
-  private cachedSelectedCategory = [];
+  private cachedCategories: CategoryTree;
   private cachedCategoryMeasures = [];
   private cachedMeasurementSeries = [];
-  private cachedGeoSeries = [];
-  private cachedObservations = [];
-  private cachedSeries = [];
-  private cachedSeriesDetail = [];
-  private cachedSiblings = [];
-  private cachedSiblingFreqs = [];
-  private cachedSiblingGeos = [];
-  private cachedSearchExpand = [];
-  private cachedSearchFilters = [];
 
   constructor(private http: Http) {
     // this.baseUrl = 'http://localhost:8080/v1';
@@ -83,94 +67,6 @@ export class ApiService {
           measurementSeries$ = null;
         });
       return measurementSeries$;
-    }
-  }
-
-  // Gets observations for series in a (sub) category
-  fetchExpanded(id: number, geo: string, freq: string): Observable<any> {
-    if (this.cachedExpanded[id + geo + freq]) {
-      return Observable.of(this.cachedExpanded[id + geo + freq]);
-    } else {
-      let expanded$ = this.http.get(`${this.baseUrl}/category/series?id=` + id + `&geo=` + geo + `&freq=` + freq + `&expand=true`, this.requestOptionsArgs)
-        .map(mapData)
-        .do(val => {
-          this.cachedExpanded[id + geo + freq] = val;
-          expanded$ = null;
-        });
-      return expanded$;
-    }
-  }
-
-  // Gets a particular category. Used to identify a category's date ranges
-  fetchSelectedCategory(id: number): Observable<Category> {
-    if (this.cachedSelectedCategory[id]) {
-      return Observable.of(this.cachedSelectedCategory[id]);
-    } else {
-      let selectedCat$ = this.http.get(`${this.baseUrl}/category?id=` + id, this.requestOptionsArgs)
-        .map(mapData)
-        .do(val => {
-          this.cachedSelectedCategory[id] = val;
-          selectedCat$ = null;
-        });
-      return selectedCat$;
-    }
-  }
-
-  fetchSeries(id: number): Observable<Series[]> {
-    if (this.cachedSeries[id]) {
-      return Observable.of(this.cachedSeries[id]);
-    } else {
-      let series$ = this.http.get(`${this.baseUrl}/category/series?id=` + id, this.requestOptionsArgs)
-        .map(mapData)
-        .do(val => {
-          this.cachedSeries[id] = val;
-          series$ = null;
-        });
-      return series$;
-    }
-  }
-
-  // Gets data for a particular series. Used for single series view.
-  fetchSeriesDetail(id: number): Observable<Series> {
-    if (this.cachedSeriesDetail[id]) {
-      return Observable.of(this.cachedSeriesDetail[id]);
-    } else {
-      let seriesDetail$ = this.http.get(`${this.baseUrl}/series?id=` + id, this.requestOptionsArgs)
-        .map(mapData)
-        .do(val => {
-          this.cachedSeriesDetail[id] = val;
-          seriesDetail$ = null;
-        });
-      return seriesDetail$;
-    }
-  }
-
-  fetchGeoSeries(id: number, handle: string): Observable<Series[]> {
-    if (this.cachedGeoSeries[id + handle]) {
-      return Observable.of(this.cachedGeoSeries[id + handle]);
-    } else {
-      let geoSeries$ = this.http.get(`${this.baseUrl}/category/series?id=` + id + `&geo=` + handle, this.requestOptionsArgs)
-        .map(mapData)
-        .do(val => {
-          this.cachedGeoSeries[id + handle] = val;
-          geoSeries$ = null;
-        });
-      return geoSeries$;
-    }
-  }
-
-  // Gets observation data for a series
-  fetchObservations(id: number) {
-    if (this.cachedObservations[id]) {
-      return Observable.of(this.cachedObservations[id]);
-    } else {
-      let observations$ = this.http.get(`${this.baseUrl}/series/observations?id=` + id, this.requestOptionsArgs)
-        .map(mapData)
-        .do(val => {
-          this.cachedObservations[id] = val;
-          observations$ = null;
-        });
-      return observations$;
     }
   }
 }

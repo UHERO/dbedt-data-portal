@@ -1,9 +1,15 @@
 .indicators {
     border-right: 1px solid #C3C3C3;
-
+    width: 250px;
+    display: inline-block;
     h5 {
         margin: 0.5em;
     }
+}
+.content-col {
+    width: 650px;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .loading {
@@ -46,7 +52,12 @@
 .selectors {
     margin-top: 1.25em;
 
+    p {
+        display: inline-block;
+    }
+    
     .dropdown {
         margin-right: 5px;
+        display: inline-block;
     }
 }
