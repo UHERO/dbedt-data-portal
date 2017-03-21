@@ -5,7 +5,7 @@ import { DebugElement } from '@angular/core';
 
 import { YearSelectorComponent } from './year-selector.component';
 
-describe('YearSelectorComponent', () => {
+/* describe('YearSelectorComponent', () => {
   let component: YearSelectorComponent;
   let fixture: ComponentFixture<YearSelectorComponent>;
 
@@ -25,4 +25,4 @@ describe('YearSelectorComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-});
+}); */

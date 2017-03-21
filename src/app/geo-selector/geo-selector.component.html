@@ -1,1 +1,4 @@
-<ss-multiselect-dropdown [options]="regions" [texts]="selectText" [settings]="selectSettings" [(ngModel)]="selectedGeos" (ngModelChange)="onChange($event)"></ss-multiselect-dropdown>
+<select class="select2-region" multiple="multiple">
+    <option *ngFor="let region of regions" [value]="region.id">{{region.text}}</option>
+</select>
+

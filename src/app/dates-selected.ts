@@ -1,4 +1,6 @@
 export interface DatesSelected {
+    startDate: string;
+    endDate: string;
     selectedStartYear: string;
     selectedEndYear: string;
     fromYearList: Array<string>;

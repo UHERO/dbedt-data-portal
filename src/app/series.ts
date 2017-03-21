@@ -3,7 +3,9 @@ import {Geography} from './geography';
 export interface Series {
   id: string;
   title?: string;
-  name: string;
+  name?: string;
+  description?: string;
+  parentId?: number;
   observationStart?: string;
   observationEnd?: string;
   frequency: string;

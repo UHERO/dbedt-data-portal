@@ -1,6 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from 'angular-2-dropdown-multiselect/src/multiselect-dropdown';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, AfterViewInit } from '@angular/core';
 import { Frequency } from '../frequency';
+import 'select2';
+import 'jquery';
+declare var $: any;
 
 @Component({
   selector: 'app-freq-selector',
@@ -10,24 +12,23 @@ import { Frequency } from '../frequency';
 export class FreqSelectorComponent implements OnInit {
   @Input() freqs: Array<Frequency>;
   @Input() selectedFreqs;
-  @Output() selectedFreqList = new EventEmitter()
-  // private selectedFreq: string[];
-  private selectSettings: IMultiSelectSettings = {
-    showCheckAll: true,
-    showUncheckAll: true,
-    buttonClasses: 'btn btn-default',
-    checkedStyle: 'fontawsome'
-  }
-  private selectText: IMultiSelectTexts = {
-    defaultTitle: 'Select Frequency'
-  }
+  @Output() selectedFreqList = new EventEmitter();
 
   constructor() { }
 
   ngOnInit() {
   }
 
-  onChange(e) {
-    this.selectedFreqList.emit(e);
+  ngAfterViewInit() {
+    $('.select2-frequency').select2({
+      data: this.freqs,
+      placeholder: 'Select Frequency',
+      width: '230px',
+      allowClear: true,
+    });
+    $('.select2-frequency').val(this.selectedFreqs).trigger('change');
+    $('.select2-frequency').on('change', e => {
+      this.selectedFreqList.emit($(e.target).val());
+    });
   }
 }

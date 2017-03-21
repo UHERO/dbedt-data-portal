@@ -1,1 +1,3 @@
-<ss-multiselect-dropdown [options]="freqs" [texts]="selectText" [settings]="selectSettings" [(ngModel)]="selectedFreqs" (ngModelChange)="onChange($event)"></ss-multiselect-dropdown>
+<select class="select2-frequency" multiple="multiple">
+    <option *ngFor="let freq of freqs" [value]="freq.id">{{freq.text}}</option>
+</select>

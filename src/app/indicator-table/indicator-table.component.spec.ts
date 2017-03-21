@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { FreqSelectorComponent } from './freq-selector.component';
+import { IndicatorTableComponent } from './indicator-table.component';
 
-/* describe('FreqSelectorComponent', () => {
-  let component: FreqSelectorComponent;
-  let fixture: ComponentFixture<FreqSelectorComponent>;
+/* describe('IndicatorTableComponent', () => {
+  let component: IndicatorTableComponent;
+  let fixture: ComponentFixture<IndicatorTableComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FreqSelectorComponent ]
+      declarations: [ IndicatorTableComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FreqSelectorComponent);
+    fixture = TestBed.createComponent(IndicatorTableComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

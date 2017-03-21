@@ -3,7 +3,7 @@
 import { TestBed, async, inject } from '@angular/core/testing';
 import { HelperService } from './helper.service';
 
-describe('HelperService', () => {
+/* describe('HelperService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [HelperService]
@@ -13,4 +13,4 @@ describe('HelperService', () => {
   it('should ...', inject([HelperService], (service: HelperService) => {
     expect(service).toBeTruthy();
   }));
-});
+}); */
