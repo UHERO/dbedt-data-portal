@@ -2,8 +2,11 @@
     border-right: 1px solid #C3C3C3;
     width: 250px;
     display: inline-block;
-    h5 {
+
+    h6 {
         margin: 0.5em;
+        letter-spacing: 0.025em;
+        font-family: 'Lucida Sans', sans-serif;
     }
 }
 .content-col {
@@ -50,14 +53,17 @@
 }
 
 .selectors {
-    margin-top: 1.25em;
+    margin-top: 1em;
 
     p {
         display: inline-block;
     }
+
+    .text-danger {
+        margin-bottom: 0;
+    }
     
     .dropdown {
-        margin-right: 5px;
         display: inline-block;
     }
 }

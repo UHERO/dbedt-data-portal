@@ -23,8 +23,8 @@ export class GeoSelectorComponent implements OnInit {
   ngAfterViewInit() {
     $('.select2-region').select2({
       data: this.regions,
-      placeholder: 'Select Region',
-      width: '315px',
+      placeholder: 'Select Area',
+      width: '250px',
       allowClear: true
     });
     $('.select2-region').val(this.selectedGeos).trigger('change');

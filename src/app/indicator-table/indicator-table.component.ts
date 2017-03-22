@@ -62,28 +62,32 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           pageSize: 'letter',
           message: 'Research & Economic Analysis Division, DBEDT',
           customize: function (doc) {
+            // Prevent ending cells from falling off
+            // Maintain consistant table width (i.e. add empty strings if row has less than 10 data cells)
+            function checkRowLength(row) {
+              let rowDiff = row.length % 10;
+              let addString = 10 - rowDiff;
+              while (addString) {
+                row.push({ text: '', style: ''});
+                addString -= 1;
+              }
+            }
             let currentTable = doc.content[2].table.body;
             let formattedTable: Array<any> = [];
             // Reformat table to allow for a maximum of 10 columns
             for (let i = 0; i < currentTable.length; i++) {
               let newRow = [];
               let currentRow = currentTable[i];
-
-              // Prevent ending cells from falling off/Maintain consistant table width
-              let rowDiff = currentRow.length % 10;
-              let addString = 10 - rowDiff;
-              while (addString) {
-                currentRow.push({ text: '' });
-                addString -= 1;
-              }
+              checkRowLength(currentRow);
               let counter = currentTable.length;
               let indicator = [{ text: currentRow[0].text, style: currentRow[0].style }]
-              // newRow.push(indicator);
               for (let n = 1; n < currentRow.length; n++) {
                 newRow.push(currentRow[n]);
-                if (newRow.length === 9) {
+                if (newRow.length === 9 || n === currentRow.length - 1) {
                   let r = indicator.concat(newRow);
-                  //newRow.unshift(indicator)
+                  if (r.length < 10) {
+                    checkRowLength(r);
+                  }
                   if (!formattedTable[i]) {
                     formattedTable[i] = r;
                   } else {
