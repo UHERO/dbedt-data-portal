@@ -55,19 +55,16 @@ export class AppComponent {
           this.errorMsg = error;
         },
         () => {
-          this.displayTable = false;
           this.freqSelectorList(freqList);
           this.geoSelectorList(geoList);
           if (this.selectedGeos.length && this.selectedFreqs.length) {
             this.getSeries();
-            this.showTable();
           }
         });
     });
     if (!this.selectedIndicators.length) {
       // Remove table if all categories are deselected and remove date selectors
       this.toggleDateSelectors();
-      this.clearSelections();
     }
   }
 

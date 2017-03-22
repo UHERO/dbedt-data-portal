@@ -3,6 +3,12 @@
         border-radius: 0;
         height: 37px;
         overflow-y: auto;
+
+        .select2-selection__choice {
+            border-radius: 0;
+            background-color: #F9F9F9;
+            margin-right: 3px;
+        }
     }
 }
 

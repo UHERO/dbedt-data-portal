@@ -54,7 +54,6 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   }
 
   activateNode(e) {
-    console.log('active e', e)
     if (e.node.hasChildren) {
       e.node.expand();
     }
@@ -65,21 +64,25 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   }
 
   deactivateNode(e) {
+    let active = this.tree.treeModel.activeNodes;
+    if (active) {
+      active.forEach((node) => {
+        if (!node.hasChildren) {
+          node.treeModel.focusDrillUp();
+        }
+      });
+    }
     if (e.node.hasChildren) {
-      console.log('deactivate', e.node)
       e.node.collapse();
       let activeNodes = e.node.treeModel.activeNodes;
       activeNodes.forEach((node) => {
         if (!node.hasChildren) {
-          console.log('node', node);
-          console.log('focus');
           node.treeModel.focusDrillUp();
           //node.parent.focus(true);
         }
       });
     }
     if (!e.node.hasChildren) {
-      console.log('deactivate child', e.node)
       let idIndex = this.ids.indexOf(e.node.id);
       if (idIndex > -1) {
         this.ids.splice(idIndex, 1);
