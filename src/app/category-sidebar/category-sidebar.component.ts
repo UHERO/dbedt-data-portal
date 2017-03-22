@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, Output, OnChanges, EventEmitter, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import { ApiService } from '../api.service';
 import { CategoryTree } from '../category-tree';
@@ -16,7 +16,7 @@ const actionMapping: IActionMapping = {
   styleUrls: ['./category-sidebar.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
+export class CategorySidebarComponent implements OnInit, OnDestroy {
   private categories: CategoryTree;
   private subCategories; // Subscription to categories
   private nodes;
@@ -25,7 +25,6 @@ export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
   private options;
   // Emit ids of selected categories to app.component
   @Output() selectedCatIds = new EventEmitter();
-  @Input() reset;
   @ViewChild(TreeComponent)
   private tree: TreeComponent
 
@@ -38,7 +37,7 @@ export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
           child.hasChildren = true;
         });
       });
-      this.nodes = categories
+      this.nodes = categories;
     });
 
     this.options = {
@@ -50,26 +49,14 @@ export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  ngOnChanges() {
-    // If reset === true, deactivate and unfocus (blur) nodes
-    if (this.reset === true) {
-      let active = this.tree.treeModel.activeNodes;
-      if (active) {
-        active.forEach((node) => {
-          node.setIsActive(false);
-          node.blur();
-        });
-      }
-    }
-  }
-
   ngOnDestroy() {
     this.subCategories.unsubscribe();
   }
 
   activateNode(e) {
+    console.log('active e', e)
     if (e.node.hasChildren) {
-      //e.node.expand();
+      e.node.expand();
     }
     if (!e.node.hasChildren) {
       this.ids.push(e.node.id);
@@ -79,8 +66,9 @@ export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   deactivateNode(e) {
     if (e.node.hasChildren) {
-      //e.node.collapse();
-      /* let activeNodes = e.node.treeModel.activeNodes;
+      console.log('deactivate', e.node)
+      e.node.collapse();
+      let activeNodes = e.node.treeModel.activeNodes;
       activeNodes.forEach((node) => {
         if (!node.hasChildren) {
           console.log('node', node);
@@ -88,14 +76,26 @@ export class CategorySidebarComponent implements OnInit, OnChanges, OnDestroy {
           node.treeModel.focusDrillUp();
           //node.parent.focus(true);
         }
-      }); */
+      });
     }
     if (!e.node.hasChildren) {
+      console.log('deactivate child', e.node)
       let idIndex = this.ids.indexOf(e.node.id);
       if (idIndex > -1) {
         this.ids.splice(idIndex, 1);
         this.selectedCatIds.emit(this.ids);
       }
+    }
+  }
+
+  // Deactivate nodes when clicking on Clear All Selections
+  reset() {
+    let active = this.tree.treeModel.activeNodes;
+    if (active) {
+      active.forEach((node) => {
+        node.setIsActive(false);
+        node.blur();
+      });
     }
   }
 }

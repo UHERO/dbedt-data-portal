@@ -1,10 +1,11 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ApiService } from './api.service';
 import { HelperService } from './helper.service';
 import { Geography } from './geography';
 import { Frequency } from './frequency';
 import { DatesSelected } from './dates-selected';
+import { CategorySidebarComponent } from './category-sidebar/category-sidebar.component';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +24,6 @@ export class AppComponent {
   // List of selected regions and frequencies
   private selectedGeos: Array<string> = [];
   private selectedFreqs: Array<string> = [];
-  private reset: Boolean = false;
 
   private annualSelected: Boolean = false;
   private quarterSelected: Boolean = false;
@@ -34,11 +34,12 @@ export class AppComponent {
   private tableData = [];
   private displayTable: Boolean = false;
   private invalidDates: String;
+  @ViewChild(CategorySidebarComponent)
+  private sidebar: CategorySidebarComponent;
 
   constructor(private _apiService: ApiService, private _helper: HelperService) { }
 
   getSelectedIndicators(e) {
-    //this.dateArray = [];
     let geoList = [];
     let freqList = [];
     this.selectedIndicators = [];
@@ -147,7 +148,6 @@ export class AppComponent {
   }
 
   getSeries() {
-    this.reset = false;
     let seriesData = [];
     let counter = 0;
     this.selectedIndicators.forEach((series) => {
@@ -227,7 +227,6 @@ export class AppComponent {
 
   clearSelections() {
     this.displayTable = false;
-    this.reset = true;
     this.selectedIndicators = [];
     this.frequencies = [];
     this.regions = [];
@@ -235,6 +234,7 @@ export class AppComponent {
     this.selectedGeos = [];
     this.dateArray = [];
     this.toggleDateSelectors();
+    this.sidebar.reset();
   }
 
   startYearChange(e) {

@@ -8,6 +8,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 export class YearSelectorComponent implements OnInit {
   @Input() years;
   @Input() selectedYear;
+  @Input() rangeLabel;
   @Output() selectedYearChange = new EventEmitter();
   
   constructor() { }

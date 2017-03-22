@@ -1,6 +1,6 @@
 <div class="form-group">
+  <label>{{rangeLabel}} Year</label>
   <select [ngModel]="selectedYear" (ngModelChange)="onChange($event)" class="custom-select">
     <option [ngValue]="year" *ngFor="let year of years">{{year}}</option>
   </select>
-  <label>Year</label>
 </div>
