@@ -189,17 +189,19 @@ export class AppComponent {
       this.dateArray.forEach((date, index) => {
         result[date.tableDate] = '';
       });
+      // If decimal value is not specified, round values to 2 decimal places
+      let decimals = series.decimals ? series.decimals : 2;
       let exist = this.tableData.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
       // If exists, add observations corresponding to the series frequency
       if (exist !== -1) {
         if (series.frequencyShort === 'A') {
-          this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, this.tableData[exist].observations, this.dateArray);
+          this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, decimals, this.tableData[exist].observations, this.dateArray);
         }
         if (series.frequencyShort === 'Q') {
-          this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, this.tableData[exist].observations, this.dateArray);
+          this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, decimals, this.tableData[exist].observations, this.dateArray);
         }
         if (series.frequencyShort === 'M') {
-          this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, this.tableData[exist].observations, this.dateArray);
+          this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, decimals, this.tableData[exist].observations, this.dateArray);
         }
       } else {
         this.tableData.push({
@@ -207,7 +209,7 @@ export class AppComponent {
           region: series.geography.name,
           units: series.unitsLabelShort,
           source: series.source_description ? series.source_description : ' ',
-          observations: this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, result, this.dateArray)
+          observations: this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, decimals, result, this.dateArray)
         });
       }
     });

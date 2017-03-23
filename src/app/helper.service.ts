@@ -171,7 +171,7 @@ export class HelperService {
     return ['Q4', 'Q3', 'Q2', 'Q1'];
   }
 
-  formatLevelData(seriesObservations, frequency: string, results: Object, dates) {
+  formatLevelData(seriesObservations, frequency: string, decimals: number, results: Object, dates) {
     let obs = seriesObservations;
     let level = obs.transformationResults[0].observations;
 
@@ -179,20 +179,35 @@ export class HelperService {
       level.forEach((entry) => {
         if (frequency === 'A') {
           let tableDate = entry.date.substr(0, 4);
-          results[tableDate] = entry.value;
+          results[tableDate] = this.formatNum(+entry.value, decimals);
         }
         if (frequency === 'Q') {
           let q = {'01': 'Q1', '04': 'Q2', '07': 'Q3', '10': 'Q4'};
           let tableDate = entry.date.substr(0, 4) + ' ' + q[entry.date.substr(5, 2)];
-          results[tableDate] = entry.value;
+          results[tableDate] = this.formatNum(+entry.value, decimals);
         }
         if (frequency === 'M') {
           let tableDate = entry.date.substr(0, 7);
-          results[tableDate] = entry.value;
+          results[tableDate] = this.formatNum(+entry.value, decimals);
         }
       });
     }
     return results;
+  }
+
+  formatNum(num: number, decimal: number) {
+    let fixedNum: any;
+    fixedNum = num.toFixed(decimal);
+    // remove decimals 
+    let int = fixedNum | 0;
+    let signCheck = num < 0 ? 1 : 0;
+    // store deicmal value
+    let remainder = Math.abs(fixedNum - int);
+    let decimalString = ('' + remainder.toFixed(decimal)).substr(2, decimal);
+    let intString = '' + int, i = intString.length;
+    let r = '';
+    while ((i -= 3) > signCheck) { r = ',' + intString.substr(i, 3) + r; }
+    return intString.substr(0, i + 3) + r + (decimalString ? '.' + decimalString : '');
   }
 
   checkSelectedGeoFreqs(selected: string, geoList: Array<any>, frequencies: Array<any>) {
