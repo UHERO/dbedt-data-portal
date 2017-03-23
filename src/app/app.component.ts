@@ -34,6 +34,7 @@ export class AppComponent {
   private tableData = [];
   private displayTable: Boolean = false;
   private invalidDates: String;
+  private noSeries: String;
   @ViewChild(CategorySidebarComponent)
   private sidebar: CategorySidebarComponent;
 
@@ -136,12 +137,14 @@ export class AppComponent {
   }
 
   toggleDateSelectors() {
-    let aIndex = this.selectedFreqs.indexOf('A');
-    let qIndex = this.selectedFreqs.indexOf('Q');
-    let mIndex = this.selectedFreqs.indexOf('M');
-    this.annualSelected = aIndex > -1 ? true : false;
-    this.quarterSelected = qIndex > -1 ? true : false;
-    this.monthSelected = mIndex > -1 ? true : false;
+    if (!this.noSeries) {
+      let aIndex = this.selectedFreqs.indexOf('A');
+      let qIndex = this.selectedFreqs.indexOf('Q');
+      let mIndex = this.selectedFreqs.indexOf('M');
+      this.annualSelected = aIndex > -1 ? true : false;
+      this.quarterSelected = qIndex > -1 ? true : false;
+      this.monthSelected = mIndex > -1 ? true : false;
+    }
   }
 
   getSeries() {
@@ -158,21 +161,27 @@ export class AppComponent {
       counter += 1;
       if (counter === this.selectedIndicators.length) {
         let seriesCount = 0;
-        seriesData.forEach((series) => {
-          let obsStart = series.seriesObservations.observationStart.substr(0, 10);
-          let obsEnd = series.seriesObservations.observationEnd.substr(0, 10);
-          if (this.datesSelected.startDate === '' || this.datesSelected.startDate > obsStart) {
-            this.datesSelected.startDate = obsStart;
-          }
-          if (this.datesSelected.endDate === '' || this.datesSelected.endDate < obsEnd) {
-            this.datesSelected.endDate = obsEnd;
-          }
-          seriesCount += 1;
-          if (seriesCount === seriesData.length) {
-            this.getDates();
-            this.formatTableData(seriesData);
-          }
-        });
+        if (seriesData.length !== 0) {
+          seriesData.forEach((series) => {
+            let obsStart = series.seriesObservations.observationStart.substr(0, 10);
+            let obsEnd = series.seriesObservations.observationEnd.substr(0, 10);
+            if (this.datesSelected.startDate === '' || this.datesSelected.startDate > obsStart) {
+              this.datesSelected.startDate = obsStart;
+            }
+            if (this.datesSelected.endDate === '' || this.datesSelected.endDate < obsEnd) {
+              this.datesSelected.endDate = obsEnd;
+            }
+            seriesCount += 1;
+            if (seriesCount === seriesData.length) {
+              this.noSeries = null;
+              this.getDates();
+              this.formatTableData(seriesData);
+            }
+          });
+        } else {
+          // Display warning, if no series exists for selected indicators, areas, and frequencies
+          this.noSeries = 'Selection Not Available';
+        }
       }
     });
   }
@@ -218,7 +227,7 @@ export class AppComponent {
   checkSelections() {
     let disable = true;
     // Enable Get Data button if selections have been made in indicators, frequencies, and areas
-    if (this.selectedIndicators.length > 0 && this.selectedFreqs.length > 0 && this.selectedGeos.length > 0) {
+    if (this.selectedIndicators.length > 0 && this.selectedFreqs.length > 0 && this.selectedGeos.length > 0 && !this.noSeries) {
       disable = false;
     }
     return disable;
