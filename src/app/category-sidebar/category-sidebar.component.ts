@@ -6,7 +6,8 @@ import { TREE_ACTIONS, IActionMapping, TreeComponent, TreeNode } from 'angular2-
 
 const actionMapping: IActionMapping = {
   mouse: {
-    click: TREE_ACTIONS.TOGGLE_SELECTED_MULTI
+    click: TREE_ACTIONS.TOGGLE_SELECTED_MULTI,
+    expanderClick: TREE_ACTIONS.TOGGLE_SELECTED_MULTI
   }
 }
 
@@ -43,7 +44,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
     this.options = {
       getChildren: (node: TreeNode) => {
         let children = [];
-        return this._apiService.fetchCategoryMeasures(node.id).toPromise();
+        return this._apiService.fetchCategoryMeasures(node.id).toPromise().catch((error) => console.log('Error', error));
       },
       actionMapping
     }
@@ -56,6 +57,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   activateNode(e) {
     if (e.node.hasChildren) {
       e.node.expand();
+      e.node.elementRef.nativeElement.classList.add('focus-parent');
     }
     if (!e.node.hasChildren) {
       this.ids.push(e.node.id);
@@ -64,23 +66,31 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   }
 
   deactivateNode(e) {
-    let active = this.tree.treeModel.activeNodes;
-    if (active) {
-      active.forEach((node) => {
-        if (!node.hasChildren) {
-          node.treeModel.focusDrillUp();
-        }
-      });
-    }
     if (e.node.hasChildren) {
       e.node.collapse();
-      let activeNodes = e.node.treeModel.activeNodes;
-      activeNodes.forEach((node) => {
-        if (!node.hasChildren) {
-          node.treeModel.focusDrillUp();
-          //node.parent.focus(true);
+      console.log('deactivate parent', e.node);
+      let activeChild = false;
+      let activeGrandchild = false;
+      e.node.children.forEach((child) => {
+        if (child.isActive === true) {
+          activeChild = true
+        }
+        if (child.hasChildren) {
+          console.log('grandchildren');
+          if (child.children) {
+            child.children.forEach((grandchild) => {
+              if (grandchild.isActive === true) {
+                activeGrandchild = true;
+              }
+            });
+          }
         }
       });
+      if (activeChild || activeGrandchild) {
+        e.node.elementRef.nativeElement.classList.add('focus-parent');
+      } else {
+        e.node.elementRef.nativeElement.classList.remove('focus-parent');
+      }
     }
     if (!e.node.hasChildren) {
       let idIndex = this.ids.indexOf(e.node.id);

@@ -7,12 +7,20 @@ table.dataTable{
             font-size: 0.9em;
             font-weight: 500;
         }
+
+        th.td-right {
+            text-align: right;
+        }
     }
 
     tbody {
         td {
             font-family: 'Lucida Sans', sans-serif;
             font-size: 0.9em;
+        }
+        
+        td.td-right {
+            text-align: right;
         }
     }
 }

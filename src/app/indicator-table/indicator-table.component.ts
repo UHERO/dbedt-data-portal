@@ -140,6 +140,10 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           }
         }],
       columns: tableColumns,
+      columnDefs: [
+        { "className": "td-left", "targets": [0, 1, 2] },
+        { "className": "td-right", "targets": "_all" }
+      ],
       scrollY: '400px',
       scrollX: true,
       paging: false,
