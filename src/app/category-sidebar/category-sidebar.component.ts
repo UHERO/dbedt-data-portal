@@ -44,7 +44,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
     this.options = {
       getChildren: (node: TreeNode) => {
         let children = [];
-        return this._apiService.fetchCategoryMeasures(node.id).toPromise().catch((error) => console.log('Error', error));
+        return this._apiService.fetchCategoryMeasures(node.id).toPromise();
       },
       actionMapping
     }
@@ -68,25 +68,23 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   deactivateNode(e) {
     if (e.node.hasChildren) {
       e.node.collapse();
-      console.log('deactivate parent', e.node);
       let activeChild = false;
-      let activeGrandchild = false;
+      let activeIndicator = false;
       e.node.children.forEach((child) => {
         if (child.isActive === true) {
           activeChild = true
         }
         if (child.hasChildren) {
-          console.log('grandchildren');
           if (child.children) {
-            child.children.forEach((grandchild) => {
-              if (grandchild.isActive === true) {
-                activeGrandchild = true;
+            child.children.forEach((indicator) => {
+              if (indicator.isActive === true) {
+                activeIndicator = true;
               }
             });
           }
         }
       });
-      if (activeChild || activeGrandchild) {
+      if (activeChild || activeIndicator) {
         e.node.elementRef.nativeElement.classList.add('focus-parent');
       } else {
         e.node.elementRef.nativeElement.classList.remove('focus-parent');
