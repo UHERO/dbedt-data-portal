@@ -1,4 +1,8 @@
 .sidebar {
     height: 430px;
     overflow: auto;
+
+    .focus-parent {
+        font-weight: 600;
+    }
 }
