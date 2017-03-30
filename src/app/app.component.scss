@@ -1,54 +1,61 @@
-.indicators {
-    border-right: 1px solid #C3C3C3;
-    width: 250px;
-    display: inline-block;
+#wrapper {
+    width: 960px;
+    overflow-x: auto;
+    overflow-y: hidden;
 
-    h6 {
-        margin: 0.5em;
-        letter-spacing: 0.025em;
-        font-family: 'Lucida Sans', sans-serif;
-    }
-}
-.content-col {
-    width: 650px;
-    display: inline-block;
-    vertical-align: top;
-}
+    .indicators {
+        border-right: 1px solid #C3C3C3;
+        width: 250px;
+        display: inline-block;
 
-.loading {
-    font-size: 0.8em;
-    color: #1D667F;
-    position: relative;
-    top: 50%;
-    text-align: center;
-}
-
-.btn {
-    line-height: 1;
-    font-family: 'Lucida Sans', sans-serif;
-    font-size: 0.9em;
-    border-radius: 0;
-    cursor: pointer;
-}
-
-.toggle-table {
-    float: right;
-    margin-bottom: -1.75em;
-}
-
-.welcome-msg {
-    p {
-        margin-bottom: 0.5rem;
+        h6 {
+            margin: 0.5em;
+            letter-spacing: 0.025em;
+            font-family: 'Lucida Sans', sans-serif;
+        }
     }
     
-    width: 80%;
-    margin-top: 5%;
-    font-family: 'Lucida Sans', sans-serif;
-    font-size: 0.9em;
+    .content-col {
+        width: 650px;
+        display: inline-block;
+        vertical-align: top;
+    }
 
-    .dbedt {
+    .loading {
+        font-size: 0.8em;
         color: #1D667F;
-        font-weight: 600;
+        position: relative;
+        top: 50%;
+        text-align: center;
+    }
+
+    .btn {
+        line-height: 1;
+        font-family: 'Lucida Sans', sans-serif;
+        font-size: 0.9em;
+        border-radius: 0;
+        cursor: pointer;
+    }
+
+    .toggle-table {
+        float: right;
+        margin-bottom: -1.75em;
+    }
+
+    .welcome-msg {
+        p {
+            margin-bottom: 0.5rem;
+        }
+    
+        width: 80%;
+        margin-top: 5%;
+        font-family: 'Lucida Sans', sans-serif;
+        font-size: 0.9em;
+
+        .dbedt {
+            color: #1D667F;
+            font-weight: 600;
+        }
     }
 }
 

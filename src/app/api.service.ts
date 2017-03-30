@@ -88,10 +88,10 @@ function mapCategories(response: Response): CategoryTree {
   });
   let result = categoryTree;
   categoryTree.forEach((category) => {
-    if (category.id === 59) {
+    if (category.id === 60) {
       result = category.children;
     }
-  })
+  });
   return result;
 }
 

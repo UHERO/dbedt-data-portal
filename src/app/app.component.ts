@@ -199,7 +199,7 @@ export class AppComponent {
         result[date.tableDate] = '';
       });
       // If decimal value is not specified, round values to 2 decimal places
-      let decimals = series.decimals ? series.decimals : 2;
+      let decimals = this.setDecimals(series.decimals);
       let exist = this.tableData.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
       // If exists, add observations corresponding to the series frequency
       if (exist !== -1) {
@@ -222,6 +222,16 @@ export class AppComponent {
         });
       }
     });
+  }
+
+  setDecimals (seriesDecimals: number) {
+    if (seriesDecimals) {
+      return seriesDecimals;
+    } else if (seriesDecimals === 0) {
+      return seriesDecimals;
+    } else {
+      return 2;
+    }
   }
 
   checkSelections() {
