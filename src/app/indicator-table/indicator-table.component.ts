@@ -49,11 +49,39 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
       buttons: [
         {
           extend: 'excel',
-          text: '<i class="fa fa-file-excel-o" aria-hidden="true" title="Excel"></i>'
+          text: '<i class="fa fa-file-excel-o" aria-hidden="true" title="Excel"></i>',
+          customizeData: function(xlsx) {
+            let cols = xlsx.header.length;
+            let dbedtFooter = [];
+            let uheroFooter = [];
+            let addRow = [];
+            // Rows with different lengths break export
+            for (let i = 0; i < cols; i++) {
+              dbedtFooter.push('');
+              uheroFooter.push('');
+              addRow.push('');
+            }
+            dbedtFooter.unshift('Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information please visit: http://dbedt.hawaii.gov/');
+            uheroFooter.unshift('The University of Hawaii Economic Research Organization: http://uhero.hawaii.edu/');
+            // Add an empty row before DBEDT and UHERO credit
+            xlsx.body.push(addRow);
+            xlsx.body.push(dbedtFooter);
+            xlsx.body.push(uheroFooter);
+          },
+          customize: function(xlsx) {
+            let sheet = xlsx.xl.worksheets['sheet1.xml'];
+            let col = $('col', sheet);
+            col.each(function() {
+              $(this).attr('width', 15);
+            })
+          }
         },
         {
           extend: 'csv',
-          text: '<i class="fa fa-file-text-o" aria-hidden="true" title="CSV"></i>'
+          text: '<i class="fa fa-file-text-o" aria-hidden="true" title="CSV"></i>',
+          customize: function(csv) {
+            return csv + '\n\n Compiled by Research & Economic Analysis Division State of Hawaii Department of Business Economic Development and Tourism. For more information please visit: http://dbedt.hawaii.gov/ \n The University of Hawaii Economic Research Organization: http://uhero.hawaii.edu/'
+          }
         },
         {
           extend: 'pdf',
@@ -102,7 +130,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             doc.content[2].table.headerRows = 0;
             doc.content[2].table.body = formattedTable
             doc.content.push({
-              text: 'Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/ \n The Economic Research Organization at the University of Hawaii: http://uhero.hawaii.edu/',
+              text: 'Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/ \n The University of Hawaii Economic Research Organization: http://uhero.hawaii.edu/',
             });
           }
         },
@@ -136,7 +164,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             $(win.document.body).find('table:nth-child(odd) td').each(function (index) {
               $(this).css('background-color', '#F9F9F9');
             });
-            $(win.document.body).find('table:last-child').after("<p>Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/ <br> The Economic Research Organization at the University of Hawaii: http://uhero.hawaii.edu/</p>")
+            $(win.document.body).find('table:last-child').after("<p>Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/ <br> The University of Hawaii Economic Research Organization: http://uhero.hawaii.edu/</p>")
           }
         }],
       columns: tableColumns,

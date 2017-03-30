@@ -3,26 +3,36 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
+import { FormsModule } from '@angular/forms';
 import { MonthSelectorComponent } from './month-selector.component';
 
-/* describe('MonthSelectorComponent', () => {
-  let component: MonthSelectorComponent;
-  let fixture: ComponentFixture<MonthSelectorComponent>;
+let comp: MonthSelectorComponent;
+let fixture: ComponentFixture<MonthSelectorComponent>
 
+describe('MonthSelectorComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MonthSelectorComponent ]
+      declarations: [
+        MonthSelectorComponent,
+      ],
+      imports: [
+        FormsModule
+      ]
     })
-    .compileComponents();
+      .compileComponents()
+      .then(() => {
+        fixture = TestBed.createComponent(MonthSelectorComponent);
+        comp = fixture.componentInstance;
+      });
   }));
+  tests();
+});
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(MonthSelectorComponent);
-    component = fixture.componentInstance;
+function tests() {
+  it('should create a month selector instance', async(() => {
+    comp.months = ['01', '02', '03', '04'];
+    comp.selectedMonth = comp.months[0];
     fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-}); */
+    expect(comp).toBeTruthy();
+  }));
+}

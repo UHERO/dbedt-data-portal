@@ -5,24 +5,27 @@ import { DebugElement } from '@angular/core';
 
 import { IndicatorTableComponent } from './indicator-table.component';
 
-/* describe('IndicatorTableComponent', () => {
-  let component: IndicatorTableComponent;
-  let fixture: ComponentFixture<IndicatorTableComponent>;
+let comp: IndicatorTableComponent;
+let fixture: ComponentFixture<IndicatorTableComponent>
 
+describe('IndicatorTableComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ IndicatorTableComponent ]
+      declarations: [
+        IndicatorTableComponent,
+      ],
     })
-    .compileComponents();
+      .compileComponents()
+      .then(() => {
+        fixture = TestBed.createComponent(IndicatorTableComponent);
+        comp = fixture.componentInstance;
+      });
   }));
+  tests();
+});
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(IndicatorTableComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-}); */
+function tests() {
+  it('should create a table instance', async(() => {
+    expect(comp).toBeTruthy();
+  }));
+}

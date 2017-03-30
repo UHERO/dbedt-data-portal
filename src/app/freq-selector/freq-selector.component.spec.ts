@@ -5,24 +5,27 @@ import { DebugElement } from '@angular/core';
 
 import { FreqSelectorComponent } from './freq-selector.component';
 
-/* describe('FreqSelectorComponent', () => {
-  let component: FreqSelectorComponent;
-  let fixture: ComponentFixture<FreqSelectorComponent>;
+let comp: FreqSelectorComponent;
+let fixture: ComponentFixture<FreqSelectorComponent>
 
+describe('FreqSelectorComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FreqSelectorComponent ]
+      declarations: [
+        FreqSelectorComponent,
+      ],
     })
-    .compileComponents();
+      .compileComponents()
+      .then(() => {
+        fixture = TestBed.createComponent(FreqSelectorComponent);
+        comp = fixture.componentInstance;
+      });
   }));
+  tests();
+});
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(FreqSelectorComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-}); */
+function tests() {
+  it('should create an frequency selector instance', async(() => {
+    expect(comp).toBeTruthy();
+  }));
+}

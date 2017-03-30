@@ -3,26 +3,36 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
+import { FormsModule } from '@angular/forms';
 import { YearSelectorComponent } from './year-selector.component';
 
-/* describe('YearSelectorComponent', () => {
-  let component: YearSelectorComponent;
-  let fixture: ComponentFixture<YearSelectorComponent>;
+let comp: YearSelectorComponent;
+let fixture: ComponentFixture<YearSelectorComponent>
 
+describe('YearSelectorComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ YearSelectorComponent ]
+      declarations: [
+        YearSelectorComponent,
+      ],
+      imports: [
+        FormsModule
+      ]
     })
-    .compileComponents();
+      .compileComponents()
+      .then(() => {
+        fixture = TestBed.createComponent(YearSelectorComponent);
+        comp = fixture.componentInstance;
+      });
   }));
+  tests();
+});
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(YearSelectorComponent);
-    component = fixture.componentInstance;
+function tests() {
+  it('should create a month selector instance', async(() => {
+    comp.years = ['2000', '2001', '2002', '2003'];
+    comp.selectedYear = comp.years[0];
     fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-}); */
+    expect(comp).toBeTruthy();
+  }));
+}

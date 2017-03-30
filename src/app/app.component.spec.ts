@@ -1,6 +1,6 @@
 /* tslint:disable:no-unused-variable */
 
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, async, ComponentFixture } from '@angular/core/testing';
 import { Component, Directive, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
@@ -41,6 +41,7 @@ class MockFreqSelectorDirective {
 class MockYearSelectorDirective {
   @Input() years;
   @Input() selectedYear;
+  @Input() rangeLabel;
 }
 
 @Directive({
@@ -67,9 +68,11 @@ class MockIndicatorTableDirective {
   @Input() tableData;
   @Input() datesSelected;
 }
+let comp: AppComponent;
+let fixture: ComponentFixture<AppComponent>
 
 describe('AppComponent', () => {
-  beforeEach(() => {
+  beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
         AppComponent,
@@ -89,13 +92,18 @@ describe('AppComponent', () => {
         { provide: ApiService, useClass: MockApiService },
         HelperService
       ]
+    })
+    .compileComponents()
+    .then(() => {
+      fixture = TestBed.createComponent(AppComponent);
+      comp = fixture.componentInstance;
     });
-    TestBed.compileComponents();
-  });
-
-  it('should create the app', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
   }));
+  tests();
 });
+
+function tests() {
+  it('should create the app', async(() => {
+    expect(comp).toBeTruthy();
+  }));
+}

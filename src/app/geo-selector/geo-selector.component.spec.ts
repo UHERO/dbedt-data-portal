@@ -5,24 +5,27 @@ import { DebugElement } from '@angular/core';
 
 import { GeoSelectorComponent } from './geo-selector.component';
 
-/* describe('GeoSelectorComponent', () => {
-  let component: GeoSelectorComponent;
-  let fixture: ComponentFixture<GeoSelectorComponent>;
+let comp: GeoSelectorComponent;
+let fixture: ComponentFixture<GeoSelectorComponent>
 
+describe('GeoSelectorComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GeoSelectorComponent ]
+      declarations: [
+        GeoSelectorComponent,
+      ],
     })
-    .compileComponents();
+      .compileComponents()
+      .then(() => {
+        fixture = TestBed.createComponent(GeoSelectorComponent);
+        comp = fixture.componentInstance;
+      });
   }));
+  tests();
+});
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(GeoSelectorComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-}); */
+function tests() {
+  it('should create an region selector instance', async(() => {
+    expect(comp).toBeTruthy();
+  }));
+}
