@@ -57,46 +57,54 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   activateNode(e) {
     if (e.node.hasChildren) {
       e.node.expand();
-      e.node.elementRef.nativeElement.classList.add('focus-parent');
     }
     if (!e.node.hasChildren) {
+      let indicator = this.tree.treeModel.getNodeById(e.node.id);
+      let subcategory = $(indicator.parent.elementRef.nativeElement);
+      let category = $(indicator.parent.parent.elementRef.nativeElement);
+      // Bold the text of the subcategory and top level category when selecting an indicator
+      this.addBold(subcategory, category);
       this.ids.push(e.node.id);
       this.selectedCatIds.emit(this.ids);
     }
   }
 
+  addBold(subcategory, category) {
+    let ignoreClasses = '.toggle-children-wrapper, .toggle-children, .toggle-children-placeholder';
+    subcategory.find('span').not(ignoreClasses).first().addClass('bold-selected');
+    category.find('span').not(ignoreClasses).first().addClass('bold-selected');
+  }
+
   deactivateNode(e) {
     if (e.node.hasChildren) {
       e.node.collapse();
-      let activeChild = false;
-      let activeIndicator = false;
-      e.node.children.forEach((child) => {
-        if (child.isActive === true) {
-          activeChild = true
-        }
-        if (child.hasChildren) {
-          if (child.children) {
-            child.children.forEach((indicator) => {
-              if (indicator.isActive === true) {
-                activeIndicator = true;
-              }
-            });
-          }
-        }
-      });
-      if (activeChild || activeIndicator) {
-        e.node.elementRef.nativeElement.classList.add('focus-parent');
-      } else {
-        e.node.elementRef.nativeElement.classList.remove('focus-parent');
-      }
     }
     if (!e.node.hasChildren) {
+      let indicator = this.tree.treeModel.getNodeById(e.node.id);
+      let subcategory = indicator.parent;
+      let activeIndicator = this.checkActiveIndicators(subcategory);
+      let category = indicator.parent.level === 1 ? indicator.parent : indicator.parent.parent;
+      if (!activeIndicator) {
+        let span = $(category.elementRef.nativeElement).find('span').removeClass('bold-selected');
+      }
       let idIndex = this.ids.indexOf(e.node.id);
       if (idIndex > -1) {
         this.ids.splice(idIndex, 1);
         this.selectedCatIds.emit(this.ids);
       }
     }
+  }
+
+  checkActiveIndicators(subcategory) {
+    let activeIndicator = false;
+    if (subcategory.children) {
+      subcategory.children.forEach((indicator) => {
+        if (indicator.isActive) {
+          activeIndicator = true;
+        }
+      });
+    }
+    return activeIndicator;
   }
 
   // Deactivate nodes when clicking on Clear All Selections
