@@ -66,6 +66,12 @@ export class AppComponent {
     if (!this.selectedIndicators.length) {
       // Remove table if all categories are deselected and remove date selectors
       this.toggleDateSelectors();
+      //this.clearSelections();
+      this.regions = [];
+      this.selectedGeos = [];
+      this.frequencies = [];
+      this.selectedFreqs = [];
+      this.invalidDates = null;
     }
   }
 
@@ -137,14 +143,12 @@ export class AppComponent {
   }
 
   toggleDateSelectors() {
-    if (!this.noSeries) {
-      let aIndex = this.selectedFreqs.indexOf('A');
-      let qIndex = this.selectedFreqs.indexOf('Q');
-      let mIndex = this.selectedFreqs.indexOf('M');
-      this.annualSelected = aIndex > -1 ? true : false;
-      this.quarterSelected = qIndex > -1 ? true : false;
-      this.monthSelected = mIndex > -1 ? true : false;
-    }
+    let aIndex = this.selectedFreqs.indexOf('A');
+    let qIndex = this.selectedFreqs.indexOf('Q');
+    let mIndex = this.selectedFreqs.indexOf('M');
+    this.annualSelected = aIndex > -1 ? true : false;
+    this.quarterSelected = qIndex > -1 ? true : false;
+    this.monthSelected = mIndex > -1 ? true : false;
   }
 
   getSeries() {

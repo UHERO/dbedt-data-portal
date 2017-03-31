@@ -24,7 +24,12 @@ export class GeoSelectorComponent implements OnInit {
     $('.select2-region').select2({
       data: this.regions,
       placeholder: 'Select Area',
-      width: '250px',
+      width: '',
+      language: {
+        noResults: function() {
+          return 'Select an indicator first'
+        }
+      },
       allowClear: true
     });
     $('.select2-region').val(this.selectedGeos).trigger('change');
