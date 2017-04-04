@@ -147,7 +147,7 @@ export class AppComponent {
     let qIndex = this.selectedFreqs.indexOf('Q');
     let mIndex = this.selectedFreqs.indexOf('M');
     this.annualSelected = aIndex > -1 ? true : false;
-    this.quarterSelected = qIndex > -1 ? true : false;
+    this.quarterSelected = qIndex > -1 && mIndex === -1 ? true : false;
     this.monthSelected = mIndex > -1 ? true : false;
   }
 

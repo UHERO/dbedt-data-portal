@@ -1,13 +1,8 @@
-.select2.select2-container.select2-container--default {
-    min-width: 300px;
+label {
+    vertical-align: top;
+}
 
-    .select2-selection--multiple {
-        border-radius: 0;
-    }
-
-    .select2-selection__choice {
-        border-radius: 0;
-        background-color: #F9F9F9;
-        margin-right: 3px;
-    }
+.select-frequency {
+    width: 125px;
+    height: 64px;
 }

@@ -44,16 +44,16 @@ export class HelperService {
       }
     }
     while (startYear + '-' + m[startMonth] + '-01' <= endYear + '-' + m[endMonth] + '-01') {
-      if ((startMonth === 1 && selectedFreqs.indexOf('A') > -1)) {
-        dateArray.push({date: startYear.toString() + '-01-01', tableDate: startYear.toString()});
+      // If monthly frequency is selected, add to table dates
+      if (m[startMonth] && selectedFreqs.indexOf('M') > -1) {
+        dateArray.push({date: startYear.toString() + '-' + m[startMonth] + '-01', tableDate: startYear.toString() + '-' + m[startMonth]});
       }
       // If quarterly frequency is selected, add to table dates
       if (q[startMonth] && selectedFreqs.indexOf('Q') > -1) {
         dateArray.push({date: startYear.toString() + '-' + m[startMonth] + '-01', tableDate: startYear.toString() + ' ' + q[startMonth]});
       }
-      // If monthly frequency is selected, add to table dates
-      if (m[startMonth] && selectedFreqs.indexOf('M') > -1) {
-        dateArray.push({date: startYear.toString() + '-' + m[startMonth] + '-01', tableDate: startYear.toString() + '-' + m[startMonth]});
+      if ((startMonth === 1 && selectedFreqs.indexOf('A') > -1)) {
+        dateArray.push({date: startYear.toString() + '-01-01', tableDate: startYear.toString()});
       }
       startYear = startMonth === 12 ? startYear += 1 : startYear;
       startMonth = startMonth === 12 ? 1 : startMonth += 1;

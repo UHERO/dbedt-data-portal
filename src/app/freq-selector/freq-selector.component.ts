@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, AfterViewInit } from '@angular/core';
 import { Frequency } from '../frequency';
-import 'select2';
 import 'jquery';
 declare var $: any;
 
@@ -13,27 +12,28 @@ export class FreqSelectorComponent implements OnInit {
   @Input() freqs: Array<Frequency>;
   @Input() selectedFreqs;
   @Output() selectedFreqList = new EventEmitter();
+  private toggleSelected = []
 
   constructor() { }
 
   ngOnInit() {
   }
 
-  ngAfterViewInit() {
-    $('.select2-frequency').select2({
-      data: this.freqs,
-      placeholder: 'Select Frequency',
-      width: '',
-      language: {
-        noResults: function() {
-          return 'Select an indicator first'
-        }
-      },
-      allowClear: true,
-    });
-    $('.select2-frequency').val(this.selectedFreqs).trigger('change');
-    $('.select2-frequency').on('change', e => {
-      this.selectedFreqList.emit($(e.target).val());
-    });
+  toggle(e) {
+    let $self = $(e);
+    // If option is selected, deselect and remove from selected list of emitted frequencies
+    if ($self.prop('selected')) {
+      $self.prop('selected', false);
+      let i = this.toggleSelected.indexOf($self.val());
+      if (i > - 1) {
+        this.toggleSelected.splice(i, 1);
+      }
+    // Else, select option and emit frequency value
+    } else {
+      $self.prop('selected', true);
+      this.toggleSelected.push($self.val())
+    }
+    this.selectedFreqList.emit(this.toggleSelected);
+    return false;
   }
 }

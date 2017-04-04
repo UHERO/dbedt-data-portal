@@ -23,7 +23,6 @@
         "../node_modules/primeng/resources/primeng.min.css",
         "../node_modules/datatables.net-dt/css/jquery.dataTables.css",
         "../node_modules/datatables.net-fixedcolumns-dt/css/fixedColumns.dataTables.css",
-        "../node_modules/select2/dist/css/select2.min.css",
         "styles.scss"
       ],
       "scripts": [
@@ -31,7 +30,6 @@
         "../node_modules/tether/dist/js/tether.js",
         "../node_modules/bootstrap/dist/js/bootstrap.js",
         "../node_modules/datatables.net/js/jquery.dataTables.js",
-        "../node_modules/select2/dist/js/select2.full.js",
         "../node_modules/jszip/dist/jszip.js",
         "../node_modules/pdfmake/build/pdfmake.min.js",
         "../node_modules/pdfmake/build/vfs_fonts.js"
