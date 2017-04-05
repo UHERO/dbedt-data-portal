@@ -17,6 +17,9 @@ export class HelperService {
     let endYear = +selectedDates.endDate.substr(0, 4);
     let startMonth = +selectedDates.startDate.substr(5, 2);
     let endMonth = +selectedDates.endDate.substr(5, 2);
+    if (selectedFreqs.indexOf('Q') > -1) {
+      endMonth += 2;
+    }
     if (selectedDates.selectedStartYear) {
       startYear = +selectedDates.selectedStartYear; 
     }
@@ -27,7 +30,7 @@ export class HelperService {
       endYear = +selectedDates.selectedEndYear;
     }
     if (selectedDates.selectedEndMonth) {
-      endMonth = +selectedDates.selectedEndMonth
+      endMonth = +selectedDates.selectedEndMonth;
     }
     if (selectedDates.selectedStartQuarter) {
       startMonth = this.setSelectedStartQuarter(q, selectedDates, startMonth);
@@ -49,7 +52,7 @@ export class HelperService {
         }
       }
       // If annual frequency is selected, add to table dates
-      if ((startMonth === 12 && selectedFreqs.indexOf('A') > -1)) {
+      if ((startMonth === 12 && selectedFreqs.indexOf('A') > -1) || dateArray.length === 0 && selectedFreqs.indexOf('A') > -1 && selectedFreqs.indexOf('Q') === -1 && selectedFreqs.indexOf('M') === -1) {
         dateArray.push({date: startYear.toString() + '-01-01', tableDate: startYear.toString()});
       }
       startYear = startMonth === 12 ? startYear += 1 : startYear;

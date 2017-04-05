@@ -1,13 +1,15 @@
 label {
     vertical-align: top;
+    font-family: 'Lucida Sans', sans-serif;
 }
 
 .select-region {
     width: 180px;
-    height: 100px;
+    height: 90px;
     overflow: hidden;
 
     option {
-        font-size: 0.9em;
+        font-size: 0.85em;
+        font-family: 'Lucida Sans', sans-serif;
     }
 }
