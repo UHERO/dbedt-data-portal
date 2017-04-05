@@ -5,4 +5,9 @@ label {
 .select-frequency {
     width: 125px;
     height: 64px;
+    overflow: hidden;
+
+    option {
+        font-size: 0.9em;
+    }
 }

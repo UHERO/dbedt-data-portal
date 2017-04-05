@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Frequency } from '../frequency';
 import 'jquery';
 declare var $: any;
@@ -9,6 +9,8 @@ declare var $: any;
   styleUrls: ['./freq-selector.component.scss']
 })
 export class FreqSelectorComponent implements OnInit {
+  // If indicator(s) selected, do not display placeholder ('Select an Indicator')
+  @Input() indicator: boolean;
   @Input() freqs: Array<Frequency>;
   @Input() selectedFreqs;
   @Output() selectedFreqList = new EventEmitter();
@@ -31,9 +33,11 @@ export class FreqSelectorComponent implements OnInit {
     // Else, select option and emit frequency value
     } else {
       $self.prop('selected', true);
-      this.toggleSelected.push($self.val())
+      this.toggleSelected.push($self.val());
     }
-    this.selectedFreqList.emit(this.toggleSelected);
+    let options = $('.select-frequency option:selected')
+    this.selectedFreqs = Array.apply(null, options).filter(option => option.selected).map(option => option.value);
+    this.selectedFreqList.emit(this.selectedFreqs);
     return false;
   }
 }

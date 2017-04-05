@@ -16,6 +16,7 @@ export class AppComponent {
   private errorMsg: string;
   // List of indicators selected from category-tree
   private selectedIndicators: Array<any> = [];
+  private indicatorSelected: boolean = false;
 
   // List of regions and freqeuencies for the selected series/categories
   private regions: Array<Geography>;
@@ -56,6 +57,7 @@ export class AppComponent {
           this.errorMsg = error;
         },
         () => {
+          this.indicatorSelected = true;
           this.freqSelectorList(freqList);
           this.geoSelectorList(geoList);
           if (this.selectedGeos.length && this.selectedFreqs.length) {
@@ -71,6 +73,7 @@ export class AppComponent {
       this.selectedGeos = [];
       this.frequencies = [];
       this.selectedFreqs = [];
+      this.indicatorSelected = false;
       this.invalidDates = null;
     }
   }
@@ -255,6 +258,7 @@ export class AppComponent {
     this.selectedFreqs = [];
     this.selectedGeos = [];
     this.dateArray = [];
+    this.indicatorSelected = false;
     this.toggleDateSelectors();
     this.sidebar.reset();
   }

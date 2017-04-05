@@ -5,4 +5,9 @@ label {
 .select-region {
     width: 180px;
     height: 100px;
+    overflow: hidden;
+
+    option {
+        font-size: 0.9em;
+    }
 }
