@@ -30,35 +30,58 @@ export class HelperService {
       endMonth = +selectedDates.selectedEndMonth
     }
     if (selectedDates.selectedStartQuarter) {
-      for (let key in q) {
-        if (q[key] === selectedDates.selectedStartQuarter) {
-          startMonth = +key;
-        }
-      }
+      startMonth = this.setSelectedStartQuarter(q, selectedDates, startMonth);
     }
     if (selectedDates.selectedEndQuarter) {
-      for (let key in q) {
-        if (q[key] === selectedDates.selectedEndQuarter) {
-          endMonth = +key + 2;
-        }
-      }
+      endMonth = this.setSelectedEndQuarter(q, selectedDates, endMonth);
     }
     while (startYear + '-' + m[startMonth] + '-01' <= endYear + '-' + m[endMonth] + '-01') {
+      // Frequency Order: M, Q, A
       // If monthly frequency is selected, add to table dates
       if (m[startMonth] && selectedFreqs.indexOf('M') > -1) {
         dateArray.push({date: startYear.toString() + '-' + m[startMonth] + '-01', tableDate: startYear.toString() + '-' + m[startMonth]});
       }
       // If quarterly frequency is selected, add to table dates
-      if (q[startMonth] && selectedFreqs.indexOf('Q') > -1) {
-        dateArray.push({date: startYear.toString() + '-' + m[startMonth] + '-01', tableDate: startYear.toString() + ' ' + q[startMonth]});
+      if (selectedFreqs.indexOf('Q') > -1) {
+        let monthCheck = this.checkStartMonth(startMonth);
+        if (monthCheck) {
+          dateArray.push({date: startYear.toString() + '-' + m[startMonth - 2] + '-01', tableDate: startYear.toString() + ' ' + q[startMonth - 2]})
+        }
       }
-      if ((startMonth === 1 && selectedFreqs.indexOf('A') > -1)) {
+      // If annual frequency is selected, add to table dates
+      if ((startMonth === 12 && selectedFreqs.indexOf('A') > -1)) {
         dateArray.push({date: startYear.toString() + '-01-01', tableDate: startYear.toString()});
       }
       startYear = startMonth === 12 ? startYear += 1 : startYear;
       startMonth = startMonth === 12 ? 1 : startMonth += 1;
     }
     return dateArray;
+  }
+
+  checkStartMonth(startMonth) {
+    // If startMonth returns true, add quarter to date array
+    if (startMonth === 3 || startMonth === 6 || startMonth === 9 || startMonth === 12) {
+      return true;
+    }
+    return false;
+  }
+
+  setSelectedStartQuarter(quarters, selectedDates, startMonth) {
+    for (let key in quarters) {
+      if (quarters[key] === selectedDates.selectedStartQuarter) {
+        startMonth = +key;
+      }
+    }
+    return startMonth;
+  }
+
+  setSelectedEndQuarter(quarters, selectedDates, endMonth) {
+    for (let key in quarters) {
+      if (quarters[key] === selectedDates.selectedEndQuarter) {
+        endMonth = +key + 2;
+      }
+    }
+    return endMonth;
   }
 
   yearsSelected(selectedDates) {
