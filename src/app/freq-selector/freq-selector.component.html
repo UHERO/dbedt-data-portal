@@ -1,3 +1,5 @@
-<select class="select2-frequency" multiple="multiple">
-    <option *ngFor="let freq of freqs" [value]="freq.id">{{freq.text}}</option>
+<label>Frequency</label>
+<select class="select-frequency" multiple="multiple">
+    <option *ngIf='!indicator' disabled>Select an Indicator</option>
+    <option *ngFor="let freq of freqs" [value]="freq.id" on-mousedown='toggle($event.target)'>{{freq.text}}</option>
 </select>

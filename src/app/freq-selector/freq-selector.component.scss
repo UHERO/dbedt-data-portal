@@ -1,13 +1,16 @@
-.select2.select2-container.select2-container--default {
-    min-width: 300px;
+label {
+    vertical-align: top;
+    font-family: 'Lucida Sans', sans-serif;
+    font-size: 0.9em;
+}
 
-    .select2-selection--multiple {
-        border-radius: 0;
-    }
+.select-frequency {
+    width: 130px;
+    height: 64px;
+    overflow: hidden;
 
-    .select2-selection__choice {
-        border-radius: 0;
-        background-color: #F9F9F9;
-        margin-right: 3px;
+    option {
+        font-size: 0.85em;
+        font-family: 'Lucida Sans', sans-serif;
     }
 }

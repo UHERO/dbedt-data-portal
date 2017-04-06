@@ -16,6 +16,7 @@ export class AppComponent {
   private errorMsg: string;
   // List of indicators selected from category-tree
   private selectedIndicators: Array<any> = [];
+  private indicatorSelected: boolean = false;
 
   // List of regions and freqeuencies for the selected series/categories
   private regions: Array<Geography>;
@@ -45,9 +46,6 @@ export class AppComponent {
     let freqList = [];
     this.selectedIndicators = [];
     let selectedMeasurements = e;
-    this.datesSelected = <DatesSelected>{};
-    this.datesSelected.startDate = '';
-    this.datesSelected.endDate = '';
     selectedMeasurements.forEach((m) => {
       this._apiService.fetchMeasurementSeries(m).subscribe((series) => {
         this.initSettings(series, geoList, freqList);
@@ -56,6 +54,7 @@ export class AppComponent {
           this.errorMsg = error;
         },
         () => {
+          this.indicatorSelected = true;
           this.freqSelectorList(freqList);
           this.geoSelectorList(geoList);
           if (this.selectedGeos.length && this.selectedFreqs.length) {
@@ -66,11 +65,12 @@ export class AppComponent {
     if (!this.selectedIndicators.length) {
       // Remove table if all categories are deselected and remove date selectors
       this.toggleDateSelectors();
-      //this.clearSelections();
+      this.displayTable = false;
       this.regions = [];
       this.selectedGeos = [];
       this.frequencies = [];
       this.selectedFreqs = [];
+      this.indicatorSelected = false;
       this.invalidDates = null;
     }
   }
@@ -147,7 +147,7 @@ export class AppComponent {
     let qIndex = this.selectedFreqs.indexOf('Q');
     let mIndex = this.selectedFreqs.indexOf('M');
     this.annualSelected = aIndex > -1 ? true : false;
-    this.quarterSelected = qIndex > -1 ? true : false;
+    this.quarterSelected = qIndex > -1 && mIndex === -1 ? true : false;
     this.monthSelected = mIndex > -1 ? true : false;
   }
 
@@ -164,9 +164,13 @@ export class AppComponent {
       });
       counter += 1;
       if (counter === this.selectedIndicators.length) {
+        this.datesSelected = <DatesSelected>{};
+        this.datesSelected.endDate = '';
+        this.datesSelected.startDate = '';
         let seriesCount = 0;
         if (seriesData.length !== 0) {
           seriesData.forEach((series) => {
+            // Find the earliest and lastest observation dates, used to set dates in the range selectors
             let obsStart = series.seriesObservations.observationStart.substr(0, 10);
             let obsEnd = series.seriesObservations.observationEnd.substr(0, 10);
             if (this.datesSelected.startDate === '' || this.datesSelected.startDate > obsStart) {
@@ -255,6 +259,7 @@ export class AppComponent {
     this.selectedFreqs = [];
     this.selectedGeos = [];
     this.dateArray = [];
+    this.indicatorSelected = false;
     this.toggleDateSelectors();
     this.sidebar.reset();
   }
@@ -262,37 +267,31 @@ export class AppComponent {
   startYearChange(e) {
     this.datesSelected.selectedStartYear = e;
     this.getDates();
-    this.getSeries();
   }
 
   startQuarterChange(e) {
     this.datesSelected.selectedStartQuarter = e;
     this.getDates();
-    this.getSeries();
   }
 
   startMonthChange(e) {
     this.datesSelected.selectedStartMonth = e;
     this.getDates();
-    this.getSeries();
   }
 
   endYearChange(e) {
     this.datesSelected.selectedEndYear = e;
     this.getDates();
-    this.getSeries();
   }
 
   endQuarterChange(e) {
     this.datesSelected.selectedEndQuarter = e;
     this.getDates();
-    this.getSeries();
   }
 
   endMonthChange(e) {
     this.datesSelected.selectedEndMonth = e;
     this.getDates();
-    this.getSeries();
   }
 
   getDates() {
@@ -300,12 +299,12 @@ export class AppComponent {
     if (validDates) {
       this.invalidDates = null;
       this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.selectedFreqs);
-      this._helper.yearsSelected(this.datesSelected);
+      this._helper.yearsRange(this.datesSelected);
       if (this.selectedFreqs.indexOf('Q') > -1) {
-        this._helper.quartersSelected(this.datesSelected);
+        this._helper.quartersRange(this.datesSelected);
       }
       if (this.selectedFreqs.indexOf('M') > -1) {
-        this._helper.monthsSelected(this.datesSelected);
+        this._helper.monthsRange(this.datesSelected);
       }
     } else {
       this.invalidDates = "Invalid date selection";

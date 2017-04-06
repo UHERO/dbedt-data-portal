@@ -10,6 +10,7 @@ export class HelperService {
   constructor() { }
 
   categoryDateArray(selectedDates, selectedFreqs: Array<string>) {
+    // Dates used in table header
     let dateArray = [];
     let m = { 1: '01', 2: '02', 3: '03', 4: '04', 5: '05', 6: '06', 7: '07', 8: '08', 9: '09', 10: '10', 11: '11', 12: '12' };
     let q = { 1: 'Q1', 4: 'Q2', 7: 'Q3', 10: 'Q4' };
@@ -17,43 +18,31 @@ export class HelperService {
     let endYear = +selectedDates.endDate.substr(0, 4);
     let startMonth = +selectedDates.startDate.substr(5, 2);
     let endMonth = +selectedDates.endDate.substr(5, 2);
-    if (selectedDates.selectedStartYear) {
-      startYear = +selectedDates.selectedStartYear; 
-    }
-    if (selectedDates.selectedStartMonth) {
-      startMonth = +selectedDates.selectedStartMonth;
-    }
-    if (selectedDates.selectedEndYear) {
-      endYear = +selectedDates.selectedEndYear;
-    }
-    if (selectedDates.selectedEndMonth) {
-      endMonth = +selectedDates.selectedEndMonth
-    }
-    if (selectedDates.selectedStartQuarter) {
-      for (let key in q) {
-        if (q[key] === selectedDates.selectedStartQuarter) {
-          startMonth = +key;
-        }
-      }
-    }
-    if (selectedDates.selectedEndQuarter) {
-      for (let key in q) {
-        if (q[key] === selectedDates.selectedEndQuarter) {
-          endMonth = +key + 2;
-        }
-      }
-    }
+    let annualSelected = selectedFreqs.indexOf('A') > -1;
+    let monthSelected = selectedFreqs.indexOf('M') > -1;
+    let quarterSelected = selectedFreqs.indexOf('Q') > -1;
+    // Check if selectedDates' properties have values set (i.e. date range selectors have been used)
+    let dates = this.checkSelectedDates(selectedDates, monthSelected, startYear, endYear, startMonth, endMonth, q);
+    startYear = dates.startYear;
+    endYear = dates.endYear;
+    startMonth = dates.startMonth;
+    endMonth = dates.endMonth;
     while (startYear + '-' + m[startMonth] + '-01' <= endYear + '-' + m[endMonth] + '-01') {
-      if ((startMonth === 1 && selectedFreqs.indexOf('A') > -1)) {
-        dateArray.push({date: startYear.toString() + '-01-01', tableDate: startYear.toString()});
-      }
-      // If quarterly frequency is selected, add to table dates
-      if (q[startMonth] && selectedFreqs.indexOf('Q') > -1) {
-        dateArray.push({date: startYear.toString() + '-' + m[startMonth] + '-01', tableDate: startYear.toString() + ' ' + q[startMonth]});
-      }
-      // If monthly frequency is selected, add to table dates
-      if (m[startMonth] && selectedFreqs.indexOf('M') > -1) {
+      // Frequency display order: M, Q, A
+      if (monthSelected) {
         dateArray.push({date: startYear.toString() + '-' + m[startMonth] + '-01', tableDate: startYear.toString() + '-' + m[startMonth]});
+      }
+      if (quarterSelected) {
+        let qMonth = this.addQuarterObs(startMonth, monthSelected);
+        if (qMonth) {
+          dateArray.push({date: startYear.toString() + '-' + m[qMonth] + '-01', tableDate: startYear.toString() + ' ' + q[qMonth]});
+        }
+      }
+      if (annualSelected) {
+        let addAnnual = this.addAnnualObs(startMonth, monthSelected, quarterSelected);
+        if (addAnnual) {
+          dateArray.push({date: startYear.toString() + '-01-01', tableDate: startYear.toString()});
+        }
       }
       startYear = startMonth === 12 ? startYear += 1 : startYear;
       startMonth = startMonth === 12 ? 1 : startMonth += 1;
@@ -61,7 +50,80 @@ export class HelperService {
     return dateArray;
   }
 
-  yearsSelected(selectedDates) {
+  addQuarterObs(startMonth, monthSelected) {
+    let monthCheck, qMonth;
+    // If M not selected, add Q at months 1, 4, 7, 10 (i.e. startMonth === 1, 4, 7, 10)
+    if (!monthSelected) {
+      qMonth = startMonth;
+      monthCheck = this.checkStartMonth(startMonth + 2);
+      if (monthCheck) return qMonth;
+    }
+    //If M is selected, add Q after months 3, 7, 9, 12 (i.e. startMonth === 3, 7, 9, 12)
+    if (monthSelected) {
+      qMonth = startMonth - 2;
+      monthCheck = this.checkStartMonth(startMonth);
+      if (monthCheck) return qMonth;
+    }
+  }
+
+  addAnnualObs(startMonth, monthSelected, quarterSelected) {
+    // If M selected, add A after month 12
+    if (monthSelected && startMonth === 12) {
+      return true;
+    }
+    // If Q selected (w/o M), add A after 4th Quarter
+    if (quarterSelected && !monthSelected && startMonth === 10) {
+      return true;
+    }
+    // If only A selected, add to date array
+    if (!quarterSelected && !monthSelected && startMonth === 1) {
+      return true;
+    }
+    return false;
+  }
+
+  checkSelectedDates(selectedDates, monthSelected, startYear, endYear, startMonth, endMonth, quarters) {
+    startYear = selectedDates.selectedStartYear ? +selectedDates.selectedStartYear : startYear;
+    endYear = selectedDates.selectedEndYear ? +selectedDates.selectedEndYear : endYear;
+    startMonth = selectedDates.selectedStartMonth ? +selectedDates.selectedStartMonth : startMonth;
+    endMonth = selectedDates.selectedEndMonth ? +selectedDates.selectedEndMonth : endMonth;
+    if (!monthSelected) {
+      startMonth = selectedDates.selectedStartQuarter ? this.setStartMonthQ(quarters, selectedDates, startMonth) : startMonth;
+      endMonth = selectedDates.selectedEndQuarter ? this.setEndMonthQ(quarters, selectedDates, endMonth) : endMonth;
+    }
+    return { startYear: startYear, endYear: endYear, startMonth: startMonth, endMonth: endMonth }
+  }
+
+  // If returns true, add quarter to date array
+  checkStartMonth(month) {
+    if (month === 3 || month === 6 || month === 9 || month === 12) {
+      return true;
+    }
+    return false;
+  }
+
+  // Get start month based on selected start quarter
+  setStartMonthQ(quarters, selectedDates, startMonth) {
+    for (let key in quarters) {
+      if (quarters[key] === selectedDates.selectedStartQuarter) {
+        startMonth = +key;
+      }
+    }
+    return startMonth;
+  }
+
+  // Get end month based on selected end quarter
+  setEndMonthQ(quarters, selectedDates, endMonth) {
+    for (let key in quarters) {
+      if (quarters[key] === selectedDates.selectedEndQuarter) {
+        endMonth = +key + 2;
+      }
+    }
+    return endMonth;
+  }
+
+  // Create list of years for year range selectors
+  yearsRange(selectedDates) {
     let allYears = [];
     let startYear = +selectedDates.startDate.substr(0, 4);
     let endYear = +selectedDates.endDate.substr(0, 4);
@@ -78,7 +140,8 @@ export class HelperService {
     selectedDates.toYearList = allYears;
   }
 
-  quartersSelected(selectedDates) {
+  // Create list of quarters for quarter range selectors
+  quartersRange(selectedDates) {
     let allQuarters = ['Q4', 'Q3', 'Q2', 'Q1'];
     let m = ['12', '11', '10', '09', '08', '07', '06', '05', '04', '03', '02', '01'];
     selectedDates.fromQuarterList = allQuarters;
@@ -90,10 +153,10 @@ export class HelperService {
     selectedDates.selectedEndQuarter = selectedDates.toQuarterList.indexOf(selectedDates.selectedEndQuarter) > -1 ? selectedDates.selectedEndQuarter : maxQuarter;
   }
 
-  monthsSelected(selectedDates) {
+  // Create list of months for month range selectors
+  monthsRange(selectedDates) {
     let allMonths = ['12', '11', '10', '09', '08', '07', '06', '05', '04', '03', '02', '01'];
     let q = { '01': 'Q1', '04': 'Q2', '07': 'Q3', '10': 'Q4' };   
-    let startMonth, endMonth;
     selectedDates.fromMonthList = allMonths;
     selectedDates.toMonthList = allMonths;
     this.minMaxYearMonths(selectedDates, allMonths);
@@ -208,38 +271,6 @@ export class HelperService {
     let r = '';
     while ((i -= 3) > signCheck) { r = ',' + intString.substr(i, 3) + r; }
     return intString.substr(0, i + 3) + r + (decimalString ? '.' + decimalString : '');
-  }
-
-  checkSelectedGeoFreqs(selected: string, geoList: Array<any>, frequencies: Array<any>) {
-    geoList.forEach((geo, index) => {
-      if (selected === geo.id) {
-        geo.freqs.forEach((freq, index) => {
-          this.uniqueFreqs(freq, frequencies);
-        });
-      }
-    });
-  }
-
-  checkSelectedList(selected: string, index: number, filterList: Array<any>, selectedList: Array<any>) {
-    let exist = false;
-    for (let i in filterList) {
-      if (selected === filterList[i].id) {
-        exist = true;
-      }
-    }
-    if (!exist) {
-      selectedList.splice(index, 1);
-    }
-  }
-
-  checkSelectedFreqGeos(selected: string, freqList: Array<any>, regions: Array<any>) {
-    freqList.forEach((freq, index) => {
-      if (selected === freq.id) {
-        freq.geos.forEach((geo, index) => {
-          this.uniqueGeos(geo, regions);
-        });
-      }
-    });
   }
 
   formatGeos(geo) {
