@@ -151,33 +151,54 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           extend: 'print',
           text: '<i class="fa fa-print" aria-hidden="true" title="Print"></i>',
           message: 'Research & Economic Analysis Division, DBEDT',
-          customize: function (win) {
-            function splitTable(table) {
-              let rows = table.find('tr');
-              $('<table>').insertAfter(table);
-              const limit = 9;
-
-              if (table.find('tr:first-child>th').length > limit) {
-                let newTable = table.next('table');
-                newTable.addClass('stripe dataTable')
-                newTable.append('<tbody>');
-                rows.each(function () {
-                  let tr = $(this);
-                  let clone = tr.clone();
-                  clone.html('');
-                  newTable.find('tbody').append(clone);
-                  let lastTr = newTable.find('tr:last-child');
-                  lastTr.append($('>:gt(' + limit + ')', this));
-                });
-                splitTable(newTable);
+          customize: function(win) {
+            // Split table into smaller tables with maximum of 10 columns each
+            // fixedCols is the array of columns to repeat in each table (i.e. displace indicator column in each table)
+            function splitTable(table, maxCols, fixedCols) {
+              let $table = table;
+              // Row length of original table
+              let rowLength = $('tr:first>*', $table).length;
+              // Number of new tables to generate
+              let n = Math.ceil(rowLength / maxCols);
+              let bufferTables = [];
+              let counter = 1;
+              for (let i = 0; i <= n; i++) {
+                // List of columns to keep in table
+                let colList = fixedCols.slice(0);
+                while (colList.length < maxCols && counter <= rowLength) {
+                  if (colList.indexOf(counter) == -1) {
+                    colList.push(counter);
+                  }
+                  counter += 1;
+                }
+                // Break if last table only has one column (i.e. only contains indicator column)
+                if (i == n && colList.length == 1) {
+                  break;
+                }
+                let $newTable = $table.clone(true);
+                for (let j = 1; j <= rowLength; j++) {
+                  if (colList.indexOf(j) == -1) {
+                    $('tr>:nth-child(' + j + ')', $newTable).hide();
+                  }
+                }
+                bufferTables.push($newTable);
               }
+              (bufferTables.reverse()).forEach((element) => {
+                $('<br>').insertAfter($table);
+                element.insertAfter($table);
+              });
             }
             let dtTable = $(win.document.body).find('table');
-            splitTable(dtTable);
-            $(win.document.body).find('table:nth-child(odd) td').each(function (index) {
-              $(this).css('background-color', '#F9F9F9');
+            splitTable(dtTable, 10, [1]);
+            // Remove original table from print
+            dtTable.remove();
+            let $tables = $(win.document.body).find('table');
+            $tables.each(function (i, table) {
+              $(table).find('tr:odd').each(function () {
+                $(this).css('background-color', '#F9F9F9');
+              });
             });
-            $(win.document.body).find('table:last-child').after("<p>Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/</p>")
+            $(win.document.body).find('br:last-child').after("<p>Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/</p>");
           }
         }],
       columns: tableColumns,

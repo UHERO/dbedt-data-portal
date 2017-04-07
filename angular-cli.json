@@ -32,9 +32,7 @@
         "../node_modules/datatables.net/js/jquery.dataTables.js",
         "../node_modules/jszip/dist/jszip.js",
         "../node_modules/pdfmake/build/pdfmake.js",
-        "../node_modules/pdfmake/build/vfs_fonts.js",
-        "../node_modules/jspdf/dist/jspdf.min.js",
-        "../node_modules/jspdf-autotable/dist/jspdf.plugin.autotable.js"
+        "../node_modules/pdfmake/build/vfs_fonts.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
