@@ -268,7 +268,7 @@ export class HelperService {
     let remainder = Math.abs(fixedNum - int);
     let decimalString = ('' + remainder.toFixed(decimal)).substr(2, decimal);
     let intString = '' + int, i = intString.length;
-    let r = '';
+    let r = ' ';
     while ((i -= 3) > signCheck) { r = ',' + intString.substr(i, 3) + r; }
     return intString.substr(0, i + 3) + r + (decimalString ? '.' + decimalString : '');
   }

@@ -7,6 +7,7 @@ import 'datatables.net-buttons/js/dataTables.buttons.js';
 import 'datatables.net-buttons/js/buttons.html5.js';
 import 'datatables.net-buttons/js/buttons.flash.js';
 import 'datatables.net-buttons/js/buttons.print.js';
+declare var jsPDF: any;
 
 @Component({
   selector: 'app-indicator-table',
@@ -32,17 +33,22 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
 
   initDatatable(): void {
     let tableColumns = [];
+    let pdfColumns = [];
     let exampleId: any = $('#indicator-table');
     if (this.tableWidget) {
       // Destroy table if table has already been initialized
       this.tableWidget.destroy();
       exampleId.empty();
     }
-    tableColumns.push({ title: 'Indicator', data: 'indicator' }, { title: 'Area', data: 'region' }, { title: 'Units', data: 'units' })
+    tableColumns.push({ title: 'Indicator', data: 'indicator' }, { title: 'Area', data: 'region' }, { title: 'Units', data: 'units' });
+    pdfColumns.push({ title: 'Indicator', dataKey: 'indicator' }, { title: 'Area', dataKey: 'region'}, { title: 'Units', data: 'units' });
     this.dateArray.forEach((date) => {
       tableColumns.push({ title: date.tableDate, data: 'observations.' + date.tableDate });
+      pdfColumns.push({ title: date.tableDate, dataKey: 'observations.' + date.tableDate });
     });
     tableColumns.push({ title: 'Source', data: 'source' });
+    pdfColumns.push({ title: 'Source', dataKey: 'source'});
+    let tableData = this.tableData
     this.tableWidget = exampleId.DataTable({
       data: this.tableData,
       dom: 'Bt',
@@ -88,36 +94,45 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           pageSize: 'letter',
           message: 'Research & Economic Analysis Division, DBEDT',
           customize: function (doc) {
-            // Prevent ending cells from falling off
+            // Table rows should be divisible by 10
             // Maintain consistant table width (i.e. add empty strings if row has less than 10 data cells)
-            function checkRowLength(row) {
-              let rowDiff = row.length % 10;
+            function rowRightPad(row) {
+              let paddedRow = [];
+              row.forEach((item) => {
+                paddedRow.push(item);
+              });
+              let rowDiff = paddedRow.length % 10;
               let addString = 10 - rowDiff;
               while (addString) {
-                row.push({ text: '', style: ''});
+                paddedRow.push({ text: ' ', style: ''});
                 addString -= 1;
               }
+              return paddedRow;
             }
             let currentTable = doc.content[2].table.body;
             let formattedTable: Array<any> = [];
             // Reformat table to allow for a maximum of 10 columns
             for (let i = 0; i < currentTable.length; i++) {
-              let newRow = [];
               let currentRow = currentTable[i];
-              checkRowLength(currentRow);
+              let paddedRow = rowRightPad(currentRow);
               let counter = currentTable.length;
-              let indicator = [{ text: currentRow[0].text, style: currentRow[0].style }]
-              for (let n = 1; n < currentRow.length; n++) {
-                newRow.push(currentRow[n]);
-                if (newRow.length === 9 || n === currentRow.length - 1) {
-                  let r = indicator.concat(newRow);
-                  if (r.length < 10) {
-                    checkRowLength(r);
+              let indicator = { text: paddedRow[0].text, style: paddedRow[0].style };
+              let newRow = [];
+              for (let n = 1; n < paddedRow.length - 1; n++) {
+                // Prevent empty rows from collapsing
+                paddedRow[n].text = paddedRow[n].text === '' ? ' ' : paddedRow[n].text;
+                newRow.push(paddedRow[n]);
+                if (newRow.length === 9 || n === paddedRow.length - 1) {
+                  let copy = Object.assign({}, indicator);
+                  // Add indicator to start of new row
+                  newRow.unshift(copy);
+                  if (newRow.length < 10) {
+                    newRow = rowRightPad(newRow);
                   }
                   if (!formattedTable[i]) {
-                    formattedTable[i] = r;
+                    formattedTable[i] = newRow;
                   } else {
-                    formattedTable[i + counter] = r;
+                    formattedTable[i + counter] = newRow;
                     counter += currentTable.length;
                   }
                   newRow = [];
