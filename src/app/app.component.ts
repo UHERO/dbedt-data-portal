@@ -204,7 +204,7 @@ export class AppComponent {
     seriesData.forEach((series) => {
       let result = {};
       this.dateArray.forEach((date, index) => {
-        result[date.tableDate] = '';
+        result[date.tableDate] = ' ';
       });
       // If decimal value is not specified, round values to 2 decimal places
       let decimals = this.setDecimals(series.decimals);
