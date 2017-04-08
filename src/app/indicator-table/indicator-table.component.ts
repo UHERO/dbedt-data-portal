@@ -109,25 +109,51 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               }
               return paddedRow;
             }
+            function checkEmptyCells(row) {
+              let emptyCount = 0;
+              row.forEach((cell) => {
+                emptyCount += cell.text === ' ' ? 1 : 0;
+              });
+              return emptyCount;
+            }
             let currentTable = doc.content[2].table.body;
             let formattedTable: Array<any> = [];
             // Reformat table to allow for a maximum of 10 columns
             for (let i = 0; i < currentTable.length; i++) {
               let currentRow = currentTable[i];
+              let sourceIndex = currentRow.length - 1;
               let paddedRow = rowRightPad(currentRow);
               let counter = currentTable.length;
               let indicator = { text: paddedRow[0].text, style: paddedRow[0].style };
+              let area = {text: paddedRow[1].text, style: paddedRow[1].style};
+              let units = {text: paddedRow[2].text, style: paddedRow[2].style};
+              let source = {text: paddedRow[sourceIndex].text, style: paddedRow[sourceIndex].style};
+              // Row to be added to formattedTable
               let newRow = [];
-              for (let n = 1; n < paddedRow.length - 1; n++) {
+              paddedRow.splice(sourceIndex, 1);
+              for (let n = 3; n <= paddedRow.length - 3; n++) {
                 // Prevent empty rows from collapsing
                 paddedRow[n].text = paddedRow[n].text === '' ? ' ' : paddedRow[n].text;
                 newRow.push(paddedRow[n]);
-                if (newRow.length === 9 || n === paddedRow.length - 1) {
-                  let copy = Object.assign({}, indicator);
-                  // Add indicator to start of new row
-                  newRow.unshift(copy);
-                  if (newRow.length < 10) {
-                    newRow = rowRightPad(newRow);
+                if (newRow.length == 7 || n == paddedRow.length - 3) {
+                  let indicatorCopy = Object.assign({}, indicator);
+                  let areaCopy = Object.assign({}, area);
+                  let unitsCopy = Object.assign({}, units);
+                  let sourceCopy = Object.assign({}, source);
+                  // Add indicator, area, and units to start of new row
+                  newRow.unshift(indicatorCopy, areaCopy, unitsCopy);
+                  newRow = newRow.length < 10 ? rowRightPad(newRow) : newRow;
+                  let lastRow;
+                  if (n == paddedRow.length - 3) {
+                    let emptyCells = checkEmptyCells(newRow);
+                    // Prevent creation of new rows containing only the indicator column at end of document
+                    if (emptyCells == 7) {
+                      newRow = [indicatorCopy, sourceCopy];
+                      newRow = rowRightPad(newRow);
+                    } else {
+                      lastRow = [indicatorCopy, sourceCopy];
+                      lastRow = rowRightPad(lastRow);
+                    }
                   }
                   if (!formattedTable[i]) {
                     formattedTable[i] = newRow;
@@ -136,9 +162,13 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
                     counter += currentTable.length;
                   }
                   newRow = [];
+                  if (lastRow) {
+                    formattedTable.push(lastRow);
+                  }
                 }
               }
             }
+            console.log(doc);
             doc.content[2].table.dontBreakRows = true;
             doc.content[2].table.headerRows = 0;
             doc.content[2].table.body = formattedTable
