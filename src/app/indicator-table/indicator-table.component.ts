@@ -156,23 +156,25 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               }
             }
             for (let i = formattedTable.length - 1; i >= 0; i--) {
+              // Number of indicators in table
+              let tableIndicators = currentTable.length - 1;
               // Find header row of last set of rows
-              let header = i - currentTable.length;
+              let header = i - tableIndicators;
               // If header row contains only three columns (indicator, area, units), remove last set of rows from export
               let emptyCount = checkEmptyCells(formattedTable[header]);
               if (emptyCount === 7) {
-                formattedTable.splice(header, currentTable.length);
+                formattedTable.splice(header, tableIndicators);
               } else {
                 break;
               }
             }
+            // Add sources to end of export
             sources.forEach((source) => {
               formattedTable.push(source)
             });
             doc.content[2].table.dontBreakRows = true;
             doc.content[2].table.headerRows = 0;
             doc.content[2].table.body = formattedTable;
-            //doc.content.push({ table: { body: sources }, layout: 'noBorders' });
             doc.content.push({
               text: 'Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/',
             });
