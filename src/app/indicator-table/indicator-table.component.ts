@@ -104,10 +104,12 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               }
               return paddedRow;
             }
-            function checkEmptyCells(row) {
+            function checkEmptyCells(header) {
               let emptyCount = 0;
-              row.forEach((cell) => {
-                emptyCount += cell.text === ' ' ? 1 : 0;
+              header.forEach((cell) => {
+                if (cell.text == ' ') {
+                  emptyCount += 1;
+                }
               });
               return emptyCount;
             }
@@ -143,17 +145,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
                   // Add indicator, area, and units to start of new row
                   newRow.unshift(indicatorCopy, areaCopy, unitsCopy);
                   newRow = newRow.length < 10 ? rowRightPad(newRow) : newRow;
-                  let rowCount = 0;
-                  if (n == paddedRow.length - 3) {
-                    console.log('end')
-                    let empty = checkEmptyCells(newRow);
-                    if (empty == 7) {
-                      rowCount += 1;
-                    }
-                  }
-                  if (rowCount === currentTable.length) {
-                    break;
-                  }
                   if (!formattedTable[i]) {
                     formattedTable[i] = newRow;
                   } else {
@@ -164,10 +155,20 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
                 }
               }
             }
+            for (let i = formattedTable.length - 1; i >= 0; i--) {
+              // Find header row of last set of rows
+              let header = i - currentTable.length;
+              // If header row contains only three columns (indicator, area, units), remove last set of rows from export
+              let emptyCount = checkEmptyCells(formattedTable[header]);
+              if (emptyCount === 7) {
+                formattedTable.splice(header, currentTable.length);
+              } else {
+                break;
+              }
+            }
             sources.forEach((source) => {
               formattedTable.push(source)
-            })
-            console.log(doc);
+            });
             doc.content[2].table.dontBreakRows = true;
             doc.content[2].table.headerRows = 0;
             doc.content[2].table.body = formattedTable;
