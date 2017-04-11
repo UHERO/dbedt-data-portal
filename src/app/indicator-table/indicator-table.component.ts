@@ -7,7 +7,6 @@ import 'datatables.net-buttons/js/dataTables.buttons.js';
 import 'datatables.net-buttons/js/buttons.html5.js';
 import 'datatables.net-buttons/js/buttons.flash.js';
 import 'datatables.net-buttons/js/buttons.print.js';
-declare var jsPDF: any;
 
 @Component({
   selector: 'app-indicator-table',
@@ -33,23 +32,19 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
 
   initDatatable(): void {
     let tableColumns = [];
-    let pdfColumns = [];
-    let exampleId: any = $('#indicator-table');
+    let indicatorTable: any = $('#indicator-table');
     if (this.tableWidget) {
       // Destroy table if table has already been initialized
       this.tableWidget.destroy();
-      exampleId.empty();
+      indicatorTable.empty();
     }
     tableColumns.push({ title: 'Indicator', data: 'indicator' }, { title: 'Area', data: 'region' }, { title: 'Units', data: 'units' });
-    pdfColumns.push({ title: 'Indicator', dataKey: 'indicator' }, { title: 'Area', dataKey: 'region'}, { title: 'Units', data: 'units' });
     this.dateArray.forEach((date) => {
       tableColumns.push({ title: date.tableDate, data: 'observations.' + date.tableDate });
-      pdfColumns.push({ title: date.tableDate, dataKey: 'observations.' + date.tableDate });
     });
     tableColumns.push({ title: 'Source', data: 'source' });
-    pdfColumns.push({ title: 'Source', dataKey: 'source'});
     let tableData = this.tableData
-    this.tableWidget = exampleId.DataTable({
+    this.tableWidget = indicatorTable.DataTable({
       data: this.tableData,
       dom: 'Bt',
       buttons: [
@@ -109,26 +104,47 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               }
               return paddedRow;
             }
+            function checkEmptyCells(header) {
+              let emptyCount = 0;
+              header.forEach((cell) => {
+                if (cell.text == ' ') {
+                  emptyCount += 1;
+                }
+              });
+              return emptyCount;
+            }
             let currentTable = doc.content[2].table.body;
+            let sources: Array<any> = [];
             let formattedTable: Array<any> = [];
             // Reformat table to allow for a maximum of 10 columns
             for (let i = 0; i < currentTable.length; i++) {
               let currentRow = currentTable[i];
+              let indicator = { text: currentRow[0].text, style: currentRow[0].style };
+              let area = { text: currentRow[1].text, style: currentRow[1].style };
+              let units = { text: currentRow[2].text, style: currentRow[2].style };
+              let sourceIndex = currentRow.length - 1;
+              let source = { text: currentRow[sourceIndex].text, style: currentRow[sourceIndex].style };
+              let sourceCopy = Object.assign({}, source);
+              let sourceRow = [indicator, sourceCopy];
+              sourceRow = rowRightPad(sourceRow)
+              sources.push(sourceRow);
+              // Remove source from original row
+              currentRow.splice(sourceIndex, 1);
               let paddedRow = rowRightPad(currentRow);
               let counter = currentTable.length;
-              let indicator = { text: paddedRow[0].text, style: paddedRow[0].style };
+              // Row to be added to formattedTable
               let newRow = [];
-              for (let n = 1; n < paddedRow.length - 1; n++) {
+              for (let n = 3; n <= paddedRow.length - 3; n++) {
                 // Prevent empty rows from collapsing
                 paddedRow[n].text = paddedRow[n].text === '' ? ' ' : paddedRow[n].text;
                 newRow.push(paddedRow[n]);
-                if (newRow.length === 9 || n === paddedRow.length - 1) {
-                  let copy = Object.assign({}, indicator);
-                  // Add indicator to start of new row
-                  newRow.unshift(copy);
-                  if (newRow.length < 10) {
-                    newRow = rowRightPad(newRow);
-                  }
+                if (newRow.length == 7 || n == paddedRow.length - 3) {
+                  let indicatorCopy = Object.assign({}, indicator);
+                  let areaCopy = Object.assign({}, area);
+                  let unitsCopy = Object.assign({}, units);
+                  // Add indicator, area, and units to start of new row
+                  newRow.unshift(indicatorCopy, areaCopy, unitsCopy);
+                  newRow = newRow.length < 10 ? rowRightPad(newRow) : newRow;
                   if (!formattedTable[i]) {
                     formattedTable[i] = newRow;
                   } else {
@@ -139,9 +155,26 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
                 }
               }
             }
+            for (let i = formattedTable.length - 1; i >= 0; i--) {
+              // Number of indicators in table
+              let tableIndicators = currentTable.length - 1;
+              // Find header row of last set of rows
+              let header = i - tableIndicators;
+              // If header row contains only three columns (indicator, area, units), remove last set of rows from export
+              let emptyCount = checkEmptyCells(formattedTable[header]);
+              if (emptyCount === 7) {
+                formattedTable.splice(header, tableIndicators);
+              } else {
+                break;
+              }
+            }
+            // Add sources to end of export
+            sources.forEach((source) => {
+              formattedTable.push(source)
+            });
             doc.content[2].table.dontBreakRows = true;
             doc.content[2].table.headerRows = 0;
-            doc.content[2].table.body = formattedTable
+            doc.content[2].table.body = formattedTable;
             doc.content.push({
               text: 'Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/',
             });

@@ -270,7 +270,12 @@ export class HelperService {
     let intString = '' + int, i = intString.length;
     let r = ' ';
     while ((i -= 3) > signCheck) { r = ',' + intString.substr(i, 3) + r; }
-    return intString.substr(0, i + 3) + r + (decimalString ? '.' + decimalString : '');
+    let returnValue = intString.substr(0, i + 3) + r + (decimalString ? '.' + decimalString : '');
+    // If int == 0, converting int to string drops minus sign
+    if (int == 0 && num < 0) {
+      return '-' + returnValue;
+    }
+    return returnValue;
   }
 
   formatGeos(geo) {
