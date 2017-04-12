@@ -185,6 +185,15 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           text: '<i class="fa fa-print" aria-hidden="true" title="Print"></i>',
           message: 'Research & Economic Analysis Division, DBEDT',
           customize: function(win) {
+            function sortIndicators(a, b) {
+              if (a.indicator < b.indicator) {
+                return -1;
+              }
+              if (a.indicator > b.indicator) {
+                return 1;
+              }
+              return 0;
+            }
             function sortObsDates(nonSorted, sorted) {
               let result = [];
               for (let i = 0; i < nonSorted.length; i++) {
@@ -193,54 +202,73 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               }
               return result;
             }
+            function splitTable(array, size) {
+              let result = [];
+              for (let i = 0; i < array.length; i += size) {
+                result.push(array.slice(i, i + size));
+              }
+               return result;
+            }
             // Get array of dates from table
             let dates = tableColumns.slice(3, tableColumns.length - 1);
             let dateArray = [];
             dates.forEach((date) => {
               dateArray.push(date.title);
             });
-            let rowLength = tableColumns.length;
-            let maxColumns = 10;
-            // Number of new tables to create
-            let n = rowLength/(maxColumns - 3);
-            // Fix first three columns (indicator, area, region)
-            let counter = 3;
-            let tables = [];
-            // Create tables
-            for (let i = 0; i < n; i++) {
-              let headerCounter = 3;
-              let indicator = tableColumns[0].title;
-              let area = tableColumns[1].title;
-              let units = tableColumns[2].title;
-              let table = '<table class="dataTable no-footer"><tr><td>' + indicator + '</td><td>' + area + '</td><td>' + units + '</td>';
-              while (headerCounter < 10 && counter < rowLength) {
-                table += '<td>' + tableColumns[counter].title + '</td>';
-                headerCounter += 1;
-                counter += 1; 
-              }
-              table += '</tr>';
-              tables.push(table);
-            }
-            // Add series data to tables
-            tableData.forEach((indicator) => {
+
+            // Sort table data alphabetically by indicators
+            tableData.sort(sortIndicators);
+
+            // Columns to be fixed in tables: Indicator, Area, Units
+            let indicator = tableColumns[0];
+            let area = tableColumns[1];
+            let units = tableColumns[2];
+            // Get array of columns minus fixed columns
+            let columns = tableColumns.slice(3);
+            // Split columns into arrays with max length of 7
+            let tableHeaders = splitTable(columns, 7);
+            let newTables = [];
+
+            // Add fixed columns to the new table headers and create a new table for each header
+            tableHeaders.forEach((header) => {
+              header.unshift(indicator, area, units);
+              let html = '<table class="dataTable no-footer"><tr>';
+              header.forEach((col) => {
+                html += '<td>' + col.title + '</td>'
+              });
+              html += '</tr>';
+              newTables.push(html);
+            });
+
+            // Add data from indicators to each new table
+            tableData.forEach((indicator, index) => {
               let obsCounter = 0;
-              for (let i = 0; i < tables.length; i++) {
-                let table = tables[i];
-                let observations = Object.keys(indicator.observations);
-                let sortedObs = sortObsDates(observations, dateArray);
-                table += '<tr><td>' + indicator.indicator + '</td><td>' + indicator.region + '</td><td>' + indicator.units + '</td>'; 
+              let observations = Object.keys(indicator.observations);
+              // Sort observations keys to match order of table date columns
+              let sortedObs = sortObsDates(observations, dateArray);
+              for (let i = 0; i < newTables.length; i++) {
+                let table = newTables[i];
+                table += '<tr><td>' + indicator.indicator + '</td><td>' + indicator.region + '</td><td>' + indicator.units + '</td>';
                 let colCount = 3;
-                while (colCount < 10) {
+                while (colCount < 10 && obsCounter < sortedObs.length) {
                   table += '<td>' + indicator.observations[sortedObs[obsCounter]] + '</td>';
                   colCount += 1;
                   obsCounter += 1;
                 }
-                tables[i] = table;
+                // Add source
+                if (colCount < 10 && obsCounter == sortedObs.length) {
+                  table += '<td>' + indicator.source + '</td></tr>';
+                }
+                if (index == tableData.length - 1) {
+                  table += '</table>';
+                }
+                newTables[i] = table;
               }
             });
-            // TODO: Add source to table
+
+            // Original table
             let dtTable = $(win.document.body).find('table');
-            tables.reverse().forEach((table) => {
+            newTables.reverse().forEach((table) => {
               $('<br>').insertAfter(dtTable);
               $(table).insertAfter(dtTable);
             });
