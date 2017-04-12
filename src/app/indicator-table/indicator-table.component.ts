@@ -185,46 +185,68 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           text: '<i class="fa fa-print" aria-hidden="true" title="Print"></i>',
           message: 'Research & Economic Analysis Division, DBEDT',
           customize: function(win) {
-            // Split table into smaller tables with maximum of 10 columns each
-            // fixedCols is the array of columns to repeat in each table (i.e. displace indicator column in each table)
-            function splitTable(table, maxCols, fixedCols) {
-              let $table = table;
-              // Row length of original table
-              let rowLength = $('tr:first>*', $table).length;
-              // Number of new tables to generate
-              let n = Math.ceil(rowLength / maxCols);
-              let bufferTables = [];
-              let counter = 1;
-              for (let i = 0; i <= n; i++) {
-                // List of columns to keep in table
-                let colList = fixedCols.slice(0);
-                while (colList.length < maxCols && counter <= rowLength) {
-                  if (colList.indexOf(counter) == -1) {
-                    colList.push(counter);
-                  }
-                  counter += 1;
-                }
-                // Break if last table only has one column (i.e. only contains indicator column)
-                if (i == n && colList.length == 1) {
-                  break;
-                }
-                let $newTable = $table.clone(true);
-                for (let j = 1; j <= rowLength; j++) {
-                  if (colList.indexOf(j) == -1) {
-                    $('tr>:nth-child(' + j + ')', $newTable).hide();
-                  }
-                }
-                bufferTables.push($newTable);
+            function sortObsDates(nonSorted, sorted) {
+              let result = [];
+              for (let i = 0; i < nonSorted.length; i++) {
+                let index = nonSorted.indexOf(sorted[i]);
+                result[i] = nonSorted[index];
               }
-              (bufferTables.reverse()).forEach((element) => {
-                $('<br>').insertAfter($table);
-                element.insertAfter($table);
-              });
+              return result;
             }
+            // Get array of dates from table
+            let dates = tableColumns.slice(3, tableColumns.length - 1);
+            let dateArray = [];
+            dates.forEach((date) => {
+              dateArray.push(date.title);
+            });
+            let rowLength = tableColumns.length;
+            let maxColumns = 10;
+            // Number of new tables to create
+            let n = rowLength/(maxColumns - 3);
+            // Fix first three columns (indicator, area, region)
+            let counter = 3;
+            let tables = [];
+            // Create tables
+            for (let i = 0; i < n; i++) {
+              let headerCounter = 3;
+              let indicator = tableColumns[0].title;
+              let area = tableColumns[1].title;
+              let units = tableColumns[2].title;
+              let table = '<table class="dataTable no-footer"><tr><td>' + indicator + '</td><td>' + area + '</td><td>' + units + '</td>';
+              while (headerCounter < 10 && counter < rowLength) {
+                table += '<td>' + tableColumns[counter].title + '</td>';
+                headerCounter += 1;
+                counter += 1; 
+              }
+              table += '</tr>';
+              tables.push(table);
+            }
+            // Add series data to tables
+            tableData.forEach((indicator) => {
+              let obsCounter = 0;
+              for (let i = 0; i < tables.length; i++) {
+                let table = tables[i];
+                let observations = Object.keys(indicator.observations);
+                let sortedObs = sortObsDates(observations, dateArray);
+                table += '<tr><td>' + indicator.indicator + '</td><td>' + indicator.region + '</td><td>' + indicator.units + '</td>'; 
+                let colCount = 3;
+                while (colCount < 10) {
+                  table += '<td>' + indicator.observations[sortedObs[obsCounter]] + '</td>';
+                  colCount += 1;
+                  obsCounter += 1;
+                }
+                tables[i] = table;
+              }
+            });
+            // TODO: Add source to table
             let dtTable = $(win.document.body).find('table');
-            splitTable(dtTable, 10, [1]);
+            tables.reverse().forEach((table) => {
+              $('<br>').insertAfter(dtTable);
+              $(table).insertAfter(dtTable);
+            });
             // Remove original table from print
             dtTable.remove();
+
             let $tables = $(win.document.body).find('table');
             $tables.each(function (i, table) {
               $(table).find('tr:odd').each(function () {
