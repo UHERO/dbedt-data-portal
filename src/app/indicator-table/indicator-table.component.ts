@@ -18,7 +18,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   @Input() dateArray;
   @Input() tableData;
   @Input() datesSelected;
-  differ: any;
   private tableWidget: any;
 
   constructor() { }
@@ -104,73 +103,56 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               }
               return paddedRow;
             }
-            function checkEmptyCells(header) {
-              let emptyCount = 0;
-              header.forEach((cell) => {
-                if (cell.text == ' ') {
-                  emptyCount += 1;
-                }
-              });
-              return emptyCount;
+            function splitTable(array, size) {
+              let result = [];
+              for (let i = 0; i < array.length; i += size) {
+                result.push(array.slice(i, i + size));
+              }
+              return result;
             }
+            // Get original table object
             let currentTable = doc.content[2].table.body;
             let sources: Array<any> = [];
             let formattedTable: Array<any> = [];
-            // Reformat table to allow for a maximum of 10 columns
-            for (let i = 0; i < currentTable.length; i++) {
-              let currentRow = currentTable[i];
-              let indicator = { text: currentRow[0].text, style: currentRow[0].style };
-              let area = { text: currentRow[1].text, style: currentRow[1].style };
-              let units = { text: currentRow[2].text, style: currentRow[2].style };
-              let sourceIndex = currentRow.length - 1;
-              let source = { text: currentRow[sourceIndex].text, style: currentRow[sourceIndex].style };
+            currentTable.forEach((row, index) => {
+              let counter = currentTable.length;
+              // Fixed Columns: Indicator, Area, Units
+              let indicator = row[0];
+              let area = row[1];
+              let units = row[2];
+              // Store source info to append to end of export (include Indicator and Source)
+              let source = row[row.length - 1];
               let sourceCopy = Object.assign({}, source);
               let sourceRow = [indicator, sourceCopy];
-              sourceRow = rowRightPad(sourceRow)
+              sourceRow = rowRightPad(sourceRow);
               sources.push(sourceRow);
-              // Remove source from original row
-              currentRow.splice(sourceIndex, 1);
-              let paddedRow = rowRightPad(currentRow);
-              let counter = currentTable.length;
-              // Row to be added to formattedTable
-              let newRow = [];
-              for (let n = 3; n <= paddedRow.length - 3; n++) {
-                // Prevent empty rows from collapsing
-                paddedRow[n].text = paddedRow[n].text === '' ? ' ' : paddedRow[n].text;
-                newRow.push(paddedRow[n]);
-                if (newRow.length == 7 || n == paddedRow.length - 3) {
-                  let indicatorCopy = Object.assign({}, indicator);
-                  let areaCopy = Object.assign({}, area);
-                  let unitsCopy = Object.assign({}, units);
-                  // Add indicator, area, and units to start of new row
-                  newRow.unshift(indicatorCopy, areaCopy, unitsCopy);
-                  newRow = newRow.length < 10 ? rowRightPad(newRow) : newRow;
-                  if (!formattedTable[i]) {
-                    formattedTable[i] = newRow;
-                  } else {
-                    formattedTable[i + counter] = newRow;
-                    counter += currentTable.length;
-                  }
-                  newRow = [];
+              // Get data from each original row excluding fixed columns and sources
+              let nonFixedCols = row.slice(3, row.length - 1);
+              // Split data into groups of arrays with max length == 7
+              let split = splitTable(nonFixedCols, 7);
+              for (let i = 0; i < split.length; i++) {
+                // Each group is used as a new row for the formatted tables
+                let newRow = split[i];
+                // Add the fixed columns to each new row
+                let indicatorCopy = Object.assign({}, indicator);
+                let areaCopy = Object.assign({}, area);
+                let unitsCopy = Object.assign({}, units);
+                newRow.unshift(indicatorCopy, areaCopy, unitsCopy);
+                if (newRow.length < 10) {
+                  newRow = rowRightPad(newRow);
+                }
+                // Add new rows to formatted table
+                if (!formattedTable[index]) {
+                  formattedTable[index] = newRow;
+                } else {
+                  formattedTable[index + counter] = newRow;
+                  counter += currentTable.length;
                 }
               }
-            }
-            for (let i = formattedTable.length - 1; i >= 0; i--) {
-              // Number of indicators in table
-              let tableIndicators = currentTable.length - 1;
-              // Find header row of last set of rows
-              let header = i - tableIndicators;
-              // If header row contains only three columns (indicator, area, units), remove last set of rows from export
-              let emptyCount = checkEmptyCells(formattedTable[header]);
-              if (emptyCount === 7) {
-                formattedTable.splice(header, tableIndicators);
-              } else {
-                break;
-              }
-            }
-            // Add sources to end of export
+            });
+            // Add sources
             sources.forEach((source) => {
-              formattedTable.push(source)
+              formattedTable.push(source);
             });
             doc.content[2].table.dontBreakRows = true;
             doc.content[2].table.headerRows = 0;
