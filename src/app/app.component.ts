@@ -124,7 +124,8 @@ export class AppComponent {
       this.toggleDateSelectors();
     }
     if (this.selectedIndicators.length && this.selectedFreqs.length) {
-      this.getSeries()
+      this.getSeries();
+      this.toggleDateSelectors();
     }
   }
 
@@ -143,10 +144,9 @@ export class AppComponent {
   }
 
   toggleDateSelectors() {
-    let aIndex = this.selectedFreqs.indexOf('A');
     let qIndex = this.selectedFreqs.indexOf('Q');
     let mIndex = this.selectedFreqs.indexOf('M');
-    this.annualSelected = aIndex > -1 ? true : false;
+    this.annualSelected = this.selectedFreqs.length ? true : false
     this.quarterSelected = qIndex > -1 && mIndex === -1 ? true : false;
     this.monthSelected = mIndex > -1 ? true : false;
   }
