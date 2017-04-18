@@ -346,4 +346,25 @@ export class HelperService {
     }
     return false;
   }
+
+  freqSort (freqArray: Array<Frequency>): Array<Frequency> {
+    let freqOrder = ['A', 'Q', 'M'];
+    freqArray.sort(function (a, b) {
+      let aSort = freqOrder.indexOf(a.id);
+      let bSort = freqOrder.indexOf(b.id);
+      return (aSort < bSort) ? - 1 : (aSort > bSort) ? 1 : 0;
+    });
+    return freqArray;
+  }
+
+  areaSort (geoArray: Array<Geography>): Array<Geography> {
+    let areaOrder = ['HI', 'HAW', 'HON', 'KAU', 'MAU'];
+    geoArray.sort(function (a, b) {
+      let aSort = areaOrder.indexOf(a.id);
+      let bSort = areaOrder.indexOf(b.id);
+      return (aSort < bSort) ? -1 : (aSort > bSort) ? 1 : 0;
+    });
+    return geoArray;
+  }
+
 }

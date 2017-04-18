@@ -101,8 +101,9 @@ export class AppComponent {
       freqArray.forEach((freq) => {
         this._helper.uniqueFreqs(freq, this.frequencies);
       });
+      this._helper.freqSort(this.frequencies);
     } else {
-      this.frequencies = freqArray;
+      this.frequencies = this._helper.freqSort(freqArray);
     }
   }
 
@@ -112,8 +113,9 @@ export class AppComponent {
       geoArray.forEach((geo) => {
         this._helper.uniqueGeos(geo, this.regions);
       });
+      this._helper.areaSort(this.regions);
     } else {
-      this.regions = geoArray;
+      this.regions = this._helper.areaSort(geoArray);
     }
   }
 
