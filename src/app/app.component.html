@@ -17,8 +17,8 @@
         <app-indicator-table *ngIf="displayTable" [dateArray]="dateArray" [tableData]="tableData" [datesSelected]="datesSelected"></app-indicator-table>
       </div>
       <div class="selectors">
-        <app-geo-selector id="area-selector" class="dropdown" [indicator]="indicatorSelected" [regions]="regions" [(selectedGeos)]="selectedGeos" (selectedGeoList)="geoChange($event)"></app-geo-selector>
-        <app-freq-selector id="freq-selector" class="dropdown" [indicator]="indicatorSelected" [freqs]="frequencies" [(selectedFreqs)]="selectedFreqs" (selectedFreqList)="freqChange($event)"></app-freq-selector>
+        <app-geo-selector id="area-selector" class="dropdown" [indicator]="indicatorSelected" [regions]="regions" (selectedGeoList)="geoChange($event)"></app-geo-selector>
+        <app-freq-selector id="freq-selector" class="dropdown" [indicator]="indicatorSelected" [freqs]="frequencies" (selectedFreqList)="freqChange($event)"></app-freq-selector>
         <app-year-selector class="dropdown" *ngIf="annualSelected" [rangeLabel]="'From'" [years]="datesSelected.fromYearList" [(selectedYear)]="datesSelected.selectedStartYear"
           (selectedYearChange)="startYearChange($event)"></app-year-selector>
         <app-quarter-selector class="dropdown" *ngIf="quarterSelected" [quarters]="datesSelected.fromQuarterList"

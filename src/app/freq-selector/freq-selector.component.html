@@ -1,5 +1,7 @@
-<label>Frequency</label>
-<select class="select-frequency" multiple="multiple">
-    <option *ngIf='!indicator' disabled>Select an Indicator</option>
-    <option *ngFor="let freq of freqs" [value]="freq.id" on-mousedown='toggle($event.target)'>{{freq.text}}</option>
-</select>
+<span>Frequency</span>
+<div class="multi-select">
+    <span *ngIf="!indicator">Select an indicator</span>
+    <template ngFor let-freq [ngForOf]="freqs">
+        <label><input type="checkbox" name="checkbox" value="{{freq.id}}" (change)="checked(freq.id, $event)"><span>{{freq.text}}</span></label>
+    </template>
+</div>
