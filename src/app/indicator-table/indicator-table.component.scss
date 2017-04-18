@@ -22,6 +22,10 @@ table.dataTable{
     }
 }
 
+table.dataTable.no-footer {
+    border-bottom: 0;
+}
+
 .datatbles_wrapper, .no-footer {
     height: 0;
     overflow: visible;
@@ -33,6 +37,13 @@ table.dataTable{
             font-size: 16pt;
             color: #000000;
             padding: 0 0.25em;
+        }
+    }
+
+    .DTFC_ScrollWrapper {
+        .DTFC_RightBodyLiner {
+            // Scrollbar appears in table header on firefox
+            overflow-y: hidden !important;
         }
     }
 }
