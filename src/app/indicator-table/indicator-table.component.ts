@@ -250,12 +250,11 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
 
             // Original table
             let dtTable = $(win.document.body).find('table');
-            console.log(newTables)
-            newTables.reverse().forEach((table) => {
-              $('<br>').insertAfter(dtTable);
-              $(table).insertAfter(dtTable);
+            newTables.forEach((table) => {
+              $(win.document.body).append('<br>');
+              $(win.document.body).append(table);
             });
-
+            
             // Remove original table from print
             dtTable.remove();
 
