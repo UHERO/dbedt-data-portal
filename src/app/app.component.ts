@@ -16,7 +16,7 @@ export class AppComponent {
   private errorMsg: string;
   // List of indicators selected from category-tree
   private selectedIndicators: Array<any> = [];
-  private indicatorSelected: boolean = false;
+  private indicatorSelected = false;
 
   // List of regions and freqeuencies for the selected series/categories
   private regions: Array<Geography>;
@@ -44,11 +44,10 @@ export class AppComponent {
     this.loadingComplete = true;
   }
 
-  getSelectedIndicators(e) {
-    let geoList = [];
-    let freqList = [];
+  getSelectedIndicators(selectedMeasurements) {
+    const geoList = [];
+    const freqList = [];
     this.selectedIndicators = [];
-    let selectedMeasurements = e;
     selectedMeasurements.forEach((m) => {
       this._apiService.fetchMeasurementSeries(m).subscribe((series) => {
         this.initSettings(series, geoList, freqList);
@@ -80,18 +79,18 @@ export class AppComponent {
 
   initSettings(series: Array<any>, geoList: Array<any>, freqList: Array<any>) {
     // Iterate through list of series to create list of areas and frequencies and identify observation dates
-    let geo_freqs, freq_geos, obsStart, obsEnd;
+    let geoFreqs, freqGeos, obsStart, obsEnd;
     series.forEach((serie) => {
-      this.selectedIndicators.push(serie)
-      geo_freqs = serie.geo_freqs;
-      freq_geos = serie.freq_geos;
+      this.selectedIndicators.push(serie);
+      geoFreqs = serie.geo_freqs;
+      freqGeos = serie.freq_geos;
       obsStart = serie.seriesObservations.observationStart.substr(0, 10);
       obsEnd = serie.seriesObservations.observationEnd.substr(0, 10);
-      geo_freqs.forEach((geo) => {
+      geoFreqs.forEach((geo) => {
         geo = this._helper.formatGeos(geo);
         this._helper.uniqueGeos(geo, geoList);
       });
-      freq_geos.forEach((freq) => {
+      freqGeos.forEach((freq) => {
         freq = this._helper.formatFreqs(freq);
         this._helper.uniqueFreqs(freq, freqList);
       });
@@ -135,6 +134,7 @@ export class AppComponent {
   }
 
   freqChange(e) {
+    console.log('freqChange');
     this.selectedFreqs = e;
     if (this.selectedIndicators.length && this.selectedGeos.length) {
       this.getSeries();
@@ -149,27 +149,28 @@ export class AppComponent {
   }
 
   toggleDateSelectors() {
-    let qIndex = this.selectedFreqs.indexOf('Q');
-    let mIndex = this.selectedFreqs.indexOf('M');
-    this.annualSelected = this.selectedFreqs.length ? true : false
-    this.quarterSelected = qIndex > -1 && mIndex === -1 ? true : false;
-    this.monthSelected = mIndex > -1 ? true : false;
+    console.log('toggleDateSelectors');
+    const qIndex = this.selectedFreqs.indexOf('Q');
+    const mIndex = this.selectedFreqs.indexOf('M');
+    this.annualSelected = this.selectedFreqs.length > 0;
+    this.quarterSelected = qIndex > -1 && mIndex === -1;
+    this.monthSelected = mIndex > -1;
   }
 
   showSpinner(e) {
-    //let tableLoad = e;
-    console.log(e);
+    // let tableLoad = e;
+    console.log('load_complete', e);
     this.loadingComplete = e;
-    this.ref.detectChanges()
+    this.ref.detectChanges();
   }
 
   getSeries() {
-    let seriesData = [];
-    this.selectedIndicators.forEach((series, indIndex) => {
+    const seriesData = [];
+    this.selectedIndicators.forEach((indicatorSeries, indIndex) => {
       this.selectedGeos.forEach((geo) => {
         this.selectedFreqs.forEach((freq) => {
-          if (series.geography.handle === geo && series.frequencyShort === freq) {
-            seriesData.push(series);
+          if (indicatorSeries.geography.handle === geo && indicatorSeries.frequencyShort === freq) {
+            seriesData.push(indicatorSeries);
           }
         });
       });
@@ -180,8 +181,8 @@ export class AppComponent {
         if (seriesData.length !== 0) {
           seriesData.forEach((series, seriesIndex) => {
             // Find the earliest and lastest observation dates, used to set dates in the range selectors
-            let obsStart = series.seriesObservations.observationStart.substr(0, 10);
-            let obsEnd = series.seriesObservations.observationEnd.substr(0, 10);
+            const obsStart = series.seriesObservations.observationStart.substr(0, 10);
+            const obsEnd = series.seriesObservations.observationEnd.substr(0, 10);
             if (this.datesSelected.startDate === '' || this.datesSelected.startDate > obsStart) {
               this.datesSelected.startDate = obsStart;
             }
@@ -210,20 +211,32 @@ export class AppComponent {
     // Format data for datatables module (indicator-table component)
     this.tableData = [];
     seriesData.forEach((series, index) => {
-      let result = {};
+      const result = {};
       this.dateArray.forEach((date, index) => {
         result[date.tableDate] = ' ';
       });
       // If decimal value is not specified, round values to 2 decimal places
-      let decimals = this.setDecimals(series.decimals);
-      let exist = this.tableData.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
+      const decimals = this.setDecimals(series.decimals);
+      const exist = this.tableData.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
       // If exists, add observations corresponding to the series frequency
       if (exist !== -1) {
         if (series.frequencyShort === 'A') {
-          this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, decimals, this.tableData[exist].observations, this.dateArray);
+          this._helper.formatLevelData(
+            series.seriesObservations,
+            series.frequencyShort,
+            decimals,
+            this.tableData[exist].observations,
+            this.dateArray,
+          );
         }
         if (series.frequencyShort === 'Q') {
-          this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, decimals, this.tableData[exist].observations, this.dateArray);
+          this._helper.formatLevelData(
+            series.seriesObservations,
+            series.frequencyShort,
+            decimals,
+            this.tableData[exist].observations,
+            this.dateArray,
+          );
         }
         if (series.frequencyShort === 'M') {
           this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, decimals, this.tableData[exist].observations, this.dateArray);

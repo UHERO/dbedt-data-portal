@@ -14,7 +14,7 @@
           <p>If you modify your selection, the table will be updated automatically after each modification. If you would like
             to start a new data query, press the “Clear All Selections” button.</p>
         </div>
-        <app-indicator-table *ngIf="displayTable" [dateArray]="dateArray" [tableData]="tableData" [datesSelected]="datesSelected" (loadComplete)="showSpinner($event)"></app-indicator-table>
+        <app-indicator-table *ngIf="displayTable" [dateArray]="dateArray" [tableData]="tableData" (loadComplete)="showSpinner($event)"></app-indicator-table>
       </div>
       <div class="selectors">
         <app-geo-selector id="area-selector" class="dropdown" [indicator]="indicatorSelected" [regions]="regions" (selectedGeoList)="geoChange($event)"></app-geo-selector>
