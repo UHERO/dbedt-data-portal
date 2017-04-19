@@ -45,9 +45,9 @@ body {
         position: absolute;
     }
 
-    :checked + span {
-        background: #0481B9;
-        color: #FFFFFF;
+    .selected + span {
+        background: #BEEBFF;
+        color: #000000;
     }
 }
 

@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Output, EventEmitter, ViewChild, ChangeDetectorRef, OnChanges } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ApiService } from './api.service';
 import { HelperService } from './helper.service';
@@ -38,8 +38,11 @@ export class AppComponent {
   private noSeries: String;
   @ViewChild(CategorySidebarComponent)
   private sidebar: CategorySidebarComponent;
+  private loadingComplete;
 
-  constructor(private _apiService: ApiService, private _helper: HelperService) { }
+  constructor(private _apiService: ApiService, private _helper: HelperService, private ref: ChangeDetectorRef) {
+    this.loadingComplete = true;
+  }
 
   getSelectedIndicators(e) {
     let geoList = [];
@@ -153,10 +156,16 @@ export class AppComponent {
     this.monthSelected = mIndex > -1 ? true : false;
   }
 
+  showSpinner(e) {
+    //let tableLoad = e;
+    console.log(e);
+    this.loadingComplete = e;
+    this.ref.detectChanges()
+  }
+
   getSeries() {
     let seriesData = [];
-    let counter = 0;
-    this.selectedIndicators.forEach((series) => {
+    this.selectedIndicators.forEach((series, indIndex) => {
       this.selectedGeos.forEach((geo) => {
         this.selectedFreqs.forEach((freq) => {
           if (series.geography.handle === geo && series.frequencyShort === freq) {
@@ -164,14 +173,12 @@ export class AppComponent {
           }
         });
       });
-      counter += 1;
-      if (counter === this.selectedIndicators.length) {
+      if (indIndex === this.selectedIndicators.length - 1) {
         this.datesSelected = <DatesSelected>{};
         this.datesSelected.endDate = '';
         this.datesSelected.startDate = '';
-        let seriesCount = 0;
         if (seriesData.length !== 0) {
-          seriesData.forEach((series) => {
+          seriesData.forEach((series, seriesIndex) => {
             // Find the earliest and lastest observation dates, used to set dates in the range selectors
             let obsStart = series.seriesObservations.observationStart.substr(0, 10);
             let obsEnd = series.seriesObservations.observationEnd.substr(0, 10);
@@ -181,8 +188,7 @@ export class AppComponent {
             if (this.datesSelected.endDate === '' || this.datesSelected.endDate < obsEnd) {
               this.datesSelected.endDate = obsEnd;
             }
-            seriesCount += 1;
-            if (seriesCount === seriesData.length) {
+            if (seriesIndex === seriesData.length - 1) {
               this.noSeries = null;
               this.getDates();
               this.formatTableData(seriesData);
@@ -203,7 +209,7 @@ export class AppComponent {
   formatTableData(seriesData) {
     // Format data for datatables module (indicator-table component)
     this.tableData = [];
-    seriesData.forEach((series) => {
+    seriesData.forEach((series, index) => {
       let result = {};
       this.dateArray.forEach((date, index) => {
         result[date.tableDate] = ' ';

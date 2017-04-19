@@ -143,7 +143,6 @@ export class HelperService {
   // Create list of quarters for quarter range selectors
   quartersRange(selectedDates) {
     let allQuarters = ['Q4', 'Q3', 'Q2', 'Q1'];
-    let m = ['12', '11', '10', '09', '08', '07', '06', '05', '04', '03', '02', '01'];
     selectedDates.fromQuarterList = allQuarters;
     selectedDates.toQuarterList = allQuarters;
     this.minMaxYearQuarters(selectedDates);
@@ -156,7 +155,6 @@ export class HelperService {
   // Create list of months for month range selectors
   monthsRange(selectedDates) {
     let allMonths = ['12', '11', '10', '09', '08', '07', '06', '05', '04', '03', '02', '01'];
-    let q = { '01': 'Q1', '04': 'Q2', '07': 'Q3', '10': 'Q4' };   
     selectedDates.fromMonthList = allMonths;
     selectedDates.toMonthList = allMonths;
     this.minMaxYearMonths(selectedDates, allMonths);
@@ -209,29 +207,31 @@ export class HelperService {
   }
 
   minYearQuarters(month) {
+    let q = ['Q4', 'Q3', 'Q2', 'Q1'];
     if (4 <= month && month < 7) {
-      return ['Q4', 'Q3', 'Q2'];
+      return q.slice(0, 3);
     }
     if (7 <= month && month < 10) {
-      return ['Q4', 'Q3'];
+      return q.slice(0, 2);
     }
     if (10 <= month) {
-      return ['Q4'];
+      return q.slice(0, 1);
     }
-    return ['Q4', 'Q3', 'Q2', 'Q1'];
+    return q;
   }
 
   maxYearQuarters(month) {
+    let q = ['Q4', 'Q3', 'Q2', 'Q1'];
     if (1 <= month && month < 4) {
-      return ['Q1'];
+      return q.slice(3);
     }
     if (4 <= month && month < 7) {
-      return ['Q2', 'Q1'];
+      return q.slice(2);
     }
     if (7 <= month && month < 10) {
-      return ['Q3', 'Q2', 'Q1'];
+      return q.slice(1);
     }
-    return ['Q4', 'Q3', 'Q2', 'Q1'];
+    return q;
   }
 
   formatLevelData(seriesObservations, frequency: string, decimals: number, results: Object, dates) {

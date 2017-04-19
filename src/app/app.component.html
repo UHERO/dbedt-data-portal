@@ -14,7 +14,7 @@
           <p>If you modify your selection, the table will be updated automatically after each modification. If you would like
             to start a new data query, press the “Clear All Selections” button.</p>
         </div>
-        <app-indicator-table *ngIf="displayTable" [dateArray]="dateArray" [tableData]="tableData" [datesSelected]="datesSelected"></app-indicator-table>
+        <app-indicator-table *ngIf="displayTable" [dateArray]="dateArray" [tableData]="tableData" [datesSelected]="datesSelected" (loadComplete)="showSpinner($event)"></app-indicator-table>
       </div>
       <div class="selectors">
         <app-geo-selector id="area-selector" class="dropdown" [indicator]="indicatorSelected" [regions]="regions" (selectedGeoList)="geoChange($event)"></app-geo-selector>
@@ -33,6 +33,9 @@
           [(selectedMonth)]="datesSelected.selectedEndMonth" (selectedMonthChange)="endMonthChange($event)"></app-month-selector>
         <p class="text-danger" *ngIf="invalidDates">{{invalidDates}}</p>
         <p class="text-danger" *ngIf="noSeries">{{noSeries}}</p>
-        <button type="button" class="btn btn-secondary" (click)="showTable()" [disabled]="checkSelections()">Get Data</button>
+        <div class="get-data">
+          <span *ngIf="loadingComplete"><i class="loading fa fa-spinner fa-pulse fa-3x fa-fw" aria-hidden="true"></i></span>
+          <button type="button" class="btn btn-secondary" (click)="showTable()" [disabled]="checkSelections()">Get Data</button>
+        </div>
       </div>
     </div>

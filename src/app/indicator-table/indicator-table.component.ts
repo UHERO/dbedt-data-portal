@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
 import { HelperService } from '../helper.service';
 import * as $ from 'jquery';
 import 'datatables.net';
@@ -19,6 +19,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   @Input() tableData;
   @Input() datesSelected;
   private tableWidget: any;
+  loadComplete;
 
   constructor() { }
 
@@ -26,7 +27,9 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(inputChanges) {
+    this.loadComplete = false;
     this.initDatatable();
+    this.loadComplete = true;
   }
 
   initDatatable(): void {
@@ -254,7 +257,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               $(win.document.body).append('<br>');
               $(win.document.body).append(table);
             });
-            
+
             // Remove original table from print
             dtTable.remove();
 
