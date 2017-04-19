@@ -279,11 +279,11 @@ export class HelperService {
   }
 
   formatGeos(geo) {
-    return { id: geo.handle, text: geo.name ? geo.name : geo.handle, freqs: geo.freqs };
+    return { id: geo.handle, text: geo.name ? geo.name : geo.handle, freqs: geo.freqs, state: false };
   }
 
   formatFreqs(freq) {
-    return { id: freq.freq, text: freq.label, geos: freq.geos };
+    return { id: freq.freq, text: freq.label, geos: freq.geos, state: false };
   }
 
   // Get a unique array of available regions for a category

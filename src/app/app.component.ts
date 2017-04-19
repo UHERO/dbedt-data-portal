@@ -155,13 +155,6 @@ export class AppComponent {
     this.monthSelected = mIndex > -1;
   }
 
-  showSpinner(e) {
-    // let tableLoad = e;
-    console.log('load_complete', e);
-    this.loadingComplete = e;
-    this.ref.detectChanges();
-  }
-
   getSeries() {
     const seriesData = [];
     this.selectedIndicators.forEach((indicatorSeries, indIndex) => {

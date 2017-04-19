@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter,  ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Geography } from '../geography';
 import 'jquery';
 declare var $: any;
@@ -13,8 +13,8 @@ export class GeoSelectorComponent implements OnInit {
   // If indicator(s) selected, do not display placeholder ('Select an Indicator')
   @Input() indicator: boolean;
   @Input() regions: Array<Geography>;
+  @Input() selectedGeos: Array<any>;
   @Output() selectedGeoList = new EventEmitter();
-  private toggleSelected = [];
 
   constructor() { }
 
@@ -22,14 +22,14 @@ export class GeoSelectorComponent implements OnInit {
   }
 
   toggle(geo, event) {
-    const index = this.toggleSelected.indexOf(geo);
+    const index = this.selectedGeos.indexOf(geo);
     if (index === -1) {
-      this.toggleSelected.push(geo);
+      this.selectedGeos.push(geo);
     } else {
-      this.toggleSelected.splice(index, 1);
+      this.selectedGeos.splice(index, 1);
     }
     setTimeout(() => {
-      this.selectedGeoList.emit(this.toggleSelected);
+      this.selectedGeoList.emit(this.selectedGeos);
     }, 20);
   }
 }

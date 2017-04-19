@@ -13,8 +13,8 @@ export class FreqSelectorComponent implements OnInit {
   // If indicator(s) selected, do not display placeholder ('Select an Indicator')
   @Input() indicator: boolean;
   @Input() freqs: Array<Frequency>;
+  @Input() selectedFreqs: Array<any>;
   @Output() selectedFreqList: EventEmitter<any> = new EventEmitter();
-  private toggleSelected: Array<any> = [];
 
   constructor() { }
 
@@ -22,14 +22,14 @@ export class FreqSelectorComponent implements OnInit {
   }
 
   toggle(freq, event) {
-    const index = this.toggleSelected.indexOf(freq);
+    const index = this.selectedFreqs.indexOf(freq);
     if (index === -1) {
-      this.toggleSelected.push(freq);
+      this.selectedFreqs.push(freq);
     } else {
-      this.toggleSelected.splice(index, 1);
+      this.selectedFreqs.splice(index, 1);
     }
     setTimeout(() => {
-      this.selectedFreqList.emit(this.toggleSelected);
+      this.selectedFreqList.emit(this.selectedFreqs);
     }, 20);
   }
 }

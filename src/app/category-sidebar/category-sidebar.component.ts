@@ -94,7 +94,8 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
         this.ids.splice(idIndex, 1);
         setTimeout(() => {
           this.selectedCatIds.emit(this.ids);
-        }, 20);      }
+        }, 20);
+      }
     }
   }
 

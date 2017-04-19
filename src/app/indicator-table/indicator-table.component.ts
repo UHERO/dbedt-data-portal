@@ -27,14 +27,14 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(inputChanges) {
-    this.loadComplete = false;
     this.initDatatable();
-    this.loadComplete = true;
   }
 
   initDatatable(): void {
     let tableColumns = [];
     let indicatorTable: any = $('#indicator-table');
+    let dataButton = $('.get-data');
+    //dataButton.find('button').after("<span class='loading'>Loading</span>");
     if (this.tableWidget) {
       // Destroy table if table has already been initialized
       this.tableWidget.destroy();
