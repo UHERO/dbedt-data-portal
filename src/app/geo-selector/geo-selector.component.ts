@@ -21,17 +21,15 @@ export class GeoSelectorComponent implements OnInit {
   ngOnInit() {
   }
 
-  checked(region, event) {
-    let index = this.toggleSelected.indexOf(region);
-    if (event.target.checked) {
-      if (index === -1) {
-        this.toggleSelected.push(region);
-      }
+  toggle(geo, event) {
+    const index = this.toggleSelected.indexOf(geo);
+    if (index === -1) {
+      this.toggleSelected.push(geo);
     } else {
-      if (index !== -1) {
-        this.toggleSelected.splice(index, 1);
-      }
+      this.toggleSelected.splice(index, 1);
     }
-    this.selectedGeoList.emit(this.toggleSelected);
+    setTimeout(() => {
+      this.selectedGeoList.emit(this.toggleSelected);
+    }, 20);
   }
 }

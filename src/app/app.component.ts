@@ -134,7 +134,6 @@ export class AppComponent {
   }
 
   freqChange(e) {
-    console.log('freqChange');
     this.selectedFreqs = e;
     if (this.selectedIndicators.length && this.selectedGeos.length) {
       this.getSeries();
@@ -149,7 +148,6 @@ export class AppComponent {
   }
 
   toggleDateSelectors() {
-    console.log('toggleDateSelectors');
     const qIndex = this.selectedFreqs.indexOf('Q');
     const mIndex = this.selectedFreqs.indexOf('M');
     this.annualSelected = this.selectedFreqs.length > 0;

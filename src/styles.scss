@@ -45,7 +45,7 @@ body {
         position: absolute;
     }
 
-    .selected + span {
+    :checked + span {
         background: #BEEBFF;
         color: #000000;
     }

@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation, ChangeDetectorRef
+  Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation
 } from '@angular/core';
 import { Frequency } from '../frequency';
 
@@ -16,18 +16,12 @@ export class FreqSelectorComponent implements OnInit {
   @Output() selectedFreqList: EventEmitter<any> = new EventEmitter();
   private toggleSelected: Array<any> = [];
 
-  constructor(private cd: ChangeDetectorRef) { }
+  constructor() { }
 
   ngOnInit() {
   }
 
-  public toggle(freq, event) {
-    event.preventDefault();
-    console.log('clicked check event', event);
-    event.target.classList.toggle('selected');
-    this.cd.detectChanges();
-    console.log('selectedFreqList', this.toggleSelected);
-    console.log('freq', freq);
+  toggle(freq, event) {
     const index = this.toggleSelected.indexOf(freq);
     if (index === -1) {
       this.toggleSelected.push(freq);
@@ -36,10 +30,6 @@ export class FreqSelectorComponent implements OnInit {
     }
     setTimeout(() => {
       this.selectedFreqList.emit(this.toggleSelected);
-    }, 10);
+    }, 20);
   }
-
-  /* updateClass(event) {
-
-  } */
 }
