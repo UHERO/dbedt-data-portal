@@ -19,7 +19,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   @Input() tableData;
   @Input() datesSelected;
   private tableWidget: any;
-  loadComplete;
 
   constructor() { }
 
@@ -30,7 +29,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
     $('span.loading').css('display', 'inline-block');
     setTimeout(() => {
       this.initDatatable();
-    }, 5) 
+    }, 20) 
   }
 
   initDatatable(): void {
