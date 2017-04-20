@@ -16,7 +16,7 @@ export class AppComponent {
   private errorMsg: string;
   // List of indicators selected from category-tree
   private selectedIndicators: Array<any> = [];
-  private indicatorSelected: boolean = false;
+  private indicatorSelected = false;
 
   // List of regions and freqeuencies for the selected series/categories
   private regions: Array<Geography>;
@@ -39,13 +39,13 @@ export class AppComponent {
   @ViewChild(CategorySidebarComponent)
   private sidebar: CategorySidebarComponent;
 
-  constructor(private _apiService: ApiService, private _helper: HelperService) { }
+  constructor(private _apiService: ApiService, private _helper: HelperService) {
+  }
 
-  getSelectedIndicators(e) {
-    let geoList = [];
-    let freqList = [];
+  getSelectedIndicators(selectedMeasurements) {
+    const geoList = [];
+    const freqList = [];
     this.selectedIndicators = [];
-    let selectedMeasurements = e;
     selectedMeasurements.forEach((m) => {
       this._apiService.fetchMeasurementSeries(m).subscribe((series) => {
         this.initSettings(series, geoList, freqList);
@@ -77,18 +77,18 @@ export class AppComponent {
 
   initSettings(series: Array<any>, geoList: Array<any>, freqList: Array<any>) {
     // Iterate through list of series to create list of areas and frequencies and identify observation dates
-    let geo_freqs, freq_geos, obsStart, obsEnd;
+    let geoFreqs, freqGeos, obsStart, obsEnd;
     series.forEach((serie) => {
-      this.selectedIndicators.push(serie)
-      geo_freqs = serie.geo_freqs;
-      freq_geos = serie.freq_geos;
+      this.selectedIndicators.push(serie);
+      geoFreqs = serie.geo_freqs;
+      freqGeos = serie.freq_geos;
       obsStart = serie.seriesObservations.observationStart.substr(0, 10);
       obsEnd = serie.seriesObservations.observationEnd.substr(0, 10);
-      geo_freqs.forEach((geo) => {
+      geoFreqs.forEach((geo) => {
         geo = this._helper.formatGeos(geo);
         this._helper.uniqueGeos(geo, geoList);
       });
-      freq_geos.forEach((freq) => {
+      freqGeos.forEach((freq) => {
         freq = this._helper.formatFreqs(freq);
         this._helper.uniqueFreqs(freq, freqList);
       });
@@ -101,8 +101,9 @@ export class AppComponent {
       freqArray.forEach((freq) => {
         this._helper.uniqueFreqs(freq, this.frequencies);
       });
+      this._helper.freqSort(this.frequencies);
     } else {
-      this.frequencies = freqArray;
+      this.frequencies = this._helper.freqSort(freqArray);
     }
   }
 
@@ -112,8 +113,9 @@ export class AppComponent {
       geoArray.forEach((geo) => {
         this._helper.uniqueGeos(geo, this.regions);
       });
+      this._helper.areaSort(this.regions);
     } else {
-      this.regions = geoArray;
+      this.regions = this._helper.areaSort(geoArray);
     }
   }
 
@@ -144,43 +146,39 @@ export class AppComponent {
   }
 
   toggleDateSelectors() {
-    let qIndex = this.selectedFreqs.indexOf('Q');
-    let mIndex = this.selectedFreqs.indexOf('M');
-    this.annualSelected = this.selectedFreqs.length ? true : false
-    this.quarterSelected = qIndex > -1 && mIndex === -1 ? true : false;
-    this.monthSelected = mIndex > -1 ? true : false;
+    const qIndex = this.selectedFreqs.indexOf('Q');
+    const mIndex = this.selectedFreqs.indexOf('M');
+    this.annualSelected = this.selectedFreqs.length > 0;
+    this.quarterSelected = qIndex > -1 && mIndex === -1;
+    this.monthSelected = mIndex > -1;
   }
 
   getSeries() {
-    let seriesData = [];
-    let counter = 0;
-    this.selectedIndicators.forEach((series) => {
+    const seriesData = [];
+    this.selectedIndicators.forEach((indicatorSeries, indIndex) => {
       this.selectedGeos.forEach((geo) => {
         this.selectedFreqs.forEach((freq) => {
-          if (series.geography.handle === geo && series.frequencyShort === freq) {
-            seriesData.push(series);
+          if (indicatorSeries.geography.handle === geo && indicatorSeries.frequencyShort === freq) {
+            seriesData.push(indicatorSeries);
           }
         });
       });
-      counter += 1;
-      if (counter === this.selectedIndicators.length) {
+      if (indIndex === this.selectedIndicators.length - 1) {
         this.datesSelected = <DatesSelected>{};
         this.datesSelected.endDate = '';
         this.datesSelected.startDate = '';
-        let seriesCount = 0;
         if (seriesData.length !== 0) {
-          seriesData.forEach((series) => {
+          seriesData.forEach((series, seriesIndex) => {
             // Find the earliest and lastest observation dates, used to set dates in the range selectors
-            let obsStart = series.seriesObservations.observationStart.substr(0, 10);
-            let obsEnd = series.seriesObservations.observationEnd.substr(0, 10);
+            const obsStart = series.seriesObservations.observationStart.substr(0, 10);
+            const obsEnd = series.seriesObservations.observationEnd.substr(0, 10);
             if (this.datesSelected.startDate === '' || this.datesSelected.startDate > obsStart) {
               this.datesSelected.startDate = obsStart;
             }
             if (this.datesSelected.endDate === '' || this.datesSelected.endDate < obsEnd) {
               this.datesSelected.endDate = obsEnd;
             }
-            seriesCount += 1;
-            if (seriesCount === seriesData.length) {
+            if (seriesIndex === seriesData.length - 1) {
               this.noSeries = null;
               this.getDates();
               this.formatTableData(seriesData);
@@ -201,21 +199,33 @@ export class AppComponent {
   formatTableData(seriesData) {
     // Format data for datatables module (indicator-table component)
     this.tableData = [];
-    seriesData.forEach((series) => {
-      let result = {};
+    seriesData.forEach((series, index) => {
+      const result = {};
       this.dateArray.forEach((date, index) => {
         result[date.tableDate] = ' ';
       });
       // If decimal value is not specified, round values to 2 decimal places
-      let decimals = this.setDecimals(series.decimals);
-      let exist = this.tableData.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
+      const decimals = this.setDecimals(series.decimals);
+      const exist = this.tableData.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
       // If exists, add observations corresponding to the series frequency
       if (exist !== -1) {
         if (series.frequencyShort === 'A') {
-          this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, decimals, this.tableData[exist].observations, this.dateArray);
+          this._helper.formatLevelData(
+            series.seriesObservations,
+            series.frequencyShort,
+            decimals,
+            this.tableData[exist].observations,
+            this.dateArray,
+          );
         }
         if (series.frequencyShort === 'Q') {
-          this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, decimals, this.tableData[exist].observations, this.dateArray);
+          this._helper.formatLevelData(
+            series.seriesObservations,
+            series.frequencyShort,
+            decimals,
+            this.tableData[exist].observations,
+            this.dateArray,
+          );
         }
         if (series.frequencyShort === 'M') {
           this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, decimals, this.tableData[exist].observations, this.dateArray);
@@ -245,7 +255,7 @@ export class AppComponent {
   checkSelections() {
     let disable = true;
     // Enable Get Data button if selections have been made in indicators, frequencies, and areas
-    if (this.selectedIndicators.length > 0 && this.selectedFreqs.length > 0 && this.selectedGeos.length > 0 && !this.noSeries) {
+    if (this.selectedIndicators.length > 0 && this.selectedFreqs.length > 0 && this.selectedGeos.length > 0 && !this.noSeries && !this.invalidDates) {
       disable = false;
     }
     return disable;

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter,  ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Geography } from '../geography';
 import 'jquery';
 declare var $: any;
@@ -13,32 +13,23 @@ export class GeoSelectorComponent implements OnInit {
   // If indicator(s) selected, do not display placeholder ('Select an Indicator')
   @Input() indicator: boolean;
   @Input() regions: Array<Geography>;
-  @Input() selectedGeos;
+  @Input() selectedGeos: Array<any>;
   @Output() selectedGeoList = new EventEmitter();
-  private toggleSelected = [];
 
   constructor() { }
 
   ngOnInit() {
   }
 
-  toggle(e) {
-    let $self = $(e);
-    // If option is selected, deselect and remove from selected list of emitted regions
-    if ($self.prop('selected')) {
-      $self.prop('selected', false);
-      let i = this.toggleSelected.indexOf($self.val());
-      if (i > - 1) {
-        this.toggleSelected.splice(i, 1);
-      }
-    // Else, select option and emit region value
+  toggle(geo, event) {
+    const index = this.selectedGeos.indexOf(geo);
+    if (index === -1) {
+      this.selectedGeos.push(geo);
     } else {
-      $self.prop('selected', true);
-      this.toggleSelected.push($self.val());
+      this.selectedGeos.splice(index, 1);
     }
-    let options = $('.select-region option:selected')
-    this.selectedGeos = Array.apply(null, options).filter(option => option.selected).map(option => option.value);
-    this.selectedGeoList.emit(this.selectedGeos);
-    return false;
+    setTimeout(() => {
+      this.selectedGeoList.emit(this.selectedGeos);
+    }, 20);
   }
 }

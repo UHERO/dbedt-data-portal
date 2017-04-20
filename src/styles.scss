@@ -1,1 +1,62 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+    font-family: 'Lucida Sans', sans-serif;
+    font-size: 0.8em;
+    
+    button, .btn {
+        font-family: 'Lucida Sans', sans-serif;
+        font-size: 1em;
+    }
+}
+
+.form-group {
+    label {
+        display: block;
+        text-align: center;
+        margin-bottom: 0;
+    }
+
+    .custom-select {
+        height: 2.5rem;
+        padding: .5rem 1.75rem .5rem .75rem;
+        border-radius: 0;
+    }
+}
+
+.multi-select-label {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.multi-select {
+    display: inline-block;
+    border: 1px solid #ABABAB;
+    background-color: #FFFFFF;
+    width: 180px;
+
+    label, label span {
+        display: block;
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    input[type="checkbox"] {
+        opacity: 0;
+        position: absolute;
+    }
+
+    :checked + span {
+        background: #BEEBFF;
+        color: #000000;
+    }
+}
+
+.freq-multi-select {
+    height: 65px;
+    width: 130px;
+}
+
+.area-multi-select {
+    height: 100px;
+    width: 175px;
+}

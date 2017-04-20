@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
 import { HelperService } from '../helper.service';
 import * as $ from 'jquery';
 import 'datatables.net';
@@ -26,7 +26,10 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(inputChanges) {
-    this.initDatatable();
+    $('span.loading').css('display', 'inline-block');
+    setTimeout(() => {
+      this.initDatatable();
+    }, 20) 
   }
 
   initDatatable(): void {
@@ -250,10 +253,11 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
 
             // Original table
             let dtTable = $(win.document.body).find('table');
-            newTables.reverse().forEach((table) => {
-              $('<br>').insertAfter(dtTable);
-              $(table).insertAfter(dtTable);
+            newTables.forEach((table) => {
+              $(win.document.body).append('<br>');
+              $(win.document.body).append(table);
             });
+
             // Remove original table from print
             dtTable.remove();
 
@@ -280,5 +284,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
         'leftColumns': 3
       },
     });
+    $('span.loading').css('display', 'none');
   }
 }

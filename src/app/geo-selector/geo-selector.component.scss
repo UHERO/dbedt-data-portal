@@ -1,16 +1,30 @@
-label {
+/* span {
+    display: inline-block;
     vertical-align: top;
-    font-family: 'Lucida Sans', sans-serif;
-    font-size: 0.9em;
 }
 
-.select-region {
+.multi-select {
+    display: inline-block;
+    border: 1px solid #ABABAB;
+    background-color: #FFFFFF;
     width: 180px;
-    height: 90px;
-    overflow: hidden;
+    height: 100px;
+    font-family: 'Lucida Sans', sans-serif;
+    font-size: 0.8em;
 
-    option {
-        font-size: 0.85em;
-        font-family: 'Lucida Sans', sans-serif;
+    label, label span {
+        display: block;
+        width: 100%;
+        margin-bottom: 0;
     }
-}
+
+    input[type="checkbox"] {
+        opacity: 0;
+        position: absolute;
+    }
+
+    :checked + span {
+        background: #0481B9;
+        color: #FFFFFF;
+    }
+} */

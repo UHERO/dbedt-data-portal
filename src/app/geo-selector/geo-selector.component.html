@@ -1,5 +1,7 @@
-<label>Area</label>
-<select class="select-region" multiple="multiple" id="area-selector">
-    <option *ngIf='!indicator' disabled>Select an Indicator</option>
-    <option *ngFor="let region of regions" [value]="region.id" on-mousedown='toggle($event.target)'>{{region.text}}</option>
-</select>
+<span class="multi-select-label">Area</span>
+<div class="area-multi-select multi-select">
+    <span *ngIf="!indicator">Select an indicator</span>
+    <template ngFor let-region [ngForOf]="regions">
+        <label><input type="checkbox" name="checkbox" value="{{region.id}}" [(ngModel)]="region.state" (ngModelChange)="toggle(region.id, $event)"><span>{{region.text}}</span></label>
+    </template>
+</div>

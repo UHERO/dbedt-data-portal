@@ -10,6 +10,7 @@
 
         h6 {
             margin: 0.5em;
+            font-size: 0.9rem;
             letter-spacing: 0.025em;
             font-family: 'Lucida Sans', sans-serif;
         }
@@ -31,8 +32,6 @@
 
     .btn {
         line-height: 1;
-        font-family: 'Lucida Sans', sans-serif;
-        font-size: 0.9em;
         border-radius: 0;
         cursor: pointer;
     }
@@ -50,10 +49,9 @@
         width: 80%;
         margin-top: 5%;
         margin-left: 10px;
-        font-family: 'Lucida Sans', sans-serif;
-        font-size: 0.85em;
 
         .dbedt {
+            font-size: 1rem;
             color: #ED7D31;
             font-weight: 600;
         }
@@ -65,11 +63,9 @@
 
     .btn {
         line-height: 1;
-        font-family: 'Lucida Sans', sans-serif;
-        font-size: 0.9em;
         border-radius: 0;
         cursor: pointer;
-        float: right;
+        //float: right;
         background-color: #29A8B4;
         color: #FFFFFF;
     }
@@ -94,5 +90,28 @@
 
     #freq-selector {
         margin-right: 15px;
+    }
+
+    .get-data {
+        .btn {
+            line-height: 1;
+            border-radius: 0;
+            cursor: pointer;
+            background-color: #29A8B4;
+            color: #FFFFFF;
+        }
+
+        display: inline-block;
+        float: right;
+
+        .loading {
+            display: none;
+
+            i {
+                font-size: 2em !important;
+                vertical-align: middle;
+                color: #29A8B4;
+            }
+        }
     }
 }

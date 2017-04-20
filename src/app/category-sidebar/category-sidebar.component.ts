@@ -65,7 +65,9 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       // Bold the text of the subcategory and top level category when selecting an indicator
       this.addBold(subcategory, category);
       this.ids.push(e.node.id);
-      this.selectedCatIds.emit(this.ids);
+      setTimeout(() => {
+        this.selectedCatIds.emit(this.ids);
+      }, 20);
     }
   }
 
@@ -90,7 +92,9 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       let idIndex = this.ids.indexOf(e.node.id);
       if (idIndex > -1) {
         this.ids.splice(idIndex, 1);
-        this.selectedCatIds.emit(this.ids);
+        setTimeout(() => {
+          this.selectedCatIds.emit(this.ids);
+        }, 20);
       }
     }
   }
