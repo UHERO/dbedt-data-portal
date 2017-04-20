@@ -91,14 +91,27 @@
     #freq-selector {
         margin-right: 15px;
     }
-}
 
-.get-data {
-    display: inline-block;
-    float: right;
+    .get-data {
+        .btn {
+            line-height: 1;
+            border-radius: 0;
+            cursor: pointer;
+            background-color: #29A8B4;
+            color: #FFFFFF;
+        }
 
-    .loading {
-        font-size: 1.5em !important;
-        vertical-align: middle;
+        display: inline-block;
+        float: right;
+
+        .loading {
+            display: none;
+
+            i {
+                font-size: 2em !important;
+                vertical-align: middle;
+                color: #29A8B4;
+            }
+        }
     }
 }

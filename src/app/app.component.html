@@ -34,6 +34,7 @@
         <p class="text-danger" *ngIf="invalidDates">{{invalidDates}}</p>
         <p class="text-danger" *ngIf="noSeries">{{noSeries}}</p>
         <div class="get-data">
+          <span class="loading"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" aria-hidden="true"></i></span>
           <button type="button" class="btn btn-secondary" (click)="showTable()" [disabled]="checkSelections()">Get Data</button>
         </div>
       </div>

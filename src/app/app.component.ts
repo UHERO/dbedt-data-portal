@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ViewChild, ChangeDetectorRef, OnChanges } from '@angular/core';
+import { Component, Output, EventEmitter, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ApiService } from './api.service';
 import { HelperService } from './helper.service';
@@ -38,10 +38,8 @@ export class AppComponent {
   private noSeries: String;
   @ViewChild(CategorySidebarComponent)
   private sidebar: CategorySidebarComponent;
-  private loadingComplete;
 
-  constructor(private _apiService: ApiService, private _helper: HelperService, private ref: ChangeDetectorRef) {
-    this.loadingComplete = true;
+  constructor(private _apiService: ApiService, private _helper: HelperService) {
   }
 
   getSelectedIndicators(selectedMeasurements) {
@@ -257,7 +255,7 @@ export class AppComponent {
   checkSelections() {
     let disable = true;
     // Enable Get Data button if selections have been made in indicators, frequencies, and areas
-    if (this.selectedIndicators.length > 0 && this.selectedFreqs.length > 0 && this.selectedGeos.length > 0 && !this.noSeries) {
+    if (this.selectedIndicators.length > 0 && this.selectedFreqs.length > 0 && this.selectedGeos.length > 0 && !this.noSeries && !this.invalidDates) {
       disable = false;
     }
     return disable;
