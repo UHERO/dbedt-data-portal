@@ -64,7 +64,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               uheroFooter.push('');
               addRow.push('');
             }
-            dbedtFooter.unshift('Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information please visit: http://dbedt.hawaii.gov/');
+            dbedtFooter.unshift('Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information please visit: http://dbedt.hawaii.gov/economic');
             // Add an empty row before DBEDT and UHERO credit
             xlsx.body.push(addRow);
             xlsx.body.push(dbedtFooter);
@@ -72,16 +72,29 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           customize: function(xlsx) {
             let sheet = xlsx.xl.worksheets['sheet1.xml'];
             let col = $('col', sheet);
-            col.each(function() {
-              $(this).attr('width', 15);
-            })
+            let textCells = $('sheetData c is', sheet);
+            let rows = $('sheetData row', sheet);
+            let dates = $('v', rows[0]);
+            // Right align dates in first row
+            dates.each(function() {
+              $(this.parentElement).attr('s', 52);
+            });
+            // Right align cells with text, except footer
+            let i = 0;
+            while (i < textCells.length - 1) {
+              $(textCells[i].parentElement).attr('s', 52);
+              i++;
+            }
+            $(col[0]).attr('width', 25);
+            $(col[1]).attr('width', 25);
+            $(col[2]).attr('width', 25);
           }
         },
         {
           extend: 'csv',
           text: '<i class="fa fa-file-text-o" aria-hidden="true" title="CSV"></i>',
           customize: function(csv) {
-            return csv + '\n\n Compiled by Research & Economic Analysis Division State of Hawaii Department of Business Economic Development and Tourism. For more information please visit: http://dbedt.hawaii.gov/'
+            return csv + '\n\n Compiled by Research & Economic Analysis Division State of Hawaii Department of Business Economic Development and Tourism. For more information please visit: http://dbedt.hawaii.gov/economic'
           }
         },
         {
@@ -161,7 +174,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             doc.content[2].table.headerRows = 0;
             doc.content[2].table.body = formattedTable;
             doc.content.push({
-              text: 'Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/',
+              text: 'Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/economic',
             });
           }
         },
@@ -267,7 +280,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
                 $(this).css('background-color', '#F9F9F9');
               });
             });
-            $(win.document.body).find('br:last-child').after("<p>Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/</p>");
+            $(win.document.body).find('br:last-child').after("<p>Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/economic</p>");
           }
         }],
       columns: tableColumns,
