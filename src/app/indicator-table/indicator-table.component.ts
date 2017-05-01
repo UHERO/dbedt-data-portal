@@ -126,6 +126,11 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               }
               return result;
             }
+            function rightAlign(array) {
+              array.forEach((cell) => {
+                cell.alignment = 'right';
+              });
+            }
             // Get original table object
             let currentTable = doc.content[2].table.body;
             let sources: Array<any> = [];
@@ -157,6 +162,8 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
                 if (newRow.length < 10) {
                   newRow = rowRightPad(newRow);
                 }
+                // Right align cell text
+                rightAlign(newRow);
                 // Add new rows to formatted table
                 if (!formattedTable[index]) {
                   formattedTable[index] = newRow;
@@ -168,6 +175,8 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             });
             // Add sources
             sources.forEach((source) => {
+              // Right align cell text
+              rightAlign(source);
               formattedTable.push(source);
             });
             doc.content[2].table.dontBreakRows = true;

@@ -1,11 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 body {
-    font-family: 'Lucida Sans', sans-serif;
+    font-family: Arial, sans-serif;
     font-size: 0.8em;
+    line-height: 1.2;
     
     button, .btn {
-        font-family: 'Lucida Sans', sans-serif;
-        font-size: 1em;
+        // font-family: 'Lucida Sans', sans-serif;
+        font-size: inherit;
     }
 }
 
@@ -13,12 +14,12 @@ body {
     label {
         display: block;
         text-align: center;
-        margin-bottom: 0;
+        margin-bottom: 0.25em;
     }
 
     .custom-select {
-        height: 2.5rem;
-        padding: .5rem 1.75rem .5rem .75rem;
+        height: 2rem;
+        padding: 0rem 1.75rem 0rem .75rem;
         border-radius: 0;
     }
 }
@@ -52,11 +53,11 @@ body {
 }
 
 .freq-multi-select {
-    height: 65px;
+    height: 50px;
     width: 130px;
 }
 
 .area-multi-select {
-    height: 100px;
+    height: 80px;
     width: 175px;
 }
