@@ -86,8 +86,8 @@ describe('ApiService', () => {
     beforeEach(inject([Http, XHRBackend], (http: Http, be: MockBackend) => {
       backend = be;
       service = new ApiService(http);
-      let mockCategories = mockCategoryData();
-      let options = new ResponseOptions({status: 200, body: { data: mockCategories}});
+      const mockCategories = mockCategoryData();
+      const options = new ResponseOptions({status: 200, body: { data: mockCategories}});
       response = new Response(options);
     }));
 
@@ -105,8 +105,8 @@ describe('ApiService', () => {
     beforeEach(inject([Http, XHRBackend], (http: Http, be: MockBackend) => {
       backend = be;
       service = new ApiService(http);
-      let mockSeries = mockCategoryMeasures();
-      let options = new ResponseOptions({status: 200, body: { data: mockCategoryMeasures}});
+      const mockSeries = mockCategoryMeasures();
+      const options = new ResponseOptions({status: 200, body: { data: mockCategoryMeasures}});
       response = new Response(options);
     }));
 
@@ -124,8 +124,8 @@ describe('ApiService', () => {
     beforeEach(inject([Http, XHRBackend], (http: Http, be: MockBackend) => {
       backend = be;
       service = new ApiService(http);
-      let mockObservations = mockMeasureSeries();
-      let options = new ResponseOptions({status: 200, body: { data: mockMeasureSeries}});
+      const mockObservations = mockMeasureSeries();
+      const options = new ResponseOptions({status: 200, body: { data: mockMeasureSeries}});
       response = new Response(options);
     }));
 

@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { MonthSelectorComponent } from './month-selector.component';
 
 let comp: MonthSelectorComponent;
-let fixture: ComponentFixture<MonthSelectorComponent>
+let fixture: ComponentFixture<MonthSelectorComponent>;
 
 describe('MonthSelectorComponent', () => {
   beforeEach(async(() => {

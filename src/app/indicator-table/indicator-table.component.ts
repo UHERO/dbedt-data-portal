@@ -29,12 +29,12 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
     $('span.loading').css('display', 'inline-block');
     setTimeout(() => {
       this.initDatatable();
-    }, 20) 
+    }, 20);
   }
 
   initDatatable(): void {
-    let tableColumns = [];
-    let indicatorTable: any = $('#indicator-table');
+    const tableColumns = [];
+    const indicatorTable: any = $('#indicator-table');
     if (this.tableWidget) {
       // Destroy table if table has already been initialized
       this.tableWidget.destroy();
@@ -45,7 +45,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
       tableColumns.push({ title: date.tableDate, data: 'observations.' + date.tableDate });
     });
     tableColumns.push({ title: 'Source', data: 'source' });
-    let tableData = this.tableData
+    const tableData = this.tableData;
     this.tableWidget = indicatorTable.DataTable({
       data: this.tableData,
       dom: 'Bt',
@@ -54,10 +54,10 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           extend: 'excel',
           text: '<i class="fa fa-file-excel-o" aria-hidden="true" title="Excel"></i>',
           customizeData: function(xlsx) {
-            let cols = xlsx.header.length;
-            let dbedtFooter = [];
-            let uheroFooter = [];
-            let addRow = [];
+            const cols = xlsx.header.length;
+            const dbedtFooter = [];
+            const uheroFooter = [];
+            const addRow = [];
             // Rows with different lengths break export
             for (let i = 0; i < cols; i++) {
               dbedtFooter.push('');
@@ -70,11 +70,11 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             xlsx.body.push(dbedtFooter);
           },
           customize: function(xlsx) {
-            let sheet = xlsx.xl.worksheets['sheet1.xml'];
-            let col = $('col', sheet);
-            let textCells = $('sheetData c is', sheet);
-            let rows = $('sheetData row', sheet);
-            let dates = $('v', rows[0]);
+            const sheet = xlsx.xl.worksheets['sheet1.xml'];
+            const col = $('col', sheet);
+            const textCells = $('sheetData c is', sheet);
+            const rows = $('sheetData row', sheet);
+            const dates = $('v', rows[0]);
             // Right align dates in first row
             dates.each(function() {
               $(this.parentElement).attr('s', 52);
@@ -94,7 +94,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           extend: 'csv',
           text: '<i class="fa fa-file-text-o" aria-hidden="true" title="CSV"></i>',
           customize: function(csv) {
-            return csv + '\n\n Compiled by Research & Economic Analysis Division State of Hawaii Department of Business Economic Development and Tourism. For more information please visit: http://dbedt.hawaii.gov/economic'
+            return csv + '\n\n Compiled by Research & Economic Analysis Division State of Hawaii Department of Business Economic Development and Tourism. For more information please visit: http://dbedt.hawaii.gov/economic';
           }
         },
         {
@@ -107,11 +107,11 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             // Table rows should be divisible by 10
             // Maintain consistant table width (i.e. add empty strings if row has less than 10 data cells)
             function rowRightPad(row) {
-              let paddedRow = [];
+              const paddedRow = [];
               row.forEach((item) => {
                 paddedRow.push(item);
               });
-              let rowDiff = paddedRow.length % 10;
+              const rowDiff = paddedRow.length % 10;
               let addString = 10 - rowDiff;
               while (addString) {
                 paddedRow.push({ text: ' ', style: ''});
@@ -120,7 +120,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               return paddedRow;
             }
             function splitTable(array, size) {
-              let result = [];
+              const result = [];
               for (let i = 0; i < array.length; i += size) {
                 result.push(array.slice(i, i + size));
               }
@@ -132,32 +132,32 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               });
             }
             // Get original table object
-            let currentTable = doc.content[2].table.body;
-            let sources: Array<any> = [];
-            let formattedTable: Array<any> = [];
+            const currentTable = doc.content[2].table.body;
+            const sources: Array<any> = [];
+            const formattedTable: Array<any> = [];
             currentTable.forEach((row, index) => {
               let counter = currentTable.length;
               // Fixed Columns: Indicator, Area, Units
-              let indicator = row[0];
-              let area = row[1];
-              let units = row[2];
+              const indicator = row[0];
+              const area = row[1];
+              const units = row[2];
               // Store source info to append to end of export (include Indicator and Source)
-              let source = row[row.length - 1];
-              let sourceCopy = Object.assign({}, source);
+              const source = row[row.length - 1];
+              const sourceCopy = Object.assign({}, source);
               let sourceRow = [indicator, sourceCopy];
               sourceRow = rowRightPad(sourceRow);
               sources.push(sourceRow);
               // Get data from each original row excluding fixed columns and sources
-              let nonFixedCols = row.slice(3, row.length - 1);
+              const nonFixedCols = row.slice(3, row.length - 1);
               // Split data into groups of arrays with max length == 7
-              let split = splitTable(nonFixedCols, 7);
+              const split = splitTable(nonFixedCols, 7);
               for (let i = 0; i < split.length; i++) {
                 // Each group is used as a new row for the formatted tables
                 let newRow = split[i];
                 // Add the fixed columns to each new row
-                let indicatorCopy = Object.assign({}, indicator);
-                let areaCopy = Object.assign({}, area);
-                let unitsCopy = Object.assign({}, units);
+                const indicatorCopy = Object.assign({}, indicator);
+                const areaCopy = Object.assign({}, area);
+                const unitsCopy = Object.assign({}, units);
                 newRow.unshift(indicatorCopy, areaCopy, unitsCopy);
                 if (newRow.length < 10) {
                   newRow = rowRightPad(newRow);
@@ -202,23 +202,23 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               return 0;
             }
             function sortObsDates(nonSorted, sorted) {
-              let result = [];
+              const result = [];
               for (let i = 0; i < nonSorted.length; i++) {
-                let index = nonSorted.indexOf(sorted[i]);
+                const index = nonSorted.indexOf(sorted[i]);
                 result[i] = nonSorted[index];
               }
               return result;
             }
             function splitTable(array, size) {
-              let result = [];
+              const result = [];
               for (let i = 0; i < array.length; i += size) {
                 result.push(array.slice(i, i + size));
               }
                return result;
             }
             // Get array of dates from table
-            let dates = tableColumns.slice(3, tableColumns.length - 1);
-            let dateArray = [];
+            const dates = tableColumns.slice(3, tableColumns.length - 1);
+            const dateArray = [];
             dates.forEach((date) => {
               dateArray.push(date.title);
             });
@@ -227,46 +227,46 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             tableData.sort(sortIndicators);
 
             // Columns to be fixed in tables: Indicator, Area, Units
-            let indicator = tableColumns[0];
-            let area = tableColumns[1];
-            let units = tableColumns[2];
+            const indicator = tableColumns[0];
+            const area = tableColumns[1];
+            const units = tableColumns[2];
             // Get array of columns minus fixed columns
-            let columns = tableColumns.slice(3);
+            const columns = tableColumns.slice(3);
             // Split columns into arrays with max length of 7
-            let tableHeaders = splitTable(columns, 7);
-            let newTables = [];
+            const tableHeaders = splitTable(columns, 7);
+            const newTables = [];
 
             // Add fixed columns to the new table headers and create a new table for each header
             tableHeaders.forEach((header) => {
               header.unshift(indicator, area, units);
               let html = '<table class="dataTable no-footer"><tr>';
               header.forEach((col) => {
-                html += '<td>' + col.title + '</td>'
+                html += '<td>' + col.title + '</td>';
               });
               html += '</tr>';
               newTables.push(html);
             });
 
             // Add data from indicators to each new table
-            tableData.forEach((indicator, index) => {
+            tableData.forEach((ind, index) => {
               let obsCounter = 0;
-              let observations = Object.keys(indicator.observations);
+              const observations = Object.keys(ind.observations);
               // Sort observations keys to match order of table date columns
-              let sortedObs = sortObsDates(observations, dateArray);
+              const sortedObs = sortObsDates(observations, dateArray);
               for (let i = 0; i < newTables.length; i++) {
                 let table = newTables[i];
-                table += '<tr><td>' + indicator.indicator + '</td><td>' + indicator.region + '</td><td>' + indicator.units + '</td>';
+                table += '<tr><td>' + ind.indicator + '</td><td>' + ind.region + '</td><td>' + ind.units + '</td>';
                 let colCount = 3;
                 while (colCount < 10 && obsCounter < sortedObs.length) {
-                  table += '<td>' + indicator.observations[sortedObs[obsCounter]] + '</td>';
+                  table += '<td>' + ind.observations[sortedObs[obsCounter]] + '</td>';
                   colCount += 1;
                   obsCounter += 1;
                 }
                 // Add source
-                if (colCount < 10 && obsCounter == sortedObs.length) {
-                  table += '<td>' + indicator.source + '</td></tr>';
+                if (colCount < 10 && obsCounter === sortedObs.length) {
+                  table += '<td>' + ind.source + '</td></tr>';
                 }
-                if (index == tableData.length - 1) {
+                if (index === tableData.length - 1) {
                   table += '</table>';
                 }
                 newTables[i] = table;
@@ -274,7 +274,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             });
 
             // Original table
-            let dtTable = $(win.document.body).find('table');
+            const dtTable = $(win.document.body).find('table');
             newTables.forEach((table) => {
               $(win.document.body).append('<br>');
               $(win.document.body).append(table);
@@ -283,19 +283,26 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             // Remove original table from print
             dtTable.remove();
 
-            let $tables = $(win.document.body).find('table');
+            const $tables = $(win.document.body).find('table');
             $tables.each(function (i, table) {
               $(table).find('tr:odd').each(function () {
                 $(this).css('background-color', '#F9F9F9');
               });
             });
-            $(win.document.body).find('br:last-child').after("<p>Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/economic</p>");
+            $(win.document.body)
+              .find('br:last-child')
+              .after('<p>Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/economic</p>');
           }
         }],
       columns: tableColumns,
       columnDefs: [
-        { "className": "td-left", "targets": [0, 1, 2] },
-        { "className": "td-right", "targets": "_all" }
+        { 'className': 'td-left', 'targets': [0, 1, 2] },
+        { 'className': 'td-right', 'targets': '_all',
+          'render': function(data, type, row, meta) {
+            // If no data is available for a given year, return an empty string
+            return data === undefined ? ' ' : data;
+          }
+        }
       ],
       scrollY: '400px',
       scrollX: true,

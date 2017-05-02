@@ -5,14 +5,13 @@ import 'rxjs/Rx';
 import 'rxjs/add/operator/mergeMap';
 
 import { Category } from './category';
-import { CategoryTree } from './category-tree';
 
 @Injectable()
 export class ApiService {
   private baseUrl: string;
   private requestOptionsArgs: RequestOptionsArgs;
   private headers: Headers;
-  private cachedCategories: CategoryTree;
+  private cachedCategories: Array<Category>;
   private cachedCategoryMeasures = [];
   private cachedMeasurementSeries = [];
 
@@ -26,8 +25,8 @@ export class ApiService {
 
   //  Get data from API
 
-  // Gets all available categories. Used for navigation & displaying sublists 
-  fetchCategories(): Observable<CategoryTree> {
+  // Gets all available categories. Used for navigation & displaying sublists
+  fetchCategories(): Observable<Category[]> {
     if (this.cachedCategories) {
       return Observable.of(this.cachedCategories);
     } else {
@@ -74,12 +73,12 @@ export class ApiService {
 // Create a nested JSON of parent and child categories
 // Used for landing-page.component
 // And side bar navigation on single-series & table views
-function mapCategories(response: Response): CategoryTree {
-  let categories = response.json().data;
-  let dataMap = categories.reduce((map, value) => (map[value.id] = value, map), {});
-  let categoryTree = [];
+function mapCategories(response: Response): Array<Category> {
+  const categories = response.json().data;
+  const dataMap = categories.reduce((map, value) => (map[value.id] = value, map), {});
+  const categoryTree = [];
   categories.forEach((value) => {
-    let parent = dataMap[value.parentId];
+    const parent = dataMap[value.parentId];
     if (parent) {
       (parent.children || (parent.children = [])).push(value);
     } else {
@@ -96,6 +95,6 @@ function mapCategories(response: Response): CategoryTree {
 }
 
 function mapData(response: Response): any {
-  let data = response.json().data;
+  const data = response.json().data;
   return data;
 }

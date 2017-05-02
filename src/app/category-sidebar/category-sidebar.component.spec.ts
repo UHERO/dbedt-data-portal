@@ -13,7 +13,7 @@ import { MockApiService } from '../../testing/mockapi-service';
 import { HelperService } from '../helper.service';
 
 let comp: CategorySidebarComponent;
-let fixture: ComponentFixture<CategorySidebarComponent>
+let fixture: ComponentFixture<CategorySidebarComponent>;
 
 describe('CategorySidebarComponent', () => {
   beforeEach(async(() => {

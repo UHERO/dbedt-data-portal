@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import { ApiService } from '../api.service';
-import { CategoryTree } from '../category-tree';
+import { Category } from '../category';
 import { TREE_ACTIONS, IActionMapping, TreeComponent, TreeNode } from 'angular2-tree-component';
 
 const actionMapping: IActionMapping = {
@@ -9,7 +9,7 @@ const actionMapping: IActionMapping = {
     click: TREE_ACTIONS.TOGGLE_SELECTED_MULTI,
     expanderClick: TREE_ACTIONS.TOGGLE_SELECTED_MULTI
   }
-}
+};
 
 @Component({
   selector: 'app-category-sidebar',
@@ -18,16 +18,16 @@ const actionMapping: IActionMapping = {
   encapsulation: ViewEncapsulation.None
 })
 export class CategorySidebarComponent implements OnInit, OnDestroy {
-  private categories: CategoryTree;
+  private categories: Array<Category>;
   private subCategories; // Subscription to categories
-  private nodes;
+  public nodes;
   private ids: Array<any> = [];
   private error: string;
-  private options;
+  public options;
   // Emit ids of selected categories to app.component
   @Output() selectedCatIds = new EventEmitter();
   @ViewChild(TreeComponent)
-  private tree: TreeComponent
+  private tree: TreeComponent;
 
   constructor(private _apiService: ApiService) { }
 
@@ -43,11 +43,11 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
 
     this.options = {
       getChildren: (node: TreeNode) => {
-        let children = [];
+        const children = [];
         return this._apiService.fetchCategoryMeasures(node.id).toPromise();
       },
       actionMapping
-    }
+    };
   }
 
   ngOnDestroy() {
@@ -59,9 +59,9 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       e.node.expand();
     }
     if (!e.node.hasChildren) {
-      let indicator = this.tree.treeModel.getNodeById(e.node.id);
-      let subcategory = $(indicator.parent.elementRef.nativeElement);
-      let category = $(indicator.parent.parent.elementRef.nativeElement);
+      const indicator = this.tree.treeModel.getNodeById(e.node.id);
+      const subcategory = $(indicator.parent.elementRef.nativeElement);
+      const category = $(indicator.parent.parent.elementRef.nativeElement);
       // Bold the text of the subcategory and top level category when selecting an indicator
       this.addBold(subcategory, category);
       this.ids.push(e.node.id);
@@ -72,7 +72,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   }
 
   addBold(subcategory, category) {
-    let ignoreClasses = '.toggle-children-wrapper, .toggle-children, .toggle-children-placeholder';
+    const ignoreClasses = '.toggle-children-wrapper, .toggle-children, .toggle-children-placeholder';
     subcategory.find('span').not(ignoreClasses).first().addClass('bold-selected');
     category.find('span').not(ignoreClasses).first().addClass('bold-selected');
   }
@@ -82,14 +82,14 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       e.node.collapse();
     }
     if (!e.node.hasChildren) {
-      let indicator = this.tree.treeModel.getNodeById(e.node.id);
-      let subcategory = indicator.parent;
-      let activeIndicator = this.checkActiveIndicators(subcategory);
-      let category = indicator.parent.level === 1 ? indicator.parent : indicator.parent.parent;
+      const indicator = this.tree.treeModel.getNodeById(e.node.id);
+      const subcategory = indicator.parent;
+      const activeIndicator = this.checkActiveIndicators(subcategory);
+      const category = indicator.parent.level === 1 ? indicator.parent : indicator.parent.parent;
       if (!activeIndicator) {
-        let span = $(category.elementRef.nativeElement).find('span').removeClass('bold-selected');
+        const span = $(category.elementRef.nativeElement).find('span').removeClass('bold-selected');
       }
-      let idIndex = this.ids.indexOf(e.node.id);
+      const idIndex = this.ids.indexOf(e.node.id);
       if (idIndex > -1) {
         this.ids.splice(idIndex, 1);
         setTimeout(() => {
@@ -113,7 +113,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
 
   // Deactivate nodes when clicking on Clear All Selections
   reset() {
-    let active = this.tree.treeModel.activeNodes;
+    const active = this.tree.treeModel.activeNodes;
     if (active) {
       active.forEach((node) => {
         node.setIsActive(false);

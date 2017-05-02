@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { YearSelectorComponent } from './year-selector.component';
 
 let comp: YearSelectorComponent;
-let fixture: ComponentFixture<YearSelectorComponent>
+let fixture: ComponentFixture<YearSelectorComponent>;
 
 describe('YearSelectorComponent', () => {
   beforeEach(async(() => {

@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { QuarterSelectorComponent } from './quarter-selector.component';
 
 let comp: QuarterSelectorComponent;
-let fixture: ComponentFixture<QuarterSelectorComponent>
+let fixture: ComponentFixture<QuarterSelectorComponent>;
 
 describe('QuarterSelectorComponent', () => {
   beforeEach(async(() => {
