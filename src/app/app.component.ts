@@ -65,6 +65,7 @@ export class AppComponent {
     if (!this.selectedIndicators.length) {
       // Remove table if all categories are deselected and remove date selectors
       this.toggleDateSelectors();
+      this.datesSelected = null;
       this.displayTable = false;
       this.regions = [];
       this.selectedGeos = [];
@@ -276,6 +277,7 @@ export class AppComponent {
   clearSelections() {
     this.displayTable = false;
     this.selectedIndicators = [];
+    this.datesSelected = null;
     this.frequencies = [];
     this.regions = [];
     this.selectedFreqs = [];
