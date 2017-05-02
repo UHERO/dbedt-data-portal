@@ -134,8 +134,10 @@ export class HelperService {
     allYears = allYears.reverse();
     const minYear = allYears[allYears.length - 1];
     const maxYear = allYears[0];
-    selectedDates.selectedStartYear = selectedDates.selectedStartYear ? selectedDates.selectedStartYear : minYear;
-    selectedDates.selectedEndYear = selectedDates.selectedEndYear ? selectedDates.selectedEndYear : maxYear;
+    const selectedStartIndex = allYears.indexOf(selectedDates.selectedStartYear);
+    const selectedEndIndex = allYears.indexOf(selectedDates.selectedEndYear);
+    selectedDates.selectedStartYear = selectedStartIndex > -1 ? selectedDates.selectedStartYear : minYear;
+    selectedDates.selectedEndYear = selectedEndIndex > -1 ? selectedDates.selectedEndYear : maxYear;
     selectedDates.fromYearList = allYears;
     selectedDates.toYearList = allYears;
   }

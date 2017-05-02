@@ -164,9 +164,7 @@ export class AppComponent {
         });
       });
       if (indIndex === this.selectedIndicators.length - 1) {
-        console.log('datesSelected', this.datesSelected);
         this.datesSelected = this.datesSelected ? this.datesSelected : <DatesSelected>{};
-        // this.datesSelected = <DatesSelected>{};
         this.datesSelected.endDate = '';
         this.datesSelected.startDate = '';
         if (seriesData.length !== 0) {
@@ -322,7 +320,6 @@ export class AppComponent {
     const validDates = this.checkValidDates(this.datesSelected);
     if (validDates) {
       this.invalidDates = null;
-      this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.selectedFreqs);
       this._helper.yearsRange(this.datesSelected);
       if (this.selectedFreqs.indexOf('Q') > -1) {
         this._helper.quartersRange(this.datesSelected);
@@ -330,6 +327,7 @@ export class AppComponent {
       if (this.selectedFreqs.indexOf('M') > -1) {
         this._helper.monthsRange(this.datesSelected);
       }
+      this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.selectedFreqs);
     } else {
       this.invalidDates = 'Invalid date selection';
       this.displayTable = false;
