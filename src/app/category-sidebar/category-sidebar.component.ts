@@ -63,21 +63,35 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       const subcategory = $(indicator.parent.elementRef.nativeElement);
       const category = $(indicator.parent.parent.elementRef.nativeElement);
       // keep track of node position, used for table ordering
-      let position;
       let categoryId = e.node.parent.parent.data.id;
       let subcategoryId = e.node.parent.data.id;
       let indicatorId = e.node.data.id;
-      console.log('category', categoryId);
-      console.log('subcat id', subcategoryId);
-      console.log('ind id', indicatorId);
+      const tree = e.node.treeModel.nodes;
+      let cat = tree.find(node => node.id === categoryId);
+      let subcat = cat.children.find(node => node.id === subcategoryId);
+      let ind = subcat.children.find(node => node.id === indicatorId);
+      let catIndex = tree.indexOf(cat);
+      let subIndex = cat.children.indexOf(subcat);
+      let indIndex = subcat.children.indexOf(ind);
+      let position = this.nodePosition(catIndex, subIndex, indIndex);
       // Bold the text of the subcategory and top level category when selecting an indicator
       this.addBold(subcategory, category);
-      this.ids.push(e.node.id);
-      console.log(e.node);
+      this.ids.push({id: e.node.id, position: position});
       setTimeout(() => {
         this.selectedCatIds.emit(this.ids);
       }, 20);
     }
+  }
+
+  nodePosition(categoryIndex, subcatIndex, indicatorIndex) {
+    const pad = '00';
+    let cat = '' + categoryIndex;
+    let subcat = '' + subcatIndex;
+    let ind = '' + indicatorIndex;
+    let paddedCat = pad.substring(0, pad.length - cat.length) + cat;
+    let paddedSub = pad.substring(0, pad.length - subcat.length) + subcat;
+    let paddedInd = pad.substring(0, pad.length - ind.length) + ind;
+    return paddedCat + paddedSub + paddedInd;
   }
 
   addBold(subcategory, category) {
@@ -98,7 +112,9 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       if (!activeIndicator) {
         const span = $(category.elementRef.nativeElement).find('span').removeClass('bold-selected');
       }
-      const idIndex = this.ids.indexOf(e.node.id);
+      //const idIndex = this.ids.indexOf(e.node.id);
+      const deactivated = this.ids.find(id => id.id === e.node.id);
+      const idIndex = this.ids.indexOf(deactivated);
       if (idIndex > -1) {
         this.ids.splice(idIndex, 1);
         setTimeout(() => {

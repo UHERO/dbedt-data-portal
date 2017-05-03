@@ -47,8 +47,8 @@ export class AppComponent {
     const freqList = [];
     this.selectedIndicators = [];
     selectedMeasurements.forEach((m) => {
-      this._apiService.fetchMeasurementSeries(m).subscribe((series) => {
-        this.initSettings(series, geoList, freqList);
+      this._apiService.fetchMeasurementSeries(m.id).subscribe((series) => {
+        this.initSettings(m.position, series, geoList, freqList);
       },
         (error) => {
           this.errorMsg = error;
@@ -76,11 +76,12 @@ export class AppComponent {
     }
   }
 
-  initSettings(series: Array<any>, geoList: Array<any>, freqList: Array<any>) {
+  initSettings(position: string, series: Array<any>, geoList: Array<any>, freqList: Array<any>) {
     // Iterate through list of series to create list of areas and frequencies and identify observation dates
     let geoFreqs, freqGeos, obsStart, obsEnd;
     series.forEach((serie) => {
       this.selectedIndicators.push(serie);
+      serie.position = position;
       geoFreqs = serie.geo_freqs;
       freqGeos = serie.freq_geos;
       obsStart = serie.seriesObservations.observationStart.substr(0, 10);
@@ -156,9 +157,7 @@ export class AppComponent {
 
   getSeries() {
     const seriesData = [];
-    console.log('selected indicator', this.selectedIndicators)
     this.selectedIndicators.forEach((indicatorSeries, indIndex) => {
-      console.log(indicatorSeries)
       this.selectedGeos.forEach((geo) => {
         this.selectedFreqs.forEach((freq) => {
           if (indicatorSeries.geography.handle === geo && indicatorSeries.frequencyShort === freq) {
@@ -207,7 +206,6 @@ export class AppComponent {
       this.dateArray.forEach((date) => {
         result[date.tableDate] = ' ';
       });
-      console.log(series)
       // If decimal value is not specified, round values to 2 decimal places
       const decimals = this.setDecimals(series.decimals);
       const exist = this.tableData.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
@@ -242,7 +240,7 @@ export class AppComponent {
         }
       } else {
         this.tableData.push({
-          // position: ,
+          position: series.position,
           indicator: series.title,
           region: series.geography.name,
           units: series.unitsLabelShort,

@@ -20,7 +20,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   @Input() tableData;
   @Input() datesSelected;
   private tableWidget: any;
-  private tableOrder = [];
 
   constructor(private _api: ApiService) { }
 
@@ -35,18 +34,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   }
 
   initDatatable(): void {
-    this.tableOrder = [];
-    /* this._api.fetchCategories().subscribe((categories) => {
-      categories.forEach((category) => {
-        category.children.forEach((child) => {
-          if (child.children) {
-            child.children.forEach((measurement) => {
-              this.tableOrder.push(measurement.name);
-            });
-          }
-        });
-      });
-    }); */
     const tableColumns = [];
     const indicatorTable: any = $('#indicator-table');
     if (this.tableWidget) {
@@ -67,6 +54,9 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
         {
           extend: 'excel',
           text: '<i class="fa fa-file-excel-o" aria-hidden="true" title="Excel"></i>',
+          exportOptions: {
+            columns: ':visible'
+          },
           customizeData: function(xlsx) {
             const cols = xlsx.header.length;
             const dbedtFooter = [];
@@ -107,6 +97,9 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
         {
           extend: 'csv',
           text: '<i class="fa fa-file-text-o" aria-hidden="true" title="CSV"></i>',
+          exportOptions: {
+            columns: ':visible'
+          },
           customize: function(csv) {
             return csv + '\n\n Compiled by Research & Economic Analysis Division State of Hawaii Department of Business Economic Development and Tourism. For more information please visit: http://dbedt.hawaii.gov/economic';
           }
@@ -117,6 +110,9 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           orientation: 'landscape',
           pageSize: 'letter',
           message: 'Research & Economic Analysis Division, DBEDT',
+          exportOptions: {
+            columns: ':visible'
+          },
           customize: function (doc) {
             // Table rows should be divisible by 10
             // Maintain consistant table width (i.e. add empty strings if row has less than 10 data cells)
@@ -205,6 +201,9 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           extend: 'print',
           text: '<i class="fa fa-print" aria-hidden="true" title="Print"></i>',
           message: 'Research & Economic Analysis Division, DBEDT',
+          exportOptions: {
+            columns: ':visible'
+          },
           customize: function(win) {
             function sortIndicators(a, b) {
               if (a.indicator < b.indicator) {
@@ -231,7 +230,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
                return result;
             }
             // Get array of dates from table
-            const dates = tableColumns.slice(3, tableColumns.length - 1);
+            const dates = tableColumns.slice(4, tableColumns.length - 1);
             const dateArray = [];
             dates.forEach((date) => {
               dateArray.push(date.title);
@@ -241,11 +240,11 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             tableData.sort(sortIndicators);
 
             // Columns to be fixed in tables: Indicator, Area, Units
-            const indicator = tableColumns[0];
-            const area = tableColumns[1];
-            const units = tableColumns[2];
+            const indicator = tableColumns[1];
+            const area = tableColumns[2];
+            const units = tableColumns[3];
             // Get array of columns minus fixed columns
-            const columns = tableColumns.slice(3);
+            const columns = tableColumns.slice(4);
             // Split columns into arrays with max length of 7
             const tableHeaders = splitTable(columns, 7);
             const newTables = [];
@@ -310,7 +309,9 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
         }],
       columns: tableColumns,
       columnDefs: [
-        { 'className': 'td-left', 'targets': [0, 1, 2] },
+        // Hide ID column -- used for initial ordering
+        { 'visible': false, 'targets': 0 },
+        { 'className': 'td-left', 'targets': [1, 2, 3] },
         { 'className': 'td-right', 'targets': '_all',
           'render': function(data, type, row, meta) {
             // If no data is available for a given year, return an empty string
@@ -319,7 +320,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
         }
       ],
       scrollY: '400px',
-      //order: [],
       scrollX: true,
       paging: false,
       searching: false,
@@ -328,7 +328,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
         'leftColumns': 3
       },
     });
-    console.log(indicatorTable)
     $('span.loading').css('display', 'none');
   }
 }
