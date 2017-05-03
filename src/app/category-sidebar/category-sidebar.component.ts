@@ -62,9 +62,18 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       const indicator = this.tree.treeModel.getNodeById(e.node.id);
       const subcategory = $(indicator.parent.elementRef.nativeElement);
       const category = $(indicator.parent.parent.elementRef.nativeElement);
+      // keep track of node position, used for table ordering
+      let position;
+      let categoryId = e.node.parent.parent.data.id;
+      let subcategoryId = e.node.parent.data.id;
+      let indicatorId = e.node.data.id;
+      console.log('category', categoryId);
+      console.log('subcat id', subcategoryId);
+      console.log('ind id', indicatorId);
       // Bold the text of the subcategory and top level category when selecting an indicator
       this.addBold(subcategory, category);
       this.ids.push(e.node.id);
+      console.log(e.node);
       setTimeout(() => {
         this.selectedCatIds.emit(this.ids);
       }, 20);

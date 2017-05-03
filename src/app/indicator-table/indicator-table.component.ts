@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, OnChanges, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
 import { HelperService } from '../helper.service';
+import {  ApiService } from '../api.service';
 import * as $ from 'jquery';
 import 'datatables.net';
 import 'datatables.net-fixedcolumns';
@@ -19,8 +20,9 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   @Input() tableData;
   @Input() datesSelected;
   private tableWidget: any;
+  private tableOrder = [];
 
-  constructor() { }
+  constructor(private _api: ApiService) { }
 
   ngOnInit() {
   }
@@ -33,6 +35,18 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   }
 
   initDatatable(): void {
+    this.tableOrder = [];
+    /* this._api.fetchCategories().subscribe((categories) => {
+      categories.forEach((category) => {
+        category.children.forEach((child) => {
+          if (child.children) {
+            child.children.forEach((measurement) => {
+              this.tableOrder.push(measurement.name);
+            });
+          }
+        });
+      });
+    }); */
     const tableColumns = [];
     const indicatorTable: any = $('#indicator-table');
     if (this.tableWidget) {
@@ -40,7 +54,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
       this.tableWidget.destroy();
       indicatorTable.empty();
     }
-    tableColumns.push({ title: 'Indicator', data: 'indicator' }, { title: 'Area', data: 'region' }, { title: 'Units', data: 'units' });
+    tableColumns.push({ title: 'Id', data: 'position'}, { title: 'Indicator', data: 'indicator' }, { title: 'Area', data: 'region' }, { title: 'Units', data: 'units' });
     this.dateArray.forEach((date) => {
       tableColumns.push({ title: date.tableDate, data: 'observations.' + date.tableDate });
     });
@@ -305,6 +319,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
         }
       ],
       scrollY: '400px',
+      //order: [],
       scrollX: true,
       paging: false,
       searching: false,
@@ -313,6 +328,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
         'leftColumns': 3
       },
     });
+    console.log(indicatorTable)
     $('span.loading').css('display', 'none');
   }
 }

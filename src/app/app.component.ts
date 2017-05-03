@@ -156,7 +156,9 @@ export class AppComponent {
 
   getSeries() {
     const seriesData = [];
+    console.log('selected indicator', this.selectedIndicators)
     this.selectedIndicators.forEach((indicatorSeries, indIndex) => {
+      console.log(indicatorSeries)
       this.selectedGeos.forEach((geo) => {
         this.selectedFreqs.forEach((freq) => {
           if (indicatorSeries.geography.handle === geo && indicatorSeries.frequencyShort === freq) {
@@ -205,6 +207,7 @@ export class AppComponent {
       this.dateArray.forEach((date) => {
         result[date.tableDate] = ' ';
       });
+      console.log(series)
       // If decimal value is not specified, round values to 2 decimal places
       const decimals = this.setDecimals(series.decimals);
       const exist = this.tableData.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
@@ -239,6 +242,7 @@ export class AppComponent {
         }
       } else {
         this.tableData.push({
+          // position: ,
           indicator: series.title,
           region: series.geography.name,
           units: series.unitsLabelShort,
