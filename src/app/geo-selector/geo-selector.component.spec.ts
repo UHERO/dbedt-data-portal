@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 import { GeoSelectorComponent } from './geo-selector.component';
 
 let comp: GeoSelectorComponent;
-let fixture: ComponentFixture<GeoSelectorComponent>
+let fixture: ComponentFixture<GeoSelectorComponent>;
 
 describe('GeoSelectorComponent', () => {
   beforeEach(async(() => {

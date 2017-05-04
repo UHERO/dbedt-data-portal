@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 import { FreqSelectorComponent } from './freq-selector.component';
 
 let comp: FreqSelectorComponent;
-let fixture: ComponentFixture<FreqSelectorComponent>
+let fixture: ComponentFixture<FreqSelectorComponent>;
 
 describe('FreqSelectorComponent', () => {
   beforeEach(async(() => {

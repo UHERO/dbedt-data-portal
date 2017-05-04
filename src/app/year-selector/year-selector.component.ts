@@ -10,7 +10,7 @@ export class YearSelectorComponent implements OnInit {
   @Input() selectedYear;
   @Input() rangeLabel;
   @Output() selectedYearChange = new EventEmitter();
-  
+
   constructor() { }
 
   ngOnInit() {

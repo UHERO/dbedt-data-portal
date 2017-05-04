@@ -1,4 +1,4 @@
-export class dateWrapper {
+export class DateWrapper {
     firstDate: string;
-    endDate: string
+    endDate: string;
 }

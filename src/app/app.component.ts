@@ -16,26 +16,26 @@ export class AppComponent {
   private errorMsg: string;
   // List of indicators selected from category-tree
   private selectedIndicators: Array<any> = [];
-  private indicatorSelected = false;
+  public indicatorSelected = false;
 
   // List of regions and freqeuencies for the selected series/categories
-  private regions: Array<Geography>;
-  private frequencies: Array<Frequency>;
+  public regions: Array<Geography>;
+  public frequencies: Array<Frequency>;
 
   // List of selected regions and frequencies
-  private selectedGeos: Array<string> = [];
-  private selectedFreqs: Array<string> = [];
+  public selectedGeos: Array<string> = [];
+  public selectedFreqs: Array<string> = [];
 
-  private annualSelected: Boolean = false;
-  private quarterSelected: Boolean = false;
-  private monthSelected: Boolean = false;
+  public annualSelected: Boolean = false;
+  public quarterSelected: Boolean = false;
+  public monthSelected: Boolean = false;
 
-  private datesSelected: DatesSelected;
-  private dateArray: Array<any>;
-  private tableData = [];
-  private displayTable: Boolean = false;
-  private invalidDates: String;
-  private noSeries: String;
+  public datesSelected: DatesSelected;
+  public dateArray: Array<any>;
+  public tableData = [];
+  public displayTable: Boolean = false;
+  public invalidDates: String;
+  public noSeries: String;
   @ViewChild(CategorySidebarComponent)
   private sidebar: CategorySidebarComponent;
 
@@ -47,8 +47,8 @@ export class AppComponent {
     const freqList = [];
     this.selectedIndicators = [];
     selectedMeasurements.forEach((m) => {
-      this._apiService.fetchMeasurementSeries(m).subscribe((series) => {
-        this.initSettings(series, geoList, freqList);
+      this._apiService.fetchMeasurementSeries(m.id).subscribe((series) => {
+        this.initSettings(m.position, series, geoList, freqList);
       },
         (error) => {
           this.errorMsg = error;
@@ -65,6 +65,7 @@ export class AppComponent {
     if (!this.selectedIndicators.length) {
       // Remove table if all categories are deselected and remove date selectors
       this.toggleDateSelectors();
+      this.datesSelected = null;
       this.displayTable = false;
       this.regions = [];
       this.selectedGeos = [];
@@ -75,11 +76,12 @@ export class AppComponent {
     }
   }
 
-  initSettings(series: Array<any>, geoList: Array<any>, freqList: Array<any>) {
+  initSettings(position: string, series: Array<any>, geoList: Array<any>, freqList: Array<any>) {
     // Iterate through list of series to create list of areas and frequencies and identify observation dates
     let geoFreqs, freqGeos, obsStart, obsEnd;
     series.forEach((serie) => {
       this.selectedIndicators.push(serie);
+      serie.position = position;
       geoFreqs = serie.geo_freqs;
       freqGeos = serie.freq_geos;
       obsStart = serie.seriesObservations.observationStart.substr(0, 10);
@@ -164,7 +166,7 @@ export class AppComponent {
         });
       });
       if (indIndex === this.selectedIndicators.length - 1) {
-        this.datesSelected = <DatesSelected>{};
+        this.datesSelected = this.datesSelected ? this.datesSelected : <DatesSelected>{};
         this.datesSelected.endDate = '';
         this.datesSelected.startDate = '';
         if (seriesData.length !== 0) {
@@ -199,9 +201,9 @@ export class AppComponent {
   formatTableData(seriesData) {
     // Format data for datatables module (indicator-table component)
     this.tableData = [];
-    seriesData.forEach((series, index) => {
+    seriesData.forEach((series) => {
       const result = {};
-      this.dateArray.forEach((date, index) => {
+      this.dateArray.forEach((date) => {
         result[date.tableDate] = ' ';
       });
       // If decimal value is not specified, round values to 2 decimal places
@@ -228,15 +230,28 @@ export class AppComponent {
           );
         }
         if (series.frequencyShort === 'M') {
-          this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, decimals, this.tableData[exist].observations, this.dateArray);
+          this._helper.formatLevelData(
+            series.seriesObservations,
+            series.frequencyShort,
+            decimals,
+            this.tableData[exist].observations,
+            this.dateArray
+          );
         }
       } else {
         this.tableData.push({
+          position: series.position,
           indicator: series.title,
           region: series.geography.name,
           units: series.unitsLabelShort,
           source: series.source_description ? series.source_description : ' ',
-          observations: this._helper.formatLevelData(series.seriesObservations, series.frequencyShort, decimals, result, this.dateArray)
+          observations: this._helper.formatLevelData(
+            series.seriesObservations,
+            series.frequencyShort,
+            decimals,
+            result,
+            this.dateArray
+          )
         });
       }
     });
@@ -255,7 +270,7 @@ export class AppComponent {
   checkSelections() {
     let disable = true;
     // Enable Get Data button if selections have been made in indicators, frequencies, and areas
-    if (this.selectedIndicators.length > 0 && this.selectedFreqs.length > 0 && this.selectedGeos.length > 0 && !this.noSeries && !this.invalidDates) {
+    if (this.selectedIndicators.length && this.selectedFreqs.length && this.selectedGeos.length && !this.noSeries && !this.invalidDates) {
       disable = false;
     }
     return disable;
@@ -264,6 +279,7 @@ export class AppComponent {
   clearSelections() {
     this.displayTable = false;
     this.selectedIndicators = [];
+    this.datesSelected = null;
     this.frequencies = [];
     this.regions = [];
     this.selectedFreqs = [];
@@ -305,10 +321,9 @@ export class AppComponent {
   }
 
   getDates() {
-    let validDates = this.checkValidDates(this.datesSelected);
+    const validDates = this.checkValidDates(this.datesSelected);
     if (validDates) {
       this.invalidDates = null;
-      this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.selectedFreqs);
       this._helper.yearsRange(this.datesSelected);
       if (this.selectedFreqs.indexOf('Q') > -1) {
         this._helper.quartersRange(this.datesSelected);
@@ -316,8 +331,9 @@ export class AppComponent {
       if (this.selectedFreqs.indexOf('M') > -1) {
         this._helper.monthsRange(this.datesSelected);
       }
+      this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.selectedFreqs);
     } else {
-      this.invalidDates = "Invalid date selection";
+      this.invalidDates = 'Invalid date selection';
       this.displayTable = false;
     }
   }

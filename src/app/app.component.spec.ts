@@ -69,7 +69,7 @@ class MockIndicatorTableDirective {
   @Input() datesSelected;
 }
 let comp: AppComponent;
-let fixture: ComponentFixture<AppComponent>
+let fixture: ComponentFixture<AppComponent>;
 
 describe('AppComponent', () => {
   beforeEach(async(() => {

@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 import { IndicatorTableComponent } from './indicator-table.component';
 
 let comp: IndicatorTableComponent;
-let fixture: ComponentFixture<IndicatorTableComponent>
+let fixture: ComponentFixture<IndicatorTableComponent>;
 
 describe('IndicatorTableComponent', () => {
   beforeEach(async(() => {
