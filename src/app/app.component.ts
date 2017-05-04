@@ -37,7 +37,7 @@ export class AppComponent {
   public invalidDates: String;
   public noSeries: String;
   @ViewChild(CategorySidebarComponent)
-  private sidebar: CategorySidebarComponent;
+  public sidebar: CategorySidebarComponent;
 
   constructor(private _apiService: ApiService, private _helper: HelperService) {
   }
