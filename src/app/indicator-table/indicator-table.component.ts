@@ -206,10 +206,10 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
           },
           customize: function(win) {
             function sortIndicators(a, b) {
-              if (a.indicator < b.indicator) {
+              if (a.position < b.position) {
                 return -1;
               }
-              if (a.indicator > b.indicator) {
+              if (a.position > b.position) {
                 return 1;
               }
               return 0;
@@ -236,8 +236,8 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               dateArray.push(date.title);
             });
 
-            // Sort table data alphabetically by indicators
-            // tableData.sort(sortIndicators);
+            // Sort table data by position (default table ordering)
+            tableData.sort(sortIndicators);
 
             // Columns to be fixed in tables: Indicator, Area, Units
             const indicator = tableColumns[1];
