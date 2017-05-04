@@ -89,9 +89,6 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               $(textCells[i].parentElement).attr('s', 52);
               i++;
             }
-            $(col[0]).attr('width', 25);
-            $(col[1]).attr('width', 25);
-            $(col[2]).attr('width', 25);
           }
         },
         {
@@ -216,7 +213,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             }
             function sortObsDates(nonSorted, sorted) {
               const result = [];
-              for (let i = 0; i < nonSorted.length; i++) {
+              for (let i = 0; i < sorted.length; i++) {
                 const index = nonSorted.indexOf(sorted[i]);
                 result[i] = nonSorted[index];
               }
@@ -300,6 +297,10 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             $tables.each(function (i, table) {
               $(table).find('tr:odd').each(function () {
                 $(this).css('background-color', '#F9F9F9');
+              });
+              $(table).find('td').each(function () {
+                $(this).css('text-align', 'right');
+                $(this).css('width', '10%');
               });
             });
             $(win.document.body)

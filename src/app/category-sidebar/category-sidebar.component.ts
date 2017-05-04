@@ -27,7 +27,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   // Emit ids of selected categories to app.component
   @Output() selectedCatIds = new EventEmitter();
   @ViewChild(TreeComponent)
-  private tree: TreeComponent;
+  public tree: TreeComponent;
 
   constructor(private _apiService: ApiService) { }
 
