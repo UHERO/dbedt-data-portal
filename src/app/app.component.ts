@@ -158,9 +158,13 @@ export class AppComponent {
   getSeries() {
     const seriesData = [];
     this.selectedIndicators.forEach((indicatorSeries, indIndex) => {
+      const indicatorGeo = indicatorSeries.geography.handle;
+      const indicatorFreq = indicatorSeries.frequencyShort;
+      // Series level observations
+      const indicatorLevel = indicatorSeries.seriesObservations.transformationResults[0].observations;
       this.selectedGeos.forEach((geo) => {
         this.selectedFreqs.forEach((freq) => {
-          if (indicatorSeries.geography.handle === geo && indicatorSeries.frequencyShort === freq) {
+          if (indicatorGeo === geo && indicatorFreq === freq && indicatorLevel !== null) {
             seriesData.push(indicatorSeries);
           }
         });
