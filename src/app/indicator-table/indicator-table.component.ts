@@ -237,7 +237,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             });
 
             // Sort table data alphabetically by indicators
-            tableData.sort(sortIndicators);
+            // tableData.sort(sortIndicators);
 
             // Columns to be fixed in tables: Indicator, Area, Units
             const indicator = tableColumns[1];
@@ -325,7 +325,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
       searching: false,
       info: false,
       fixedColumns: {
-        'leftColumns': 3
+        'leftColumns': 4
       },
     });
     $('span.loading').css('display', 'none');

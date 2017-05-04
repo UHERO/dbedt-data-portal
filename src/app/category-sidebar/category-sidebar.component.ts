@@ -62,18 +62,19 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       const indicator = this.tree.treeModel.getNodeById(e.node.id);
       const subcategory = $(indicator.parent.elementRef.nativeElement);
       const category = $(indicator.parent.parent.elementRef.nativeElement);
-      // keep track of node position, used for table ordering
-      let categoryId = e.node.parent.parent.data.id;
-      let subcategoryId = e.node.parent.data.id;
-      let indicatorId = e.node.data.id;
+      // create tracking for node position, used for table ordering
+      const indices = [];
+      const categoryId = e.node.parent.parent.data.id;
+      const subcategoryId = e.node.parent.data.id;
+      const indicatorId = e.node.data.id;
       const tree = e.node.treeModel.nodes;
-      let cat = tree.find(node => node.id === categoryId);
-      let subcat = cat.children.find(node => node.id === subcategoryId);
-      let ind = subcat.children.find(node => node.id === indicatorId);
-      let catIndex = tree.indexOf(cat);
-      let subIndex = cat.children.indexOf(subcat);
-      let indIndex = subcat.children.indexOf(ind);
-      let position = this.nodePosition(catIndex, subIndex, indIndex);
+      const cat = tree.find(node => node.id === categoryId);
+      const subcat = cat.children.find(node => node.id === subcategoryId);
+      const ind = subcat.children.find(node => node.id === indicatorId);
+      indices.push(tree.indexOf(cat));
+      indices.push(cat.children.indexOf(subcat));
+      indices.push(subcat.children.indexOf(ind));
+      const position = this.nodePosition(indices);
       // Bold the text of the subcategory and top level category when selecting an indicator
       this.addBold(subcategory, category);
       this.ids.push({id: e.node.id, position: position});
@@ -83,15 +84,15 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
     }
   }
 
-  nodePosition(categoryIndex, subcatIndex, indicatorIndex) {
+  nodePosition(indices) {
     const pad = '00';
-    let cat = '' + categoryIndex;
-    let subcat = '' + subcatIndex;
-    let ind = '' + indicatorIndex;
-    let paddedCat = pad.substring(0, pad.length - cat.length) + cat;
-    let paddedSub = pad.substring(0, pad.length - subcat.length) + subcat;
-    let paddedInd = pad.substring(0, pad.length - ind.length) + ind;
-    return paddedCat + paddedSub + paddedInd;
+    let result = '';
+    indices.forEach((index) => {
+      const str = '' + index;
+      const paddedStr = pad.substring(0, pad.length - str.length) + str;
+      result += paddedStr;
+    });
+    return result;
   }
 
   addBold(subcategory, category) {
@@ -112,10 +113,10 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       if (!activeIndicator) {
         const span = $(category.elementRef.nativeElement).find('span').removeClass('bold-selected');
       }
-      //const idIndex = this.ids.indexOf(e.node.id);
       const deactivated = this.ids.find(id => id.id === e.node.id);
       const idIndex = this.ids.indexOf(deactivated);
       if (idIndex > -1) {
+        // Remove deactivated node from list of ids
         this.ids.splice(idIndex, 1);
         setTimeout(() => {
           this.selectedCatIds.emit(this.ids);
