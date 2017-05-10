@@ -274,9 +274,9 @@ export class HelperService {
     const decimalString = ('' + remainder.toFixed(decimal)).substr(2, decimal);
     const intString = '' + int;
     let i = intString.length;
-    let r = ' ';
+    let r = '';
     while ((i -= 3) > signCheck) { r = ',' + intString.substr(i, 3) + r; }
-    const returnValue = intString.substr(0, i + 3) + r + (decimalString ? '.' + decimalString : '');
+    let returnValue = intString.substr(0, i + 3) + r + (decimalString ? '.' + decimalString : '');
     // If int == 0, converting int to string drops minus sign
     if (int === 0 && num < 0) {
       return '-' + returnValue;

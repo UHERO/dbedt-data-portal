@@ -150,7 +150,7 @@ export class AppComponent {
   toggleDateSelectors() {
     const qIndex = this.selectedFreqs.indexOf('Q');
     const mIndex = this.selectedFreqs.indexOf('M');
-    this.annualSelected = this.selectedFreqs.length > 0;
+    this.annualSelected = this.selectedFreqs.length > 0 && this.selectedIndicators.length > 0 && this.selectedGeos.length > 0;
     this.quarterSelected = qIndex > -1 && mIndex === -1;
     this.monthSelected = mIndex > -1;
   }
