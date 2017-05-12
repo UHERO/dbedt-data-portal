@@ -64,7 +64,6 @@ export class AppComponent {
     });
     if (!this.selectedIndicators.length) {
       // Remove table if all categories are deselected and remove date selectors
-      this.toggleDateSelectors();
       this.datesSelected = null;
       this.displayTable = false;
       this.regions = [];
@@ -73,6 +72,7 @@ export class AppComponent {
       this.selectedFreqs = [];
       this.indicatorSelected = false;
       this.invalidDates = null;
+      this.toggleDateSelectors();
     }
   }
 
