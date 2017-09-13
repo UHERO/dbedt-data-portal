@@ -17,6 +17,6 @@ export interface Series {
   sesonalAdjustmentShort?: string;
   source?: string;
   sourceLink?: string;
-  freq_geos?: Array<any>;
-  geo_freqs?: Array<any>;
+  freqGeos?: Array<any>;
+  geoFreqs?: Array<any>;
 }

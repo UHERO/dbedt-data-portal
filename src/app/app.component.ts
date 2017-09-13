@@ -82,8 +82,8 @@ export class AppComponent {
     series.forEach((serie) => {
       this.selectedIndicators.push(serie);
       serie.position = position;
-      geoFreqs = serie.geo_freqs;
-      freqGeos = serie.freq_geos;
+      geoFreqs = serie.geoFreqs;
+      freqGeos = serie.freqGeos;
       obsStart = serie.seriesObservations.observationStart.substr(0, 10);
       obsEnd = serie.seriesObservations.observationEnd.substr(0, 10);
       geoFreqs.forEach((geo) => {
