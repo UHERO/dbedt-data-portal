@@ -42,7 +42,7 @@ const mockMeasureSeries = () => [{
   },
   decimals: 0,
   source_description: 'Source',
-  geo_freqs: {
+  geoFreqs: {
     fips: '15000',
     name: 'State of Hawaii',
     handle: 'HI',
@@ -53,7 +53,7 @@ const mockMeasureSeries = () => [{
       }
     ]
   },
-  freq_geos: {
+  freqGeos: {
     freq: 'A',
     label: 'Annual',
     geos: [
