@@ -240,9 +240,10 @@ export class HelperService {
     return q;
   }
 
-  formatLevelData(seriesObservations, frequency: string, decimals: number, results: Object, dates) {
+  formatLevelData(seriesObservations, newObservations, frequency: string, decimals: number, results: Object, dates) {
     const obs = seriesObservations;
-    const level = obs.transformationResults[0].observations;
+    const newObs = newObservations;
+    const level = newObs ? newObservations : obs.transformationResults.find(transforms => transforms.transformation === 'lvl').observations;
     if (level) {
       level.forEach((entry) => {
         if (frequency === 'A') {
