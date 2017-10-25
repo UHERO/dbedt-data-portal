@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, OnChanges, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
-import { HelperService } from '../helper.service';
-import {  ApiService } from '../api.service';
+
 import * as $ from 'jquery';
 import 'datatables.net';
 import 'datatables.net-fixedcolumns';
@@ -21,7 +20,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
   @Input() datesSelected;
   private tableWidget: any;
 
-  constructor(private _api: ApiService) { }
+  constructor() { }
 
   ngOnInit() {
   }

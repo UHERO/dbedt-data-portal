@@ -23,6 +23,7 @@ class MockTreeDirective {
   selector: 'app-geo-selector'
 })
 class MockGeoSelectorDirective {
+  @Input() indicator;
   @Input() regions;
   @Input() selectedGeos;
 }
@@ -31,6 +32,7 @@ class MockGeoSelectorDirective {
   selector: 'app-freq-selector'
 })
 class MockFreqSelectorDirective {
+  @Input() indicator;
   @Input() freqs;
   @Input() selectedFreqs;
 }
