@@ -30,7 +30,7 @@ export class ApiService {
     if (this.cachedCategories) {
       return Observable.of(this.cachedCategories);
     } else {
-      let categories$ = this.http.get(`${this.baseUrl}/category`, this.requestOptionsArgs)
+      let categories$ = this.http.get(`${this.baseUrl}/category?u=DBEDT`, this.requestOptionsArgs)
         .map(mapCategories)
         .do(val => {
           this.cachedCategories = val;
