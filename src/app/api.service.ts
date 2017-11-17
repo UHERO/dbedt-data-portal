@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptionsArgs } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { environment } from '../environments/environment';
 import 'rxjs/Rx';
 import 'rxjs/add/operator/mergeMap';
 
@@ -16,8 +17,7 @@ export class ApiService {
   private cachedMeasurementSeries = [];
 
   constructor(private http: Http) {
-    // this.baseUrl = 'http://localhost:8080/v1';
-    this.baseUrl = 'http://api.uhero.hawaii.edu/v1';
+    this.baseUrl = environment["apiUrl"];
     this.headers = new Headers();
     this.headers.append('Authorization', 'Bearer -VI_yuv0UzZNy4av1SM5vQlkfPK_JKnpGfMzuJR7d0M=');
     this.requestOptionsArgs = { headers: this.headers };
