@@ -37,6 +37,14 @@
     .clear-table {
         float: right;
         margin-bottom: -1.75em;
+        color: #292B2C;
+        background-color: #FFF;
+        border-color: #CCC;
+
+        &:hover {
+            background-color: #E6E6E6;
+            border-color: #ADADAD;
+        }
     }
 
     .welcome-msg {
