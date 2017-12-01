@@ -6,6 +6,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-staging": "ng serve --env=staging --port=4200",
+    "start-api-dev": "ng serve --env=apiDev",    
+    "build-staging": "ng build --env=staging --base-href=/dbedt/ --output-path=dist_staging",
     "build": "ng build --prod --base-href=/dbedt/",
     "test": "ng test",
     "lint": "ng lint",

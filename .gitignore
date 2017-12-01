@@ -2,6 +2,8 @@
 
 # compiled output
 /tmp
+/dist
+/dist_staging
 
 # dependencies
 /node_modules
