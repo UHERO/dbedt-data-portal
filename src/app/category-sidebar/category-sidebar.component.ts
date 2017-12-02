@@ -2,7 +2,8 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, V
 
 import { ApiService } from '../api.service';
 import { Category } from '../category';
-import { TREE_ACTIONS, IActionMapping, TreeComponent, TreeNode } from 'angular2-tree-component';
+import { TREE_ACTIONS, IActionMapping, TreeComponent, TreeNode } from 'angular-tree-component';
+declare var $: any;
 
 const actionMapping: IActionMapping = {
   mouse: {
@@ -60,8 +61,8 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
     }
     if (!e.node.hasChildren) {
       const indicator = this.tree.treeModel.getNodeById(e.node.id);
-      const subcategory = $(indicator.parent.elementRef.nativeElement);
-      const category = $(indicator.parent.parent.elementRef.nativeElement);
+      const subcategory = $('tree-node-content > span:contains(' + indicator.parent.data.name + ')');
+      const category = $('tree-node-content > span:contains(' + indicator.parent.parent.data.name + ')');
       // create tracking for node position, used for table ordering
       const indices = [];
       const categoryId = e.node.parent.parent.data.id;
@@ -97,8 +98,8 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
 
   addBold(subcategory, category) {
     const ignoreClasses = '.toggle-children-wrapper, .toggle-children, .toggle-children-placeholder';
-    subcategory.find('span').not(ignoreClasses).first().addClass('bold-selected');
-    category.find('span').not(ignoreClasses).first().addClass('bold-selected');
+    subcategory.not(ignoreClasses).first().addClass('bold-selected');
+    category.not(ignoreClasses).first().addClass('bold-selected');
   }
 
   deactivateNode(e) {
