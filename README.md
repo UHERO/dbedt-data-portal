@@ -1,9 +1,11 @@
 # Dbedt
 
-This project was generated with [angular-cli](https://github.com/angular/angular-cli) 1.0.0-rc2.
+This project was generated with [angular-cli](https://github.com/angular/angular-cli) 1.5.5 (with npm v. 3.10.10 and node v. 6.9.5).
 
 ## Development server
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Run `npm run start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+While testing with localhost version of REST-API, run `npm run start-api-dev`.
 
 On staging server, run `npm run start-staging` to start dev server with staging envrionement.
 
