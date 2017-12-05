@@ -1,8 +1,8 @@
 <span class="multi-select-label">Frequency</span>
 <div class="freq-multi-select multi-select">
     <span *ngIf="!indicator">Select an indicator</span>
-    <template ngFor let-freq [ngForOf]="freqs">
+    <ng-template ngFor let-freq [ngForOf]="freqs">
         <label><input type="checkbox" name="checkbox" value="{{freq.id}}" [(ngModel)]="freq.state" (ngModelChange)="toggle(freq.id, $event)">
         <span>{{freq.text}}</span></label>
-    </template>
+    </ng-template>
 </div>

@@ -143,7 +143,8 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
               });
             }
             // Get original table object
-            const currentTable = doc.content[2].table.body;
+            const docContent = doc.content.find(c => c.hasOwnProperty('table'));
+            const currentTable = docContent.table.body;
             const sources: Array<any> = [];
             const formattedTable: Array<any> = [];
             currentTable.forEach((row, index) => {
@@ -193,9 +194,9 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
             });
             doc.defaultStyle.fontSize = 10;
             doc.styles.tableHeader.fontSize = 10;
-            doc.content[2].table.dontBreakRows = true;
-            doc.content[2].table.headerRows = 0;
-            doc.content[2].table.body = formattedTable;
+            docContent.table.dontBreakRows = true;
+            docContent.table.headerRows = 0;
+            docContent.table.body = formattedTable;
             doc.content.push({
               text: 'Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/economic',
             });

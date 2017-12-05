@@ -7,7 +7,7 @@ import { ApiService } from './api.service';
 import { HelperService } from './helper.service';
 import { AppComponent } from './app.component';
 import { CategorySidebarComponent } from './category-sidebar/category-sidebar.component';
-import { TreeModule } from 'angular2-tree-component';
+import { TreeModule } from 'angular-tree-component';
 import { GeoSelectorComponent } from './geo-selector/geo-selector.component';
 import { FreqSelectorComponent } from './freq-selector/freq-selector.component';
 import { YearSelectorComponent } from './year-selector/year-selector.component';

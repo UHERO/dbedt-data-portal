@@ -78,22 +78,37 @@ export class AppComponent {
 
   initSettings(position: string, series: Array<any>, geoList: Array<any>, freqList: Array<any>) {
     // Iterate through list of series to create list of areas and frequencies and identify observation dates
-    let geoFreqs, freqGeos, obsStart, obsEnd;
+    let geoFreqs, freqGeos, geos, freqs, obsStart, obsEnd;
     series.forEach((serie) => {
       this.selectedIndicators.push(serie);
       serie.position = position;
       geoFreqs = serie.geoFreqs;
       freqGeos = serie.freqGeos;
+      // New API freq/geo responses
+      geos = serie.geos;
+      freqs = serie.freqs;
       obsStart = serie.seriesObservations.observationStart.substr(0, 10);
       obsEnd = serie.seriesObservations.observationEnd.substr(0, 10);
-      geoFreqs.forEach((geo) => {
-        geo = this._helper.formatGeos(geo);
-        this._helper.uniqueGeos(geo, geoList);
-      });
-      freqGeos.forEach((freq) => {
-        freq = this._helper.formatFreqs(freq);
-        this._helper.uniqueFreqs(freq, freqList);
-      });
+      if (geoFreqs && freqGeos) {
+        geoFreqs.forEach((geo) => {
+          geo = this._helper.formatGeos(geo);
+          this._helper.uniqueGeos(geo, geoList);
+        });
+        freqGeos.forEach((freq) => {
+          freq = this._helper.formatFreqs(freq);
+          this._helper.uniqueFreqs(freq, freqList);
+        });
+      }
+      if (geos && freqs) {
+        geos.forEach((geo) => {
+          geo = this._helper.formatGeos(geo);
+          this._helper.uniqueGeos(geo, geoList);
+        });
+        freqs.forEach((freq) => {
+          freq = this._helper.formatFreqs(freq);
+          this._helper.uniqueFreqs(freq, freqList);
+        });
+      }
     });
   }
 

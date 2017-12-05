@@ -1,7 +1,7 @@
 <div class="sidebar">
-	<Tree #tree [nodes]="nodes"
+	<tree-root #tree [nodes]="nodes"
 		[options]="options"
-    	(onActivate)="activateNode($event)"
-    	(onDeactivate)="deactivateNode($event)">
-	</Tree>
+    	(activate)="activateNode($event)"
+    	(deactivate)="deactivateNode($event)">
+	</tree-root>
 </div>

@@ -28,6 +28,7 @@
       "scripts": [
         "../node_modules/jquery/dist/jquery.js",
         "../node_modules/tether/dist/js/tether.js",
+        "../node_modules/popper.js/dist/umd/popper.min.js",        
         "../node_modules/bootstrap/dist/js/bootstrap.js",
         "../node_modules/datatables.net/js/jquery.dataTables.js",
         "../node_modules/jszip/dist/jszip.js",
@@ -38,7 +39,8 @@
       "environments": {
         "dev": "environments/environment.ts",
         "staging": "environments/environment.staging.ts",
-        "prod": "environments/environment.prod.ts"
+        "prod": "environments/environment.prod.ts",
+        "apiDev": "environments/environment.apiDev.ts"
       }
     }
   ],
