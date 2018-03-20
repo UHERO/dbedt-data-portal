@@ -326,9 +326,11 @@ export class AppComponent {
     this.selectedFreqs = [];
     this.selectedGeos = [];
     this.dateArray = [];
+    this.tableData = [];
     this.indicatorSelected = false;
     this.toggleDateSelectors();
     this.sidebar.reset();
+    this.sidebar.ids = [];
   }
 
   startYearChange(e) {

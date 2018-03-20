@@ -7,8 +7,8 @@ declare var $: any;
 
 const actionMapping: IActionMapping = {
   mouse: {
-    click: TREE_ACTIONS.TOGGLE_SELECTED_MULTI,
-    expanderClick: TREE_ACTIONS.TOGGLE_SELECTED_MULTI
+    click: TREE_ACTIONS.TOGGLE_ACTIVE_MULTI,
+    expanderClick: TREE_ACTIONS.TOGGLE_ACTIVE_MULTI
   }
 };
 
@@ -22,7 +22,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   private categories: Array<Category>;
   private subCategories; // Subscription to categories
   public nodes;
-  private ids: Array<any> = [];
+  public ids: Array<any> = [];
   private error: string;
   public options;
   // Emit ids of selected categories to app.component
@@ -142,6 +142,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   reset() {
     const active = this.tree.treeModel.activeNodes;
     if (active) {
+      $('.bold-selected').removeClass('bold-selected');
       active.forEach((node) => {
         node.setIsActive(false);
         node.blur();
