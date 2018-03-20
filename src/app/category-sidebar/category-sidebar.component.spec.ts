@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/observable';
 
 import { CategorySidebarComponent } from './category-sidebar.component';
 import { TreeModule } from 'angular-tree-component';
-import { TREE_ACTIONS, IActionMapping, TreeComponent, TreeNode } from 'angular2-tree-component';
+import { TREE_ACTIONS, IActionMapping, TreeComponent, TreeNode } from 'angular-tree-component';
 import { ApiService } from '../api.service';
 import { MockApiService } from '../../testing/mockapi-service';
 import { HelperService } from '../helper.service';
