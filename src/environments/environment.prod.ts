@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://api.uhero.hawaii.edu/v1'
+  apiUrl: 'https://api.uhero.hawaii.edu/v1'
 };
