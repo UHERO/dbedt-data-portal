@@ -265,24 +265,7 @@ export class HelperService {
   }
 
   formatNum(num: number, decimal: number) {
-    let fixedNum: any;
-    fixedNum = num.toFixed(decimal);
-    // remove decimals
-    const int = fixedNum | 0;
-    const signCheck = num < 0 ? 1 : 0;
-    // store deicmal value
-    const remainder = Math.abs(fixedNum - int);
-    const decimalString = ('' + remainder.toFixed(decimal)).substr(2, decimal);
-    const intString = '' + int;
-    let i = intString.length;
-    let r = '';
-    while ((i -= 3) > signCheck) { r = ',' + intString.substr(i, 3) + r; }
-    let returnValue = intString.substr(0, i + 3) + r + (decimalString ? '.' + decimalString : '');
-    // If int == 0, converting int to string drops minus sign
-    if (int === 0 && num < 0) {
-      return '-' + returnValue;
-    }
-    return returnValue;
+    return num === Infinity ? ' ' : num.toLocaleString('en-US', {minimumFractionDigits: decimal, maximumFractionDigits: decimal});
   }
 
   formatGeos(geo) {
