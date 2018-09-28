@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptionsArgs } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { of } from 'rxjs';
 import { environment } from '../environments/environment';
 import 'rxjs/Rx';
 import 'rxjs/add/operator/mergeMap';
@@ -28,7 +29,7 @@ export class ApiService {
   // Gets all available categories. Used for navigation & displaying sublists
   fetchCategories(): Observable<Category[]> {
     if (this.cachedCategories) {
-      return Observable.of(this.cachedCategories);
+      return of(this.cachedCategories);
     } else {
       let categories$ = this.http.get(`${this.baseUrl}/category?u=DBEDT`, this.requestOptionsArgs)
         .map(mapCategories)
@@ -43,7 +44,7 @@ export class ApiService {
   // Gets measurements belonging to each category
   fetchCategoryMeasures(id: number) {
     if (this.cachedCategoryMeasures[id]) {
-      return Observable.of(this.cachedCategoryMeasures[id]);
+      return of(this.cachedCategoryMeasures[id]);
     } else {
       let categoryMeasures$ = this.http.get(`${this.baseUrl}/category/measurements?id=` + id, this.requestOptionsArgs)
         .map(mapData)
@@ -57,7 +58,7 @@ export class ApiService {
 
   fetchMeasurementSeries(id: number) {
     if (this.cachedMeasurementSeries[id]) {
-      return Observable.of(this.cachedMeasurementSeries[id]);
+      return of(this.cachedMeasurementSeries[id]);
     } else {
       let measurementSeries$ = this.http.get(`${this.baseUrl}/measurement/series?id=` + id + `&expand=true`, this.requestOptionsArgs)
         .map(mapData)

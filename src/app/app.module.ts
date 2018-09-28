@@ -31,7 +31,7 @@ import { IndicatorTableComponent } from './indicator-table/indicator-table.compo
     BrowserModule,
     FormsModule,
     HttpModule,
-    TreeModule,
+    TreeModule.forRoot(),
   ],
   providers: [ApiService, HelperService],
   bootstrap: [AppComponent]
