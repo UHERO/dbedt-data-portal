@@ -1,9 +1,10 @@
 export { ApiService } from '../app/api.service';
 import { Observable } from 'rxjs/Observable';
+import { of } from 'rxjs';
 
 export class MockApiService {
   fetchCategories() {
-    return Observable.of(
+    return of(
       [
         {
           children: [{

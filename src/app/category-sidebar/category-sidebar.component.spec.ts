@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement, Directive, Input } from '@angular/core';
 import { HttpModule, Http, XHRBackend, BaseRequestOptions, ConnectionBackend, Response, ResponseOptions } from '@angular/http';
-import { Observable } from 'rxjs/observable';
+//import { Observable } from 'rxjs/observable';
 
 import { CategorySidebarComponent } from './category-sidebar.component';
 import { TreeModule } from 'angular-tree-component';
@@ -22,7 +22,7 @@ describe('CategorySidebarComponent', () => {
         CategorySidebarComponent,
       ],
       imports: [
-        TreeModule
+        TreeModule.forRoot()
       ],
       providers: [
         { provide: ApiService, useClass: MockApiService },
