@@ -12,7 +12,9 @@
     "build": "ng build --prod --base-href=/dbedt/",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "private": true,
   "dependencies": {
@@ -44,7 +46,8 @@
     "rxjs-compat": "^6.4.0",
     "tether": "^1.4.5",
     "tslib": "^1.9.0",
-    "zone.js": "^0.8.29"
+    "zone.js": "^0.8.29",
+    "snyk": "^1.192.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.13.9",
@@ -66,5 +69,6 @@
     "ts-node": "~8.0.2",
     "tslint": "~5.12.1",
     "typescript": "3.1.6"
-  }
+  },
+  "snyk": true
 }
