@@ -3,6 +3,15 @@ version: v1.13.5
 ignore: {}
 # patches apply the minimum changes required to fix a vulnerability
 patch:
+  SNYK-JS-HTTPSPROXYAGENT-469131:
+    - angular-datatables > @angular/cli > pacote > make-fetch-happen > https-proxy-agent:
+        patched: '2019-10-07T01:31:08.191Z'
+    - angular-datatables > @angular/cli > pacote > npm-registry-fetch > make-fetch-happen > https-proxy-agent:
+        patched: '2019-10-07T01:31:08.191Z'
+    - angular-datatables > @angular/cli > @schematics/update > pacote > make-fetch-happen > https-proxy-agent:
+        patched: '2019-10-07T01:31:08.191Z'
+    - angular-datatables > @angular/cli > @schematics/update > pacote > npm-registry-fetch > make-fetch-happen > https-proxy-agent:
+        patched: '2019-10-07T01:31:08.191Z'
   SNYK-JS-LODASH-450202:
     - angular-tree-component > lodash:
         patched: '2019-07-08T01:31:02.841Z'
