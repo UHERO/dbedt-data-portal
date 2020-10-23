@@ -36,7 +36,7 @@ export class AppComponent {
   public displayTable: Boolean = false;
   public invalidDates: String;
   public noSeries: String;
-  @ViewChild(CategorySidebarComponent)
+  @ViewChild(CategorySidebarComponent, { static: true })
   public sidebar: CategorySidebarComponent;
 
   constructor(private _apiService: ApiService, private _helper: HelperService) {
