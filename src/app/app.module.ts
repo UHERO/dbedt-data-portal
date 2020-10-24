@@ -1,8 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
-
 import { ApiService } from './api.service';
 import { HelperService } from './helper.service';
 import { AppComponent } from './app.component';
@@ -30,7 +29,7 @@ import { IndicatorTableComponent } from './indicator-table/indicator-table.compo
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule,
+    HttpClientModule,
     TreeModule.forRoot(),
   ],
   providers: [ApiService, HelperService],
