@@ -9,7 +9,7 @@
     "start-staging": "ng serve -c=staging --port=4200",
     "start-api-dev": "ng serve -c=apiDev",
     "build-staging": "ng build -c=staging --base-href=/dbedt/ --output-path=dist_staging",
-    "build": "ng build --prod --base-href=/dbedt/",
+    "build": "ng build --configuration production --base-href=/dbedt/",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
