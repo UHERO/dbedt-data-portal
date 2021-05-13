@@ -1,6 +1,6 @@
 /* tslint:disable:no-unused-variable */
 
-import { TestBed, async, inject } from '@angular/core/testing';
+import { TestBed, inject, waitForAsync } from '@angular/core/testing';
 import { HttpModule, Http, XHRBackend, BaseRequestOptions, ConnectionBackend, Response, ResponseOptions } from '@angular/http';
 import { MockBackend, MockConnection } from '@angular/http/testing';
 
@@ -67,7 +67,7 @@ const mockMeasureSeries = () => [{
 }];
 
 describe('ApiService', () => {
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [HttpModule],
       providers: [
@@ -91,7 +91,7 @@ describe('ApiService', () => {
       response = new Response(options);
     }));
 
-    it('should have expected fake categories', async(inject([], () => {
+    it('should have expected fake categories', waitForAsync(inject([], () => {
       backend.connections.subscribe((c: MockConnection) => c.mockRespond(response));
 
       service.fetchCategories()
@@ -110,7 +110,7 @@ describe('ApiService', () => {
       response = new Response(options);
     }));
 
-    it('should have expected fake category measurement data', async(inject([], () => {
+    it('should have expected fake category measurement data', waitForAsync(inject([], () => {
       backend.connections.subscribe((c: MockConnection) => c.mockRespond(response));
 
       service.fetchCategoryMeasures(1)
@@ -129,7 +129,7 @@ describe('ApiService', () => {
       response = new Response(options);
     }));
 
-    it('should have expected fake measurement series data', async(inject([], () => {
+    it('should have expected fake measurement series data', waitForAsync(inject([], () => {
       backend.connections.subscribe((c: MockConnection) => c.mockRespond(response));
 
       service.fetchMeasurementSeries(1)

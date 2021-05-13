@@ -1,6 +1,6 @@
 /* tslint:disable:no-unused-variable */
 
-import { TestBed, async, ComponentFixture } from '@angular/core/testing';
+import { TestBed, ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { Component, Directive, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
@@ -74,7 +74,7 @@ let comp: AppComponent;
 let fixture: ComponentFixture<AppComponent>;
 
 describe('AppComponent', () => {
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         AppComponent,
@@ -105,7 +105,7 @@ describe('AppComponent', () => {
 });
 
 function tests() {
-  it('should create the app', async(() => {
+  it('should create the app', waitForAsync(() => {
     expect(comp).toBeTruthy();
   }));
 }
