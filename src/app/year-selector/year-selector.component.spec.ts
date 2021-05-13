@@ -1,5 +1,5 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
@@ -10,7 +10,7 @@ let comp: YearSelectorComponent;
 let fixture: ComponentFixture<YearSelectorComponent>;
 
 describe('YearSelectorComponent', () => {
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         YearSelectorComponent,
@@ -29,7 +29,7 @@ describe('YearSelectorComponent', () => {
 });
 
 function tests() {
-  it('should create a month selector instance', async(() => {
+  it('should create a month selector instance', waitForAsync(() => {
     comp.years = ['2000', '2001', '2002', '2003'];
     comp.selectedYear = comp.years[0];
     fixture.detectChanges();

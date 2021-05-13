@@ -1,5 +1,5 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
@@ -10,7 +10,7 @@ let comp: MonthSelectorComponent;
 let fixture: ComponentFixture<MonthSelectorComponent>;
 
 describe('MonthSelectorComponent', () => {
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         MonthSelectorComponent,
@@ -29,7 +29,7 @@ describe('MonthSelectorComponent', () => {
 });
 
 function tests() {
-  it('should create a month selector instance', async(() => {
+  it('should create a month selector instance', waitForAsync(() => {
     comp.months = ['01', '02', '03', '04'];
     comp.selectedMonth = comp.months[0];
     fixture.detectChanges();

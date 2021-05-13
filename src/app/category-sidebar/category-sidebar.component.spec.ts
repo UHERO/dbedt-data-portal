@@ -1,13 +1,12 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement, Directive, Input } from '@angular/core';
-import { HttpModule, Http, XHRBackend, BaseRequestOptions, ConnectionBackend, Response, ResponseOptions } from '@angular/http';
-//import { Observable } from 'rxjs/observable';
+//import { HttpModule, Http, XHRBackend, BaseRequestOptions, ConnectionBackend, Response, ResponseOptions } from '@angular/http';
 
 import { CategorySidebarComponent } from './category-sidebar.component';
-import { TreeModule } from 'angular-tree-component';
-import { TREE_ACTIONS, IActionMapping, TreeComponent, TreeNode } from 'angular-tree-component';
+import { TreeModule } from '@circlon/angular-tree-component';
+//import { TREE_ACTIONS, IActionMapping, TreeComponent, TreeNode } from 'angular-tree-component';
 import { ApiService } from '../api.service';
 import { MockApiService } from '../../testing/mockapi-service';
 import { HelperService } from '../helper.service';
@@ -16,13 +15,13 @@ let comp: CategorySidebarComponent;
 let fixture: ComponentFixture<CategorySidebarComponent>;
 
 describe('CategorySidebarComponent', () => {
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         CategorySidebarComponent,
       ],
       imports: [
-        TreeModule.forRoot()
+        TreeModule
       ],
       providers: [
         { provide: ApiService, useClass: MockApiService },
@@ -41,7 +40,7 @@ describe('CategorySidebarComponent', () => {
 });
 
 function tests() {
-  it('should create an instance', async(() => {
+  it('should create an instance', waitForAsync(() => {
     expect(comp).toBeTruthy();
   }));
 }

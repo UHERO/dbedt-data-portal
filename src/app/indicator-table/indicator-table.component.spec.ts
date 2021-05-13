@@ -1,5 +1,5 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
@@ -9,7 +9,7 @@ let comp: IndicatorTableComponent;
 let fixture: ComponentFixture<IndicatorTableComponent>;
 
 describe('IndicatorTableComponent', () => {
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         IndicatorTableComponent,
@@ -25,7 +25,7 @@ describe('IndicatorTableComponent', () => {
 });
 
 function tests() {
-  it('should create a table instance', async(() => {
+  it('should create a table instance', waitForAsync(() => {
     expect(comp).toBeTruthy();
   }));
 }

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, V
 
 import { ApiService } from '../api.service';
 import { Category } from '../category';
-import { TREE_ACTIONS, IActionMapping, TreeComponent, TreeNode } from 'angular-tree-component';
+import { TREE_ACTIONS, IActionMapping, TreeComponent, TreeNode } from '@circlon/angular-tree-component';
 declare var $: any;
 
 const actionMapping: IActionMapping = {

@@ -1,5 +1,5 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +9,7 @@ let comp: FreqSelectorComponent;
 let fixture: ComponentFixture<FreqSelectorComponent>;
 
 describe('FreqSelectorComponent', () => {
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [ FormsModule ],
       declarations: [
@@ -26,7 +26,7 @@ describe('FreqSelectorComponent', () => {
 });
 
 function tests() {
-  it('should create an frequency selector instance', async(() => {
+  it('should create an frequency selector instance', waitForAsync(() => {
     expect(comp).toBeTruthy();
   }));
 }
