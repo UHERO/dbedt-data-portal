@@ -44,7 +44,6 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
 
     this.options = {
       getChildren: (node: TreeNode) => {
-        const children = [];
         return this._apiService.fetchCategoryMeasures(node.id).toPromise();
       },
       actionMapping
@@ -61,8 +60,8 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
     }
     if (!e.node.hasChildren) {
       const indicator = this.tree.treeModel.getNodeById(e.node.id);
-      const subcategory = $('tree-node-content > span:contains(' + indicator.parent.data.name + ')');
-      const category = $('tree-node-content > span:contains(' + indicator.parent.parent.data.name + ')');
+      const subcategory = $(`tree-node-content > span:contains(${indicator.parent.data.name})`);
+      const category = $(`tree-node-content > span:contains(${indicator.parent.parent.data.name})`);
       // create tracking for node position, used for table ordering
       const indices = [];
       const categoryId = e.node.parent.parent.data.id;
@@ -77,7 +76,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       indices.push(subcat.children.indexOf(ind));
       const position = this.nodePosition(indices);
       // Bold the text of the subcategory and top level category when selecting an indicator
-      this.addBold(subcategory, category);
+      this.toggleBoldClass(subcategory, category, this.addBold)
       this.ids.push({id: e.node.id, position: position});
       setTimeout(() => {
         this.selectedCatIds.emit(this.ids);
@@ -96,10 +95,19 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  addBold(subcategory, category) {
+  removeBold(subcategoryElement, categoryElement) {
+    subcategoryElement.removeClass('bold-selected');
+    categoryElement.removeClass('bold-selected');
+  }
+
+  addBold(subcategoryElement, categoryElement) {
+    subcategoryElement.addClass('bold-selected');
+    categoryElement.addClass('bold-selected');
+  }
+
+  toggleBoldClass(subcategory, category, callback) {
     const ignoreClasses = '.toggle-children-wrapper, .toggle-children, .toggle-children-placeholder';
-    subcategory.not(ignoreClasses).first().addClass('bold-selected');
-    category.not(ignoreClasses).first().addClass('bold-selected');
+    callback(subcategory.not(ignoreClasses).first(), category.not(ignoreClasses).first());
   }
 
   deactivateNode(e) {
@@ -112,7 +120,9 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       const activeIndicator = this.checkActiveIndicators(subcategory);
       const category = indicator.parent.level === 1 ? indicator.parent : indicator.parent.parent;
       if (!activeIndicator) {
-        const span = $(category.elementRef.nativeElement).find('span').removeClass('bold-selected');
+        const subcategoryLabel = $(`tree-node-content > span:contains(${subcategory.data.name})`);
+        const categoryLabel = $(`tree-node-content > span:contains(${category.data.name})`);
+        this.toggleBoldClass(subcategoryLabel, categoryLabel, this.removeBold);
       }
       const deactivated = this.ids.find(id => id.id === e.node.id);
       const idIndex = this.ids.indexOf(deactivated);
