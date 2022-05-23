@@ -14,10 +14,11 @@ export class HelperService {
     const dateArray = [];
     const m = { 1: '01', 2: '02', 3: '03', 4: '04', 5: '05', 6: '06', 7: '07', 8: '08', 9: '09', 10: '10', 11: '11', 12: '12' };
     const q = { 1: 'Q1', 4: 'Q2', 7: 'Q3', 10: 'Q4' };
-    let startYear = +selectedDates.startDate.substr(0, 4);
-    let endYear = +selectedDates.endDate.substr(0, 4);
-    let startMonth = +selectedDates.startDate.substr(5, 2);
-    let endMonth = +selectedDates.endDate.substr(5, 2);
+    console.log(selectedDates)
+    let startYear = +selectedDates.startDate.substring(0, 4);
+    let endYear = +selectedDates.endDate.substring(0, 4);
+    let startMonth = +selectedDates.startDate.substring(5, 7);
+    let endMonth = +selectedDates.endDate.substring(5, 7);
     const annualSelected = selectedFreqs.indexOf('A') > -1;
     const monthSelected = selectedFreqs.indexOf('M') > -1;
     const quarterSelected = selectedFreqs.indexOf('Q') > -1;
@@ -27,21 +28,21 @@ export class HelperService {
     endYear = dates.endYear;
     startMonth = dates.startMonth;
     endMonth = dates.endMonth;
-    while (startYear + '-' + m[startMonth] + '-01' <= endYear + '-' + m[endMonth] + '-01') {
+    while (`${startYear}-${m[startMonth]}-01` <= `${endYear}-${m[endMonth]}-01`) {
       // Frequency display order: M, Q, A
       if (monthSelected) {
-        dateArray.push({date: startYear.toString() + '-' + m[startMonth] + '-01', tableDate: startYear.toString() + '-' + m[startMonth]});
+        dateArray.push({date: `${startYear.toString()}-${m[startMonth]}-01`, tableDate: `${startYear.toString()}-${m[startMonth]}` });
       }
       if (quarterSelected) {
         const qMonth = this.addQuarterObs(startMonth, monthSelected);
         if (qMonth) {
-          dateArray.push({date: startYear.toString() + '-' + m[qMonth] + '-01', tableDate: startYear.toString() + ' ' + q[qMonth]});
+          dateArray.push({date: `${startYear.toString()}-${m[qMonth]}-01`, tableDate: `${startYear.toString()} ${q[qMonth]}`});
         }
       }
       if (annualSelected) {
         const addAnnual = this.addAnnualObs(startMonth, monthSelected, quarterSelected);
         if (addAnnual) {
-          dateArray.push({date: startYear.toString() + '-01-01', tableDate: startYear.toString()});
+          dateArray.push({date: `${startYear.toString()}-01-01`, tableDate: startYear.toString()});
         }
       }
       startYear = startMonth === 12 ? startYear += 1 : startYear;
@@ -91,7 +92,7 @@ export class HelperService {
       startMonth = selectedDates.selectedStartQuarter ? this.setStartMonthQ(quarters, selectedDates, startMonth) : startMonth;
       endMonth = selectedDates.selectedEndQuarter ? this.setEndMonthQ(quarters, selectedDates, endMonth) : endMonth;
     }
-    return { startYear: startYear, endYear: endYear, startMonth: startMonth, endMonth: endMonth };
+    return { startYear, endYear, startMonth, endMonth };
   }
 
   // If returns true, add quarter to date array
@@ -125,8 +126,8 @@ export class HelperService {
   // Create list of years for year range selectors
   yearsRange(selectedDates) {
     let allYears = [];
-    let startYear = +selectedDates.startDate.substr(0, 4);
-    const endYear = +selectedDates.endDate.substr(0, 4);
+    let startYear = +selectedDates.startDate.substring(0, 4);
+    const endYear = +selectedDates.endDate.substring(0, 4);
     while (startYear <= endYear) {
       allYears.push(startYear.toString());
       startYear += 1;
@@ -173,10 +174,10 @@ export class HelperService {
   minMaxYearQuarters(selectedDates) {
     // If selectedStartYear is set to earliest/latest possible year, set quarter list based on earliest/latest month available
     // If selectedStartYear is set to earliest/latest possible year, set quarter list based on earliest/latest month available
-    const minYear = selectedDates.startDate.substr(0, 4);
-    const maxYear = selectedDates.endDate.substr(0, 4);
-    const startMonth = +selectedDates.startDate.substr(5, 2);
-    const endMonth = +selectedDates.endDate.substr(5, 2);
+    const minYear = selectedDates.startDate.substring(0, 4);
+    const maxYear = selectedDates.endDate.substring(0, 4);
+    const startMonth = +selectedDates.startDate.substring(5, 7);
+    const endMonth = +selectedDates.endDate.substring(5, 7);
     if (selectedDates.selectedStartYear === minYear) {
       selectedDates.fromQuarterList = this.minYearQuarters(startMonth);
     }
@@ -194,10 +195,10 @@ export class HelperService {
   minMaxYearMonths(selectedDates, allMonths) {
     // If selectedStartYear is set to earliest/latest possible year, set month list based on earliest/latest month available
     // If selectedEndYear is set to earliest/latest possible year, set month list based on earliest/latest month available
-    const minYear = selectedDates.startDate.substr(0, 4);
-    const maxYear = selectedDates.endDate.substr(0, 4);
-    const startMonth = selectedDates.startDate.substr(5, 2);
-    const endMonth = selectedDates.endDate.substr(5, 2);
+    const minYear = selectedDates.startDate.substring(0, 4);
+    const maxYear = selectedDates.endDate.substring(0, 4);
+    const startMonth = selectedDates.startDate.substring(5, 7);
+    const endMonth = selectedDates.endDate.substring(5, );
     if (selectedDates.selectedStartYear === minYear) {
       selectedDates.fromMonthList = allMonths.slice(0, allMonths.indexOf(startMonth) + 1);
     }
@@ -247,16 +248,16 @@ export class HelperService {
     if (level) {
       level.forEach((entry) => {
         if (frequency === 'A') {
-          const tableDate = entry.date.substr(0, 4);
+          const tableDate = entry.date.substring(0, 4);
           results[tableDate] = this.formatNum(+entry.value, decimals);
         }
         if (frequency === 'Q') {
           const q = {'01': 'Q1', '04': 'Q2', '07': 'Q3', '10': 'Q4'};
-          const tableDate = entry.date.substr(0, 4) + ' ' + q[entry.date.substr(5, 2)];
+          const tableDate = `${entry.date.substring(0, 4)} ${q[entry.date.substring(5, 7)]}`;
           results[tableDate] = this.formatNum(+entry.value, decimals);
         }
         if (frequency === 'M') {
-          const tableDate = entry.date.substr(0, 7);
+          const tableDate = entry.date.substring(0, 7);
           results[tableDate] = this.formatNum(+entry.value, decimals);
         }
       });

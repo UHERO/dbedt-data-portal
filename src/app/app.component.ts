@@ -82,13 +82,20 @@ export class AppComponent {
     series.forEach((serie) => {
       this.selectedIndicators.push(serie);
       serie.position = position;
-      geoFreqs = serie.geoFreqs;
+      /* geoFreqs = serie.geoFreqs;
       freqGeos = serie.freqGeos;
       // New API freq/geo responses
       geos = serie.geos;
       freqs = serie.freqs;
-      obsStart = serie.seriesObservations.observationStart.substr(0, 10);
-      obsEnd = serie.seriesObservations.observationEnd.substr(0, 10);
+      obsStart = serie.seriesObservations.observationStart;
+      obsEnd = serie.seriesObservations.observationEnd; */
+      const {
+        geoFreqs,
+        freqGeos,
+        geos,
+        freqs
+      } = serie;
+      console.log(serie)
       if (geoFreqs && freqGeos) {
         geoFreqs.forEach((geo) => {
           geo = this._helper.formatGeos(geo);
@@ -196,8 +203,8 @@ export class AppComponent {
         if (seriesData.length !== 0) {
           seriesData.forEach((series, seriesIndex) => {
             // Find the earliest and lastest observation dates, used to set dates in the range selectors
-            const obsStart = series.seriesObservations.observationStart.substr(0, 10);
-            const obsEnd = series.seriesObservations.observationEnd.substr(0, 10);
+            const obsStart = series.seriesObservations.observationStart;
+            const obsEnd = series.seriesObservations.observationEnd;
             if (this.datesSelected.startDate === '' || this.datesSelected.startDate > obsStart) {
               this.datesSelected.startDate = obsStart;
             }
