@@ -195,10 +195,11 @@ export class HelperService {
   minMaxYearMonths(selectedDates, allMonths) {
     // If selectedStartYear is set to earliest/latest possible year, set month list based on earliest/latest month available
     // If selectedEndYear is set to earliest/latest possible year, set month list based on earliest/latest month available
-    const minYear = selectedDates.startDate.substring(0, 4);
-    const maxYear = selectedDates.endDate.substring(0, 4);
-    const startMonth = selectedDates.startDate.substring(5, 7);
-    const endMonth = selectedDates.endDate.substring(5, );
+    const { startDate, endDate } = selectedDates;
+    const minYear = startDate.substring(0, 4);
+    const maxYear = endDate.substring(0, 4);
+    const startMonth = startDate.substring(5, 7);
+    const endMonth = endDate.substring(5, );
     if (selectedDates.selectedStartYear === minYear) {
       selectedDates.fromMonthList = allMonths.slice(0, allMonths.indexOf(startMonth) + 1);
     }
@@ -241,10 +242,10 @@ export class HelperService {
     return q;
   }
 
-  formatLevelData(seriesObservations, newObservations, frequency: string, decimals: number, results: Object, dates) {
-    const obs = seriesObservations;
-    const newObs = newObservations;
-    const level = newObs ? newObservations : obs.transformationResults.find(transforms => transforms.transformation === 'lvl').observations;
+  formatLevelData(seriesObservations, newObservations, frequency: string, decimals: number, results: Object) {
+    const level = newObservations ?
+      newObservations :
+      seriesObservations.transformationResults.find(transforms => transforms.transformation === 'lvl').observations;
     if (level) {
       level.forEach((entry) => {
         if (frequency === 'A') {
@@ -270,61 +271,23 @@ export class HelperService {
   }
 
   formatGeos(geo) {
-    return { id: geo.handle, text: geo.name ? geo.name : geo.handle, freqs: geo.freqs, state: false };
+    return { id: geo.handle, text: geo.name ? geo.name : geo.handle, state: false };
   }
 
   formatFreqs(freq) {
-    return { id: freq.freq, text: freq.label, geos: freq.geos, state: false };
+    return { id: freq.freq, text: freq.label, state: false };
   }
 
   // Get a unique array of available regions for a category
   uniqueGeos(geo: Geography, geoList: Array<any>) {
-    let exist = false;
-    for (const i in geoList) {
-      // Multiselect Dropdown Component (geo & freq selectors) requires name and id properties
-      if (geo.id === geoList[i].id) {
-        exist = true;
-        // If region already exists, check it's list of frequencies
-        // Get a unique list of frequencies available for a region
-        const freqs = geo.freqs;
-        for (const j in freqs) {
-          if (!this.freqExist(geoList[i].freqs, freqs[j].freq)) {
-            geoList[i].freqs.push(freqs[j]);
-          }
-        }
-      }
+    if (!geoList.some(g => g.id === geo.id)) {
+      geoList.push(geo)
     }
-    if (!exist) {
-      geoList.push(geo);
-    }
-  }
-
-  freqExist(freqArray: Array<any>, freq: Frequency) {
-    for (const n in freqArray) {
-      if (freq === freqArray[n].freq) {
-        return true;
-      }
-    }
-    return false;
   }
 
   // Get a unique array of available frequencies for a category
   uniqueFreqs(freq: Frequency, freqList: Array<any>) {
-    let exist = false;
-    for (const i in freqList) {
-      if (freq.text === freqList[i].text) {
-        exist = true;
-        // If frequency already exists, check it's list of regions
-        // Get a unique list of regions available for a frequency
-        const geos = freq.geos;
-        for (const j in geos) {
-          if (!this.geoExist(freqList[i].geos, geos[j].handle)) {
-            freqList[i].geos.push(geos[j]);
-          }
-        }
-      }
-    }
-    if (!exist) {
+    if (!freqList.some(f => f.id === freq.id)) {
       freqList.push(freq);
     }
   }

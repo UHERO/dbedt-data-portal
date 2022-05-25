@@ -78,34 +78,10 @@ export class AppComponent {
 
   initSettings(position: string, series: Array<any>, geoList: Array<any>, freqList: Array<any>) {
     // Iterate through list of series to create list of areas and frequencies and identify observation dates
-    let geoFreqs, freqGeos, geos, freqs, obsStart, obsEnd;
     series.forEach((serie) => {
       this.selectedIndicators.push(serie);
       serie.position = position;
-      /* geoFreqs = serie.geoFreqs;
-      freqGeos = serie.freqGeos;
-      // New API freq/geo responses
-      geos = serie.geos;
-      freqs = serie.freqs;
-      obsStart = serie.seriesObservations.observationStart;
-      obsEnd = serie.seriesObservations.observationEnd; */
-      const {
-        geoFreqs,
-        freqGeos,
-        geos,
-        freqs
-      } = serie;
-      console.log(serie)
-      if (geoFreqs && freqGeos) {
-        geoFreqs.forEach((geo) => {
-          geo = this._helper.formatGeos(geo);
-          this._helper.uniqueGeos(geo, geoList);
-        });
-        freqGeos.forEach((freq) => {
-          freq = this._helper.formatFreqs(freq);
-          this._helper.uniqueFreqs(freq, freqList);
-        });
-      }
+      const { geos, freqs } = serie;
       if (geos && freqs) {
         geos.forEach((geo) => {
           geo = this._helper.formatGeos(geo);
@@ -231,8 +207,7 @@ export class AppComponent {
 
   formatObservations(indicatorLevel) {
     // Return array of of dates with their corresponding values
-    const dates = indicatorLevel.dates;
-    const values = indicatorLevel.values;
+    const { dates, values } = indicatorLevel;
     const formattedResults = dates.map((d, index) => {
       const entry = { date: '', value: '' };
       entry.date = d;
@@ -255,36 +230,13 @@ export class AppComponent {
       const exist = this.tableData.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
       // If exists, add observations corresponding to the series frequency
       if (exist !== -1) {
-        if (series.frequencyShort === 'A') {
-          this._helper.formatLevelData(
-            series.seriesObservations,
-            series.observations,
-            series.frequencyShort,
-            decimals,
-            this.tableData[exist].observations,
-            this.dateArray,
-          );
-        }
-        if (series.frequencyShort === 'Q') {
-          this._helper.formatLevelData(
-            series.seriesObservations,
-            series.observations,
-            series.frequencyShort,
-            decimals,
-            this.tableData[exist].observations,
-            this.dateArray,
-          );
-        }
-        if (series.frequencyShort === 'M') {
-          this._helper.formatLevelData(
-            series.seriesObservations,
-            series.observations,
-            series.frequencyShort,
-            decimals,
-            this.tableData[exist].observations,
-            this.dateArray
-          );
-        }
+        this._helper.formatLevelData(
+          series.seriesObservations,
+          series.observations,
+          series.frequencyShort,
+          decimals,
+          this.tableData[exist].observations
+        );
       } else {
         this.tableData.push({
           position: series.position,
@@ -297,8 +249,7 @@ export class AppComponent {
             series.observations,
             series.frequencyShort,
             decimals,
-            result,
-            this.dateArray
+            result
           )
         });
       }
@@ -306,13 +257,7 @@ export class AppComponent {
   }
 
   setDecimals(seriesDecimals: number) {
-    if (seriesDecimals) {
-      return seriesDecimals;
-    } else if (seriesDecimals === 0) {
-      return seriesDecimals;
-    } else {
-      return 2;
-    }
+    return (seriesDecimals || seriesDecimals === 0) ? seriesDecimals : 2;
   }
 
   checkSelections() {
