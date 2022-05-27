@@ -108,7 +108,7 @@ export class AppComponent {
   }
 
   geoSelectorList(geoArray: Array<Geography>) {
-    // Set list of reginos for region selector
+    // Set list of regions for region selector
     if (this.regions) {
       geoArray.forEach((geo) => {
         this._helper.uniqueGeos(geo, this.regions);
@@ -159,16 +159,14 @@ export class AppComponent {
       const indicatorGeo = indicatorSeries.geography.handle;
       const indicatorFreq = indicatorSeries.frequencyShort;
       // Series level observations
-      const indicatorLevel = indicatorSeries.seriesObservations.transformationResults[0].observations;
-      // Allow use of new observation format from API change
-      const newIndicatorLevel = indicatorSeries.seriesObservations.transformationResults.find(transforms => transforms.transformation === 'lvl');
-      const levelValues = indicatorLevel ? indicatorLevel.observations : newIndicatorLevel.values;
+      const indicatorLevel = indicatorSeries.seriesObservations.transformationResults.find(transforms => transforms.transformation === 'lvl');
+      const levelValues = indicatorLevel.values;
       const geoSelected = this.selectedGeos.findIndex(geo => geo === indicatorGeo);
       const freqSelected = this.selectedFreqs.findIndex(freq => freq === indicatorFreq);
       // If region and frequency are selected and the series contains observations, add series to seriesData
       if (geoSelected > -1 && freqSelected > -1 && levelValues !== null) {
-        if (newIndicatorLevel.dates && newIndicatorLevel.values) {
-          indicatorSeries.observations = this.formatObservations(newIndicatorLevel);
+        if (indicatorLevel.dates && indicatorLevel.values) {
+          indicatorSeries.observations = this.formatObservations(indicatorLevel);
         }
         seriesData.push(indicatorSeries);
       }
@@ -334,18 +332,22 @@ export class AppComponent {
   }
 
   checkValidDates(dates) {
-    let valid = true;
-    if (dates.selectedStartYear > dates.selectedEndYear) {
-      valid = false;
+    const {
+      selectedStartYear,
+      selectedEndYear,
+      selectedStartQuarter,
+      selectedEndQuarter,
+      selectedStartMonth,
+      selectedEndMonth
+    } = dates;
+    if (selectedStartYear > selectedEndYear) {
+      return false;
     }
-    if (dates.selectedStartYear === dates.selectedEndYear) {
-      if (dates.selectedStartQuarter > dates.selectedEndQuarter) {
-        valid = false;
-      }
-      if (dates.selectedStartMonth > dates.selectedEndMonth) {
-        valid = false;
+    if (selectedStartYear === selectedEndYear) {
+      if ((selectedStartQuarter > selectedEndQuarter) || (selectedStartMonth > selectedEndMonth)) {
+        return false;
       }
     }
-    return valid;
+    return true;
   }
 }

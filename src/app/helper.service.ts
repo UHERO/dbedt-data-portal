@@ -14,7 +14,6 @@ export class HelperService {
     const dateArray = [];
     const m = { 1: '01', 2: '02', 3: '03', 4: '04', 5: '05', 6: '06', 7: '07', 8: '08', 9: '09', 10: '10', 11: '11', 12: '12' };
     const q = { 1: 'Q1', 4: 'Q2', 7: 'Q3', 10: 'Q4' };
-    console.log(selectedDates)
     let startYear = +selectedDates.startDate.substring(0, 4);
     let endYear = +selectedDates.endDate.substring(0, 4);
     let startMonth = +selectedDates.startDate.substring(5, 7);
@@ -199,7 +198,7 @@ export class HelperService {
     const minYear = startDate.substring(0, 4);
     const maxYear = endDate.substring(0, 4);
     const startMonth = startDate.substring(5, 7);
-    const endMonth = endDate.substring(5, );
+    const endMonth = endDate.substring(5, 7);
     if (selectedDates.selectedStartYear === minYear) {
       selectedDates.fromMonthList = allMonths.slice(0, allMonths.indexOf(startMonth) + 1);
     }
@@ -303,22 +302,21 @@ export class HelperService {
 
   freqSort (freqArray: Array<Frequency>): Array<Frequency> {
     const freqOrder = ['A', 'Q', 'M'];
-    freqArray.sort(function (a, b) {
-      const aSort = freqOrder.indexOf(a.id);
-      const bSort = freqOrder.indexOf(b.id);
-      return (aSort < bSort) ? - 1 : (aSort > bSort) ? 1 : 0;
-    });
-    return freqArray;
+    return this.customSorter(freqArray, freqOrder);
   }
 
   areaSort (geoArray: Array<Geography>): Array<Geography> {
     const areaOrder = ['HI', 'HAW', 'HON', 'KAU', 'MAU'];
-    geoArray.sort(function (a, b) {
-      const aSort = areaOrder.indexOf(a.id);
-      const bSort = areaOrder.indexOf(b.id);
+    return this.customSorter(geoArray, areaOrder);
+  }
+
+  customSorter = (arr: Array<Geography | Frequency>, ordering: Array<any>): Array<any> => {
+    arr.sort((a, b) => {
+      const aSort = ordering.indexOf(a.id);
+      const bSort = ordering.indexOf(b.id);
       return (aSort < bSort) ? -1 : (aSort > bSort) ? 1 : 0;
     });
-    return geoArray;
+    return arr;
   }
 
 }

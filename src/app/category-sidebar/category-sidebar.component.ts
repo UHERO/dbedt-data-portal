@@ -19,7 +19,6 @@ const actionMapping: IActionMapping = {
   encapsulation: ViewEncapsulation.None
 })
 export class CategorySidebarComponent implements OnInit, OnDestroy {
-  private categories: Array<Category>;
   private subCategories; // Subscription to categories
   public nodes;
   public ids: Array<any> = [];
