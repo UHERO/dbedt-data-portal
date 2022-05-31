@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from './api.service';
 import { HelperService } from './helper.service';
@@ -13,6 +13,8 @@ import { YearSelectorComponent } from './year-selector/year-selector.component';
 import { QuarterSelectorComponent } from './quarter-selector/quarter-selector.component';
 import { MonthSelectorComponent } from './month-selector/month-selector.component';
 import { IndicatorTableComponent } from './indicator-table/indicator-table.component';
+import { RequestCache } from './request-cache';
+import { CacheInterceptor } from './cache.interceptor';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,12 @@ import { IndicatorTableComponent } from './indicator-table/indicator-table.compo
     HttpClientModule,
     TreeModule,
   ],
-  providers: [ApiService, HelperService],
+  providers: [
+    ApiService,
+    HelperService,
+    RequestCache,
+    { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
