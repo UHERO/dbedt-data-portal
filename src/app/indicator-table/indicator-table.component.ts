@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnChanges, ViewEncapsulation } from '@angular/core';
 
 import * as $ from 'jquery';
 import 'datatables.net';
@@ -14,7 +14,7 @@ import 'datatables.net-buttons/js/buttons.print.js';
   styleUrls: ['./indicator-table.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class IndicatorTableComponent implements OnInit, OnChanges {
+export class IndicatorTableComponent implements OnChanges {
   @Input() dateArray;
   @Input() tableData;
   @Input() datesSelected;
@@ -22,10 +22,7 @@ export class IndicatorTableComponent implements OnInit, OnChanges {
 
   constructor() { }
 
-  ngOnInit() {
-  }
-
-  ngOnChanges(inputChanges) {
+  ngOnChanges() {
     $('span.loading').css('display', 'inline-block');
     setTimeout(() => {
       this.initDatatable();
