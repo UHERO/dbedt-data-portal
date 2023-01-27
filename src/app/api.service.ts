@@ -2,11 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, map } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs';
 import { environment } from '../environments/environment';
-import 'rxjs/Rx';
-import 'rxjs/add/operator/mergeMap';
-
 import { Category } from './category';
 
 @Injectable()
