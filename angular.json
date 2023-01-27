@@ -168,7 +168,6 @@
       }
     }
   },
-  "defaultProject": "dbedt",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,
