@@ -1,7 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Geography } from '../geography';
-import 'jquery';
-declare var $: any;
 
 @Component({
   selector: 'app-geo-selector',
@@ -9,7 +7,7 @@ declare var $: any;
   styleUrls: ['./geo-selector.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class GeoSelectorComponent implements OnInit {
+export class GeoSelectorComponent {
   // If indicator(s) selected, do not display placeholder ('Select an Indicator')
   @Input() indicator: boolean;
   @Input() regions: Array<Geography>;
@@ -17,9 +15,6 @@ export class GeoSelectorComponent implements OnInit {
   @Output() selectedGeoList = new EventEmitter();
 
   constructor() { }
-
-  ngOnInit() {
-  }
 
   toggle(geo, event) {
     const index = this.selectedGeos.indexOf(geo);
