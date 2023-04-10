@@ -175,6 +175,15 @@ export class AppComponent {
         this.datesSelected.endDate = '';
         this.datesSelected.startDate = '';
         if (seriesData.length !== 0) {
+          const obsStartDates = seriesData.map(series => series.seriesObservations.observationStart);
+          const obsEndDates = seriesData.map(series => series.seriesObservations.observationEnd);
+          const minObsDate = obsStartDates.reduce((min, curr) => {
+            return min === '' ? curr : curr.localeCompare(min) < 0 ? curr : min;
+          }, '');
+          const maxObsDate = obsEndDates.reduce((max, curr) => {
+            return max === '' ? curr : curr.localeCompare(max) > 0 ? curr : max;
+          }, '');
+          this._helper.updateMaxDateRange({start: minObsDate, end: maxObsDate});
           seriesData.forEach((series, seriesIndex) => {
             // Find the earliest and lastest observation dates, used to set dates in the range selectors
             const obsStart = series.seriesObservations.observationStart;

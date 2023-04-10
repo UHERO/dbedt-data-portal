@@ -3,11 +3,26 @@ import { Injectable } from '@angular/core';
 import { Geography } from './geography';
 import { Frequency } from './frequency';
 import { DatesSelected } from './dates-selected';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable()
 export class HelperService {
+  maxDateRangeChange: BehaviorSubject<any> = new BehaviorSubject({});
+  maxDateRange = this.maxDateRangeChange.asObservable();
 
   constructor() { }
+
+  updateMaxDateRange = (newDateRange/* : any */) => {
+    this.maxDateRangeChange.next(newDateRange);
+    return newDateRange;
+  }
+
+  setCurrentDateRange = (start: string, end: string) => {
+    this.updateMaxDateRange({
+      start,
+      end,
+    });
+  }
 
   categoryDateArray(selectedDates, selectedFreqs: Array<string>) {
     // Dates used in table header

@@ -17,7 +17,6 @@ import 'datatables.net-buttons/js/buttons.print.js';
 export class IndicatorTableComponent implements OnChanges {
   @Input() dateArray;
   @Input() tableData;
-  @Input() datesSelected;
   private tableWidget: any;
 
   constructor() { }
@@ -37,7 +36,12 @@ export class IndicatorTableComponent implements OnChanges {
       this.tableWidget.destroy();
       indicatorTable.empty();
     }
-    tableColumns.push({ title: 'Id', data: 'position'}, { title: 'Indicator', data: 'indicator' }, { title: 'Area', data: 'region' }, { title: 'Units', data: 'units' });
+    tableColumns.push(
+      { title: 'Id', data: 'position'},
+      { title: 'Indicator', data: 'indicator' },
+      { title: 'Area', data: 'region' },
+      { title: 'Units', data: 'units' }
+    );
     this.dateArray.forEach((date) => {
       tableColumns.push({ title: date.tableDate, data: 'observations.' + date.tableDate });
     });
