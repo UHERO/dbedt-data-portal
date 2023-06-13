@@ -38,6 +38,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
           child.hasChildren = true;
         });
       });
+      console.log('categories', categories)
       this.nodes = categories;
     });
 
@@ -47,6 +48,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       },
       actionMapping
     };
+    console.log('options', this.options)
   }
 
   ngOnDestroy() {
