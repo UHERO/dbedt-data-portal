@@ -4,6 +4,8 @@ import { ApiService } from '../api.service';
 import { Category } from '../category';
 import { TREE_ACTIONS, IActionMapping, TreeComponent, TreeNode } from '@circlon/angular-tree-component';
 declare var $: any;
+import { mergeMap, switchMap, map, tap } from 'rxjs/operators';
+import { forkJoin, observable, of } from 'rxjs';
 
 const actionMapping: IActionMapping = {
   mouse: {
@@ -20,6 +22,7 @@ const actionMapping: IActionMapping = {
 })
 export class CategorySidebarComponent implements OnInit, OnDestroy {
   private subCategories; // Subscription to categories
+  categories;
   public nodes;
   public ids: Array<any> = [];
   private error: string;
@@ -32,7 +35,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   constructor(private _apiService: ApiService) { }
 
   ngOnInit() {
-    this.subCategories = this._apiService.fetchCategories().subscribe((categories) => {
+    /* this.subCategories = this._apiService.fetchCategories().subscribe((categories) => {
       categories.forEach((category) => {
         category.children.forEach((child) => {
           child.hasChildren = true;
@@ -44,15 +47,71 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
 
     this.options = {
       getChildren: (node: TreeNode) => {
+        console.log(node)
         return this._apiService.fetchCategoryMeasures(node.id).toPromise();
       },
       actionMapping
-    };
-    console.log('options', this.options)
+    }; */
+    this._apiService.fetchCategories().subscribe((data) => {
+      this.categories = data;
+    });
   }
 
   ngOnDestroy() {
     this.subCategories.unsubscribe();
+  }
+
+  nodeExpand(event) {
+    console.log(event)
+    if (!event.node.children) {
+      console.log('event.node', event.node)
+      this._apiService.fetchCategoryMeasures(event.node.id).subscribe((data) => {
+        event.node.children = data.map((d) => {
+          return { ...d, key: d.id, label: d.name }
+        });
+      });
+    }
+  }
+
+  nodeSelect(event, categories) {
+    const { node } = event;
+    console.log('categories', categories)
+    if (!node.parent) {
+      categories.find(category => category.id === node.id).expanded = true;
+      this.categories = [...categories]
+    }
+    if (!node.children && node.leaf === false) {
+      const parentCategory = categories.find(category => category.id === node.parentId);
+      parentCategory.expanded = true;
+      parentCategory.children.find(subcategory => subcategory.id === node.id).expanded = true;
+      this.nodeExpand(event);
+      this.categories = [...categories]
+    }
+    if (!event.node.children && node.leaf !== false) {
+      console.log('select event', event)
+      const node = event.node;
+      // create tracking for node position, used for table ordering
+      const { parentId: categoryId, id: subcategoryId } = node.parent;
+      const indicatorId = node.id;
+      const categoryIndex = categories.findIndex(node => node.id === categoryId);
+      const subcatIndex = categories[categoryIndex]
+        .children
+        .findIndex(node => node.id === subcategoryId);
+      const indicatorIndex = categories[categoryIndex]
+        .children[subcatIndex]
+        .children
+        .findIndex(node => node.id === indicatorId);
+      const indices = [categoryIndex, subcatIndex, indicatorIndex];
+      const position = this.nodePosition(indices);
+      if (!this.ids.find(({ id }) => id === node.id)) {
+        this.ids.push({id: node.id, position });
+      }
+      console.log(this.ids)
+        setTimeout(() => {
+          this.selectedCatIds.emit(this.ids);
+        }, 20);
+    }
+    
   }
 
   activateNode(e) {

@@ -7,8 +7,8 @@ import { ApiService } from './api.service';
 import { HelperService } from './helper.service';
 import { AppComponent } from './app.component';
 import { CategorySidebarComponent } from './category-sidebar/category-sidebar.component';
-import { TreeModule } from '@circlon/angular-tree-component';
-import { TreeModule as PrimeTree } from 'primeng/tree';
+//import { TreeModule } from '@circlon/angular-tree-component';
+import { TreeModule } from 'primeng/tree';
 import { GeoSelectorComponent } from './geo-selector/geo-selector.component';
 import { FreqSelectorComponent } from './freq-selector/freq-selector.component';
 import { YearSelectorComponent } from './year-selector/year-selector.component';
@@ -36,7 +36,6 @@ import { CacheInterceptor } from './cache.interceptor';
     FormsModule,
     HttpClientModule,
     TreeModule,
-    PrimeTree
   ],
   providers: [
     ApiService,

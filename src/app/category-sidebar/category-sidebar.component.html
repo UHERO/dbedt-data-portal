@@ -1,7 +1,9 @@
 <div class="sidebar">
-	<tree-root #tree [nodes]="nodes"
+	<!-- <tree-root #tree [nodes]="nodes"
 		[options]="options"
     	(activate)="activateNode($event)"
     	(deactivate)="deactivateNode($event)">
-	</tree-root>
+	</tree-root> -->
+	<p-tree [value]="categories" selectionMode="multiple" (onNodeExpand)="nodeExpand($event)"
+		(onNodeSelect)="nodeSelect($event, categories)" [loading]="!categories"></p-tree>
 </div>
