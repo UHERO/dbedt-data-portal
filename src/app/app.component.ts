@@ -46,6 +46,8 @@ export class AppComponent {
     const geoList = [];
     const freqList = [];
     this.selectedIndicators = [];
+    console.log('selectedMeasurements', selectedMeasurements)
+    console.log('freqList', freqList)
     selectedMeasurements.forEach((m) => {
       this._apiService.fetchMeasurementSeries(m.id).subscribe((series) => {
         this.initSettings(m.position, series, geoList, freqList);
@@ -97,14 +99,15 @@ export class AppComponent {
 
   freqSelectorList(freqArray: Array<Frequency>) {
     // Set list of frequencies for frequency selector
-    if (this.frequencies) {
+    /* if (this.frequencies) {
       freqArray.forEach((freq) => {
         this._helper.uniqueFreqs(freq, this.frequencies);
       });
       this._helper.freqSort(this.frequencies);
     } else {
       this.frequencies = this._helper.freqSort(freqArray);
-    }
+    } */
+    this.frequencies = this._helper.freqSort(freqArray)
   }
 
   geoSelectorList(geoArray: Array<Geography>) {

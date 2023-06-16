@@ -66,6 +66,7 @@ const buildCategoryTree = (categories: Category[], idMap: {}) => {
     value.label = value.name;
     value.key = value.id;
     value.leaf = false;
+    value.expanded = false;
     if (parent) {
       (parent.children || (parent.children = [])).push(value);
     } else {

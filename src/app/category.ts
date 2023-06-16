@@ -4,6 +4,8 @@ export interface Category {
   label: string;
   key: number;
   leaf: boolean;
+  selectable: boolean;
+  expanded: boolean;
   freqGeos: Array<any>;
   geoFreqs: Array<any>;
   parentId?: number;
