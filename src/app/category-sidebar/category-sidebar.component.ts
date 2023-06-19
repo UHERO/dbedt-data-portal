@@ -82,6 +82,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       if (!this.ids.find(({ id }) => id === node.id)) {
         this.ids.push({id: node.id, position });
       }
+      console.log('ids', this.ids)
       this.selectedCatIds.emit(this.ids);
     }
   }

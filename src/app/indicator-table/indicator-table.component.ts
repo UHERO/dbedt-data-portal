@@ -335,7 +335,7 @@ export class IndicatorTableComponent implements OnChanges {
       searching: false,
       info: false,
       fixedColumns: {
-        'leftColumns': 4
+        'leftColumns': 3
       },
     });
     $('span.loading').css('display', 'none');

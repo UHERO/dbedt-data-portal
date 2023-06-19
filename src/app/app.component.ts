@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ApiService } from './api.service';
 import { HelperService } from './helper.service';
@@ -19,12 +19,8 @@ export class AppComponent {
   public indicatorSelected = false;
 
   // List of regions and freqeuencies for the selected series/categories
-  public regions: Array<Geography>;
-  public frequencies: Array<Frequency>;
-
-  // List of selected regions and frequencies
-  public selectedGeos: Array<string> = [];
-  public selectedFreqs: Array<string> = [];
+  public regions: Array<any>;
+  public frequencies: Array<any>;
 
   public annualSelected: Boolean = false;
   public quarterSelected: Boolean = false;
@@ -42,105 +38,91 @@ export class AppComponent {
   constructor(private _apiService: ApiService, private _helper: HelperService) {
   }
 
-  getSelectedIndicators(selectedMeasurements) {
-    const geoList = [];
-    const freqList = [];
+  ngOnInit() {
+    this.frequencies = [];
+    this.regions = [];
+    this.indicatorSelected = false;
+  }
+
+  getSelectedIndicators(selectedMeasurements) {    
     this.selectedIndicators = [];
-    console.log('selectedMeasurements', selectedMeasurements)
-    console.log('freqList', freqList)
-    selectedMeasurements.forEach((m) => {
-      this._apiService.fetchMeasurementSeries(m.id).subscribe((series) => {
-        this.initSettings(m.position, series, geoList, freqList);
-      },
-        (error) => {
-          this.errorMsg = error;
-        },
-        () => {
-          this.indicatorSelected = true;
-          this.freqSelectorList(freqList);
-          this.geoSelectorList(geoList);
-          if (this.selectedGeos.length && this.selectedFreqs.length) {
-            this.getSeries();
-          }
-        });
+    selectedMeasurements.forEach((measurement) => {
+      this.fetchSeries(measurement);
     });
+    // remove frequencies & regions that are no longer needed
+    // when updating indicator selection
+    if (this.frequencies.length) {
+      this.frequencies = this.frequencies.filter(freq => this.selectedIndicators.some(s => s.frequencyShort === freq.id));
+    }
+    if (this.regions.length) {
+      this.regions = this.regions.filter(geo => this.selectedIndicators.some(s => s.geography.handle === geo.id));
+    }
     if (!this.selectedIndicators.length) {
       // Remove table if all categories are deselected and remove date selectors
       this.datesSelected = null;
       this.displayTable = false;
       this.regions = [];
-      this.selectedGeos = [];
       this.frequencies = [];
-      this.selectedFreqs = [];
       this.indicatorSelected = false;
       this.invalidDates = null;
       this.toggleDateSelectors();
     }
   }
 
-  initSettings(position: string, series: Array<any>, geoList: Array<any>, freqList: Array<any>) {
-    // Iterate through list of series to create list of areas and frequencies and identify observation dates
-    series.forEach((serie) => {
-      this.selectedIndicators.push(serie);
-      serie.position = position;
-      const { geos, freqs } = serie;
-      if (geos && freqs) {
-        geos.forEach((geo) => {
-          geo = this._helper.formatGeos(geo);
-          this._helper.uniqueGeos(geo, geoList);
-        });
-        freqs.forEach((freq) => {
-          freq = this._helper.formatFreqs(freq);
-          this._helper.uniqueFreqs(freq, freqList);
-        });
+  fetchSeries(measurement) {
+    this._apiService.fetchMeasurementSeries(measurement.id).subscribe((series) => {
+      series.forEach((serie) => {
+        this.selectedIndicators.push(serie);
+        serie.position = measurement.position;
+        const { geography, frequencyShort, frequency } = serie;
+        if (!this.frequencies.some(freq => freq.id === frequencyShort)) {
+          this.frequencies.push(this._helper.formatFreqs({freq: frequencyShort, label: frequency}))
+        }
+        if (!this.regions.some(geo => geo.id === geography.handle)) {
+          this.regions.push(this._helper.formatGeos(geography));
+        } 
+      });
+    },
+    (error) => {
+      this.errorMsg = error;
+    },
+    () => {
+      this.indicatorSelected = true;
+      this.freqSelectorList(this.frequencies);
+      this.geoSelectorList(this.regions);
+      if (this.frequencies.some(freq => freq.state) && this.regions.some(geo => geo.state)) {
+        this.formatSeries();
       }
     });
   }
 
   freqSelectorList(freqArray: Array<Frequency>) {
-    // Set list of frequencies for frequency selector
-    /* if (this.frequencies) {
-      freqArray.forEach((freq) => {
-        this._helper.uniqueFreqs(freq, this.frequencies);
-      });
-      this._helper.freqSort(this.frequencies);
-    } else {
-      this.frequencies = this._helper.freqSort(freqArray);
-    } */
-    this.frequencies = this._helper.freqSort(freqArray)
+    this.frequencies = this._helper.freqSort(freqArray);
   }
 
   geoSelectorList(geoArray: Array<Geography>) {
-    // Set list of regions for region selector
-    if (this.regions) {
-      geoArray.forEach((geo) => {
-        this._helper.uniqueGeos(geo, this.regions);
-      });
-      this._helper.areaSort(this.regions);
-    } else {
-      this.regions = this._helper.areaSort(geoArray);
-    }
+    this._helper.areaSort(this.regions);
   }
 
-  geoChange(e) {
-    this.selectedGeos = e;
-    if (!this.selectedGeos.length) {
+  geoChange(geos) {
+    this.regions = geos;
+    if (!this.regions.some(geo => geo.state)) {
       this.displayTable = false;
       this.toggleDateSelectors();
     }
-    if (this.selectedIndicators.length && this.selectedFreqs.length) {
-      this.getSeries();
+    if (this.selectedIndicators.length && this.frequencies.some(freq => freq.state)) {
+      this.formatSeries();
       this.toggleDateSelectors();
     }
   }
 
-  freqChange(e) {
-    this.selectedFreqs = e;
-    if (this.selectedIndicators.length && this.selectedGeos.length) {
-      this.getSeries();
+  freqChange(frequencies) {
+    this.frequencies = frequencies;
+    if (this.selectedIndicators.length && this.regions.some(geo => geo.state)) {
+      this.formatSeries();
       this.toggleDateSelectors();
     }
-    if (!this.selectedFreqs.length) {
+    if (!this.frequencies.some(freq => freq.state)) {
       this.displayTable = false;
       this.annualSelected = false;
       this.quarterSelected = false;
@@ -149,14 +131,14 @@ export class AppComponent {
   }
 
   toggleDateSelectors() {
-    const qIndex = this.selectedFreqs.indexOf('Q');
-    const mIndex = this.selectedFreqs.indexOf('M');
-    this.annualSelected = this.selectedFreqs.length > 0 && this.selectedIndicators.length > 0 && this.selectedGeos.length > 0;
-    this.quarterSelected = qIndex > -1 && mIndex === -1;
-    this.monthSelected = mIndex > -1;
+    const qSelected = this.frequencies.find(freq => freq.id === 'Q' && freq.state);
+    const mSelected = this.frequencies.find(freq => freq.id === 'M' && freq.state);
+    this.annualSelected = this.frequencies.some(freq => freq.state) && this.selectedIndicators.length > 0 && this.regions.some(geo => geo.state);
+    this.quarterSelected = qSelected ? true : false;
+    this.monthSelected = mSelected ? true : false;
   }
 
-  getSeries() {
+  formatSeries() {
     const seriesData = [];
     this.selectedIndicators.forEach((indicatorSeries, indIndex) => {
       const indicatorGeo = indicatorSeries.geography.handle;
@@ -164,8 +146,8 @@ export class AppComponent {
       // Series level observations
       const indicatorLevel = indicatorSeries.seriesObservations.transformationResults.find(transforms => transforms.transformation === 'lvl');
       const levelValues = indicatorLevel.values;
-      const geoSelected = this.selectedGeos.findIndex(geo => geo === indicatorGeo);
-      const freqSelected = this.selectedFreqs.findIndex(freq => freq === indicatorFreq);
+      const geoSelected = this.regions.findIndex(geo => geo.id === indicatorGeo && geo.state);
+      const freqSelected = this.frequencies.findIndex(freq => freq.id === indicatorFreq && freq.state);
       // If region and frequency are selected and the series contains observations, add series to seriesData
       if (geoSelected > -1 && freqSelected > -1 && levelValues !== null) {
         if (indicatorLevel.dates && indicatorLevel.values) {
@@ -273,7 +255,7 @@ export class AppComponent {
   checkSelections() {
     let disable = true;
     // Enable Get Data button if selections have been made in indicators, frequencies, and areas
-    if (this.selectedIndicators.length && this.selectedFreqs.length && this.selectedGeos.length && !this.noSeries && !this.invalidDates) {
+    if (this.selectedIndicators.length && this.frequencies.some(freq => freq.state) && this.regions.some(geo => geo.state) && !this.noSeries && !this.invalidDates) {
       disable = false;
     }
     return disable;
@@ -285,8 +267,6 @@ export class AppComponent {
     this.datesSelected = null;
     this.frequencies = [];
     this.regions = [];
-    this.selectedFreqs = [];
-    this.selectedGeos = [];
     this.dateArray = [];
     this.tableData = [];
     this.indicatorSelected = false;
@@ -330,13 +310,13 @@ export class AppComponent {
     if (validDates) {
       this.invalidDates = null;
       this._helper.yearsRange(this.datesSelected);
-      if (this.selectedFreqs.indexOf('Q') > -1) {
+      if (this.frequencies.some(freq => freq.id === 'Q')) {
         this._helper.quartersRange(this.datesSelected);
       }
-      if (this.selectedFreqs.indexOf('M') > -1) {
+      if (this.frequencies.some(freq => freq.id === 'M')) {
         this._helper.monthsRange(this.datesSelected);
       }
-      this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.selectedFreqs);
+      this.dateArray = this._helper.categoryDateArray(this.datesSelected, this.frequencies);
     } else {
       this.invalidDates = 'Invalid date selection';
       this.displayTable = false;

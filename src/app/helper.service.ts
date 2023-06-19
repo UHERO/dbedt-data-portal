@@ -24,7 +24,7 @@ export class HelperService {
     });
   }
 
-  categoryDateArray(selectedDates, selectedFreqs: Array<string>) {
+  categoryDateArray(selectedDates, selectedFreqs: Array<any>) {
     // Dates used in table header
     const dateArray = [];
     const m = { 1: '01', 2: '02', 3: '03', 4: '04', 5: '05', 6: '06', 7: '07', 8: '08', 9: '09', 10: '10', 11: '11', 12: '12' };
@@ -33,9 +33,9 @@ export class HelperService {
     let endYear = +selectedDates.endDate.substring(0, 4);
     let startMonth = +selectedDates.startDate.substring(5, 7);
     let endMonth = +selectedDates.endDate.substring(5, 7);
-    const annualSelected = selectedFreqs.indexOf('A') > -1;
-    const monthSelected = selectedFreqs.indexOf('M') > -1;
-    const quarterSelected = selectedFreqs.indexOf('Q') > -1;
+    const annualSelected = selectedFreqs.find(freq => freq.id === 'A' && freq.state);//selectedFreqs.indexOf('A') > -1;
+    const monthSelected = selectedFreqs.find(freq => freq.id === 'M' && freq.state);
+    const quarterSelected = selectedFreqs.find(freq => freq.id === 'Q' && freq.state)
     // Check if selectedDates' properties have values set (i.e. date range selectors have been used)
     const dates = this.checkSelectedDates(selectedDates, monthSelected, startYear, endYear, startMonth, endMonth, q);
     startYear = dates.startYear;
@@ -300,7 +300,7 @@ export class HelperService {
   }
 
   // Get a unique array of available frequencies for a category
-  uniqueFreqs(freq: Frequency, freqList: Array<any>) {
+  uniqueFreqs(freq, freqList: Array<any>) {
     if (!freqList.some(f => f.id === freq.id)) {
       freqList.push(freq);
     }
