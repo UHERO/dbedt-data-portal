@@ -1,124 +1,128 @@
 #wrapper {
-    width: 960px;
-    overflow-x: auto;
-    overflow-y: hidden;
+  width: 960px;
+  overflow-x: auto;
+  overflow-y: hidden;
 
-    .indicators {
-        border-right: 1px solid #3096A1;
-        width: 250px;
-        display: inline-block;
+  .indicators {
+    border-right: 1px solid #3096a1;
+    width: 250px;
+    display: inline-block;
 
-        h6 {
-            margin: 0.5em;
-            font-size: 0.9rem;
-        }
+    h6 {
+      margin: 0.5em;
+      font-size: 0.9rem;
     }
-    
-    .content-col {
-        width: 705px;
-        display: inline-block;
-        vertical-align: top;
+  }
+
+  .content-col {
+    width: 705px;
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .loading {
+    font-size: 0.8em;
+    color: #1d667f;
+    position: relative;
+    top: 50%;
+    text-align: center;
+  }
+
+  .btn {
+    line-height: 1;
+    border-radius: 0;
+    cursor: pointer;
+  }
+
+  .clear-table {
+    float: right;
+    margin-bottom: -1.75em;
+    color: #292b2c;
+    background-color: #fff;
+    border-color: #ccc;
+
+    &:hover {
+      background-color: #e6e6e6;
+      border-color: #adadad;
+    }
+  }
+
+  .welcome-msg {
+    p {
+      margin-bottom: 0.5rem;
+      font-size: 1.1em;
     }
 
-    .loading {
-        font-size: 0.8em;
-        color: #1D667F;
-        position: relative;
-        top: 50%;
-        text-align: center;
+    width: 80%;
+    margin-top: 5%;
+    margin-left: 10px;
+
+    .dbedt {
+      font-size: 1rem;
+      color: #ed7d31;
+      font-weight: 600;
     }
-
-    .btn {
-        line-height: 1;
-        border-radius: 0;
-        cursor: pointer;
-    }
-
-    .clear-table {
-        float: right;
-        margin-bottom: -1.75em;
-        color: #292B2C;
-        background-color: #FFF;
-        border-color: #CCC;
-
-        &:hover {
-            background-color: #E6E6E6;
-            border-color: #ADADAD;
-        }
-    }
-
-    .welcome-msg {
-        p {
-            margin-bottom: 0.5rem;
-            font-size: 1.1em;
-        }
-    
-        width: 80%;
-        margin-top: 5%;
-        margin-left: 10px;
-
-        .dbedt {
-            font-size: 1rem;
-            color: #ED7D31;
-            font-weight: 600;
-        }
-    }
+  }
 }
 
 .selectors {
-    margin-top: 1em;
+  margin-top: 1em;
 
+  .btn {
+    line-height: 1;
+    border-radius: 0;
+    cursor: pointer;
+    //float: right;
+    background-color: #29a8b4;
+    color: #ffffff;
+  }
+
+  p {
+    display: inline-block;
+  }
+
+  .text-danger {
+    margin-bottom: 0;
+  }
+
+  .dropdown {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  #area-selector {
+    margin-left: 5px;
+    margin-right: 15px;
+  }
+
+  #freq-selector {
+    margin-right: 15px;
+  }
+
+  #date-selector {
+    display: inline-block;
+  }
+
+  .get-data {
     .btn {
-        line-height: 1;
-        border-radius: 0;
-        cursor: pointer;
-        //float: right;
-        background-color: #29A8B4;
-        color: #FFFFFF;
+      line-height: 1;
+      border-radius: 0;
+      cursor: pointer;
+      background-color: #29a8b4;
+      color: #ffffff;
     }
 
-    p {
-        display: inline-block;
+    display: inline-block;
+    float: right;
+
+    .loading {
+      display: none;
+
+      i {
+        font-size: 2em !important;
+        vertical-align: middle;
+        color: #29a8b4;
+      }
     }
-
-    .text-danger {
-        margin-bottom: 0;
-    }
-    
-    .dropdown {
-        display: inline-block;
-        vertical-align: top;
-    }
-
-    #area-selector {
-        margin-left: 5px;
-        margin-right: 15px;
-    }
-
-    #freq-selector {
-        margin-right: 15px;
-    }
-
-    .get-data {
-        .btn {
-            line-height: 1;
-            border-radius: 0;
-            cursor: pointer;
-            background-color: #29A8B4;
-            color: #FFFFFF;
-        }
-
-        display: inline-block;
-        float: right;
-
-        .loading {
-            display: none;
-
-            i {
-                font-size: 2em !important;
-                vertical-align: middle;
-                color: #29A8B4;
-            }
-        }
-    }
+  }
 }

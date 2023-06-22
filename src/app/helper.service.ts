@@ -24,6 +24,35 @@ export class HelperService {
     });
   }
 
+  setDateArray = (dateFormValues, quarterSelected: boolean, monthSelected: boolean) => {
+    const dateArray = [];
+    const m = { 1: '01', 2: '02', 3: '03', 4: '04', 5: '05', 6: '06', 7: '07', 8: '08', 9: '09', 10: '10', 11: '11', 12: '12' };
+    const q = { 1: 'Q1', 4: 'Q2', 7: 'Q3', 10: 'Q4' };
+    // const q = { Q1: '01', Q2: '04', Q3: '07', Q4: '10'};
+    let { startYear, endYear, startQuarter, endQuarter, startMonth, endMonth } = dateFormValues;
+    let minMonth = quarterSelected ? +startQuarter : monthSelected ? +startMonth : 1;
+    let maxMonth = quarterSelected ? +endQuarter : monthSelected ? +endMonth : 1;
+    while (`${startYear}-${m[minMonth]}-01` <= `${endYear}-${m[maxMonth]}-01`) {
+      // Frequency display order: M, Q, A
+      if (monthSelected) {
+        dateArray.push({date: `${startYear.toString()}-${m[minMonth]}-01`, tableDate: `${startYear.toString()}-${m[minMonth]}` });
+      }
+      if (quarterSelected) {
+        const qMonth = this.addQuarterObs(minMonth, monthSelected);
+        if (qMonth) {
+          dateArray.push({date: `${startYear.toString()}-${m[qMonth]}-01`, tableDate: `${startYear.toString()} ${q[qMonth]}`});
+        }
+      }
+      const addAnnual = this.addAnnualObs(minMonth, monthSelected, quarterSelected);
+      if (addAnnual) {
+        dateArray.push({date: `${startYear.toString()}-01-01`, tableDate: startYear.toString()});
+      }
+      startYear = minMonth === 12 ? startYear += 1 : startYear;
+      minMonth = minMonth === 12 ? 1 : minMonth += 1;
+    }
+    return dateArray;
+  }
+
   categoryDateArray(selectedDates, selectedFreqs: Array<any>) {
     // Dates used in table header
     const dateArray = [];
