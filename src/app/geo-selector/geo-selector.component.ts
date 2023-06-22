@@ -17,6 +17,7 @@ export class GeoSelectorComponent {
   constructor() { }
 
   toggle(geo, event) {
+    /* console.log('GEO TOGGLE regions', this.regions)
     const index = this.selectedGeos.indexOf(geo);
     if (index === -1) {
       this.selectedGeos.push(geo);
@@ -25,6 +26,7 @@ export class GeoSelectorComponent {
     }
     setTimeout(() => {
       this.selectedGeoList.emit(this.selectedGeos);
-    }, 20);
+    }, 20); */
+    this.selectedGeoList.emit(this.regions)
   }
 }
