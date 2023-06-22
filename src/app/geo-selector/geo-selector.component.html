@@ -2,6 +2,6 @@
 <div class="area-multi-select multi-select">
     <span *ngIf="!indicator">Select an indicator</span>
     <ng-template ngFor let-region [ngForOf]="regions">
-        <label><input type="checkbox" name="checkbox" value="{{region.id}}" [(ngModel)]="region.state" (ngModelChange)="toggle(region.id, $event)"><span>{{region.text}}</span></label>
+        <label><input type="checkbox" name="checkbox" value="{{region.id}}" [(ngModel)]="region.state" (ngModelChange)="toggle(regions)"><span>{{region.text}}</span></label>
     </ng-template>
 </div>

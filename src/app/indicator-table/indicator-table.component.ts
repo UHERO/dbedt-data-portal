@@ -17,7 +17,6 @@ import 'datatables.net-buttons/js/buttons.print.js';
 })
 export class IndicatorTableComponent implements OnChanges {
   @Input() dateArray;
-  // @Input() tableData;
   @Input() displayedSeries;
   tableData = [];
   private tableWidget: any;
@@ -25,9 +24,6 @@ export class IndicatorTableComponent implements OnChanges {
   constructor(private _helper: HelperService) {}
 
   ngOnChanges() {
-    $('span.loading').css('display', 'inline-block');
-    console.log('table component date array', this.dateArray)
-    console.log('table component displayedSeries', this.displayedSeries)
     this.formatTableData(this.displayedSeries)
     this.initDatatable();
   }
@@ -36,7 +32,6 @@ export class IndicatorTableComponent implements OnChanges {
     // Format data for datatables module (indicator-table component)
     this.tableData = [];
     seriesData.forEach((series) => {
-      console.log('SERIES', series)
       const result = {};
       this.dateArray.forEach((date) => {
         result[date.tableDate] = ' ';
@@ -70,7 +65,6 @@ export class IndicatorTableComponent implements OnChanges {
         });
       }
     });
-    console.log('TABLE DATA', this.tableData)
   }
 
   setDecimals(seriesDecimals: number) {
@@ -96,7 +90,6 @@ export class IndicatorTableComponent implements OnChanges {
       tableColumns.push({ title: date.tableDate, data: 'observations.' + date.tableDate });
     });
     tableColumns.push({ title: 'Source', data: 'source' });
-    console.log('tableColumns', tableColumns)
     const tableData = this.tableData;
     this.tableWidget = indicatorTable.DataTable({
       data: this.tableData,
@@ -389,6 +382,5 @@ export class IndicatorTableComponent implements OnChanges {
         'leftColumns': 3
       },
     });
-    $('span.loading').css('display', 'none');
   }
 }

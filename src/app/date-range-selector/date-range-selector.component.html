@@ -1,42 +1,42 @@
 <form [formGroup]="dateRangeForm">
   <div class="form-group">
     <div class="dropdown"><label>From Year</label>
-      <select (change)="changeStartYear($event)" class="custom-select" formControlName="startYear">
-        <option [ngValue]="year" *ngFor="let year of years">{{year}}</option>
+      <select (change)="changeDate($event, 'startYear')" class="custom-select" formControlName="startYear">
+        <option [value]="year" *ngFor="let year of years">{{year}}</option>
       </select>
     </div>
     <ng-template ngIf [ngIf]="displayQuarterly">
       <div class="dropdown"><label>Quarter</label>
-        <select (change)="changeStartQuarter($event)" class="custom-select" formControlName="startQuarter">
-          <option [ngValue]="quarter.value" *ngFor="let quarter of startQuarters">{{quarter.label}}</option>
+        <select (change)="changeDate($event, 'startQuarter')" class="custom-select" formControlName="startQuarter">
+          <option [value]="quarter.value" *ngFor="let quarter of startQuarters">{{quarter.label}}</option>
         </select>
       </div>
     </ng-template>
     <ng-template ngIf [ngIf]="displayMonthly">
       <div class="dropdown"><label>Month</label>
-        <select (change)="changeStartMonth($event)" class="custom-select" formControlName="startMonth">
-          <option [ngValue]="month" *ngFor="let month of startMonths">{{month}}</option>
+        <select (change)="changeDate($event, 'startMonth')" class="custom-select" formControlName="startMonth">
+          <option [value]="month" *ngFor="let month of startMonths">{{month}}</option>
         </select>
       </div>
     </ng-template>
     <div class="dropdown">
       <label>To Year</label>
-      <select (change)="changeEndYear($event)" class="custom-select" formControlName="endYear">
-        <option [ngValue]="year" *ngFor="let year of years">{{year}}</option>
+      <select (change)="changeDate($event, 'endYear')" class="custom-select" formControlName="endYear">
+        <option [value]="year" *ngFor="let year of years">{{year}}</option>
       </select>
     </div>
     <ng-template ngIf [ngIf]="displayQuarterly">
       <div class="dropdown"><label>Quarter</label>
-        <select (change)="changeEndQuarter($event)" class="custom-select" formControlName="endQuarter">
-          <option [ngValue]="quarter.value" *ngFor="let quarter of endQuarters">{{quarter.label}}</option>
+        <select (change)="changeDate($event, 'endQuarter')" class="custom-select" formControlName="endQuarter">
+          <option [value]="quarter.value" *ngFor="let quarter of endQuarters">{{quarter.label}}</option>
         </select>
       </div>
     </ng-template>
     <ng-template ngIf [ngIf]="displayMonthly">
       <div class="dropdown">
         <label>Month</label>
-        <select (change)="changeStartMonth($event)" class="custom-select" formControlName="endMonth">
-          <option [ngValue]="month" *ngFor="let month of endMonths">{{month}}</option>
+        <select (change)="changeDate($event, 'endMonth')" class="custom-select" formControlName="endMonth">
+          <option [value]="month" *ngFor="let month of endMonths">{{month}}</option>
         </select>
       </div>
     </ng-template>

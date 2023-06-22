@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ApiService } from './api.service';
 import { HelperService } from './helper.service';
 import { Geography } from './geography';
@@ -17,10 +17,11 @@ export class AppComponent {
   public indicatorSelected = false;
   displayDateRangeSelector: boolean = false;
   displayedSeries = [];
+  displayLoading: boolean = false;
 
   // List of regions and freqeuencies for the selected series/categories
-  public regions: Array<any>;
-  public frequencies: Array<any>;
+  public regions: Array<any> = [];
+  public frequencies: Array<any> = [];
 
   public annualSelected: boolean = false;
   public quarterSelected: boolean = false;
@@ -38,26 +39,13 @@ export class AppComponent {
     private _apiService: ApiService,
     private _helper: HelperService
   ) {}
-
-  ngOnInit() {
-    this.frequencies = [];
-    this.regions = [];
-    this.indicatorSelected = false;
-  }
  
   getSelectedIndicators(selectedMeasurements) {    
     this.selectedIndicators = [];
+    this.displayLoading = true;
     selectedMeasurements.forEach((measurement, index) => {
       this.fetchSeries(measurement, index === selectedMeasurements.length - 1);
     });
-    // remove frequencies & regions that are no longer needed
-    // when updating indicator selection
-    if (this.frequencies.length) {
-      this.frequencies = this.frequencies.filter(freq => this.selectedIndicators.some(s => s.frequencyShort === freq.id));
-    }
-    if (this.regions.length) {
-      this.regions = this.regions.filter(geo => this.selectedIndicators.some(s => s.geography.handle === geo.id));
-    }
     if (!this.selectedIndicators.length) {
       // Remove table if all categories are deselected and remove date selectors
       this.displayTable = false;
@@ -65,6 +53,7 @@ export class AppComponent {
       this.frequencies = [];
       this.indicatorSelected = false;
       this.invalidDates = null;
+      this.displayDateRangeSelector = false;
       this.toggleDateSelectors();
     }
   }
@@ -88,20 +77,34 @@ export class AppComponent {
     },
     () => {
       this.indicatorSelected = true;
-      this.freqSelectorList(this.frequencies);
-      this.geoSelectorList(this.regions);
+      if (startFormat) {
+        this.setFreqSelectorList(this.frequencies, this.selectedIndicators);
+        this.setGeoSelectorList(this.regions, this.selectedIndicators);
+        this.displayLoading = false;
+      }
       if (this.frequencies.some(freq => freq.state) && this.regions.some(geo => geo.state) && startFormat) {
         this.filterDisplayedSeries();
+        
       }
     });
   }
 
-  freqSelectorList(freqArray: Array<Frequency>) {
+  setFreqSelectorList(freqArray: Array<Frequency>, selectedIndicators) {
     this.frequencies = this._helper.freqSort(freqArray);
+    // remove frequencies that are no longer needed
+    // when updating indicator selection
+    if (this.frequencies.length) {
+      this.frequencies = this.frequencies.filter(freq => selectedIndicators.some(s => s.frequencyShort === freq.id));
+    }
   }
 
-  geoSelectorList(geoArray: Array<Geography>) {
-    this._helper.areaSort(this.regions);
+  setGeoSelectorList(geoArray: Array<Geography>, selectedIndicators) {
+    this.regions = this._helper.areaSort(geoArray);
+    // remove regions that are no longer needed
+    // when updating indicator selection
+    if (this.regions.length) {
+      this.regions = this.regions.filter(geo => selectedIndicators.some(s => s.geography.handle === geo.id));
+    }
   }
 
   geoChange(geos) {
@@ -131,7 +134,13 @@ export class AppComponent {
   }
 
   dateSelectionChange(event) {
-    this.dateArray = this._helper.setDateArray(event, this.frequencies.some(freq => freq.id === 'Q' && freq.state), this.frequencies.some(freq => freq.id === 'M' && freq.state));
+    if (this.checkValidDates(event)) {
+      this.invalidDates = null;
+      this.dateArray = this._helper.setDateArray(event, this.frequencies.some(freq => freq.id === 'Q' && freq.state), this.frequencies.some(freq => freq.id === 'M' && freq.state));
+    } else {
+      this.invalidDates = 'Invalid date selection';
+      this.displayTable = false;
+    }
   }
 
   toggleDateSelectors() {
@@ -162,9 +171,6 @@ export class AppComponent {
     if (this.displayedSeries.length) {
       this.noSeries = null;
       this.displayDateRangeSelector = true;
-      //this.formatTableData(displayedSeries);
-      //return displayedSeries;
-      // this.getDates();
     } else {
       // Display warning, if no series exists for selected indicators, areas, and frequencies
       this.noSeries = 'Selection Not Available';
@@ -207,22 +213,23 @@ export class AppComponent {
     this.toggleDateSelectors();
     this.sidebar.reset();
     this.sidebar.ids = [];
+    this.displayDateRangeSelector = false;
   }
 
   checkValidDates(dates) {
     const {
-      selectedStartYear,
-      selectedEndYear,
-      selectedStartQuarter,
-      selectedEndQuarter,
-      selectedStartMonth,
-      selectedEndMonth
+      startYear,
+      endYear,
+      startQuarter,
+      endQuarter,
+      startMonth,
+      endMonth
     } = dates;
-    if (selectedStartYear > selectedEndYear) {
+    if (startYear > endYear) {
       return false;
     }
-    if (selectedStartYear === selectedEndYear) {
-      if ((selectedStartQuarter > selectedEndQuarter) || (selectedStartMonth > selectedEndMonth)) {
+    if (startYear === endYear) {
+      if ((startQuarter > endQuarter) || (startMonth > endMonth)) {
         return false;
       }
     }

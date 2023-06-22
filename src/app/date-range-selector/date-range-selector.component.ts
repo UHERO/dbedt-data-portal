@@ -12,9 +12,10 @@ export class DateRangeSelectorComponent implements OnInit {
   @Input() displayQuarterly: boolean;
   @Input() displayMonthly: boolean;
   @Output() dateChange = new EventEmitter();
+  @Output() throwDateError = new EventEmitter();
   maxDateRange;
   maxDateRangeSubscription: Subscription;
-  years: Array<number>;
+  years: Array<string>;
   startQuarters: Array<{value: string, label: string}>;
   endQuarters: Array<{value: string, label: string}>;
   startMonths: Array<any>;
@@ -24,8 +25,8 @@ export class DateRangeSelectorComponent implements OnInit {
   constructor(private _helperService: HelperService, public fb: FormBuilder) { }
   
   dateRangeForm = this.fb.group({
-    startYear: [0, [Validators.required]],
-    endYear: [0, [Validators.required]],
+    startYear: ['', [Validators.required]],
+    endYear: ['', [Validators.required]],
     startQuarter: '',
     endQuarter: '',
     startMonth: '',
@@ -44,7 +45,6 @@ export class DateRangeSelectorComponent implements OnInit {
 
   ngOnInit() {
     this.maxDateRangeSubscription = this._helperService.maxDateRange.subscribe((dateRange) => {
-      console.log('dateRange', dateRange)
       this.maxDateRange = dateRange;
       const { start, end } = dateRange;
       // set years arrays
@@ -68,58 +68,17 @@ export class DateRangeSelectorComponent implements OnInit {
     });
   }
 
-  changeStartYear(e: any) {
-    this.startYear?.setValue(e.target.value, {onlySelf: true});
+  changeDate(e: any, formControl: string) {
+    this.dateRangeForm.get(formControl).setValue(e.target.value);
+    if (formControl === 'startYear') {
+      this.startQuarters = this.getQuarters(this.maxDateRange.start, this.maxDateRange.end, e.target.value);
+      this.startMonths = this.getMonths(this.maxDateRange.start, this.maxDateRange.end, e.target.value);
+    }
+    if (formControl === 'endYear') {
+      this.endQuarters = this.getQuarters(this.maxDateRange.start, this.maxDateRange.end, e.target.value);
+      this.endMonths = this.getMonths(this.maxDateRange.start, this.maxDateRange.end, e.target.value);
+    }
     this.dateChange.emit(this.dateRangeForm.value);
-  }
-
-  changeEndYear(e: any) {
-    this.endYear?.setValue(e.target.value, {onlySelf: true});
-    this.dateChange.emit(this.dateRangeForm.value);
-  }
-
-  changeStartQuarter(e: any) {
-    this.startQuarter?.setValue(e.target.value, {onlySelf: true});
-    this.dateChange.emit(this.dateRangeForm.value);
-  }
-
-  changeEndQuarter(e: any) {
-    this.endQuarter?.setValue(e.target.value, {onlySelf: true});
-    this.dateChange.emit(this.dateRangeForm.value);
-  }
-
-  changeStartMonth(e: any) {
-    this.startMonth?.setValue(e.target.value, {onlySelf: true});
-    this.dateChange.emit(this.dateRangeForm.value);
-  }
-
-  changeEndMonth(e: any) {
-    this.endMonth?.setValue(e.target.value, {onlySelf: true});
-    this.dateChange.emit(this.dateRangeForm.value);
-  }
-
-  get startYear() {
-    return this.dateRangeForm.get('startYear');
-  }
-
-  get endYear() {
-    return this.dateRangeForm.get('endYear');
-  }
-
-  get startQuarter() {
-    return this.dateRangeForm.get('startQuarter');
-  }
-
-  get endQuarter() {
-    return this.dateRangeForm.get('endQuarter');
-  }
-
-  get startMonth() {
-    return this.dateRangeForm.get('startMonth');
-  }
-
-  get endMonth() {
-    return this.dateRangeForm.get('endMonth');
   }
 
   getYears = (start: string, end: string) => {
@@ -127,15 +86,15 @@ export class DateRangeSelectorComponent implements OnInit {
     const endYear = +end.substring(0, 4);
     const years = [];
     while (startYear <= endYear) {
-      years.push(startYear);
+      years.push(`${startYear}`);
       startYear += 1;
     }
     return years;
   }
 
-  getQuarters = (start: string, end: string, selectedYear: number) => {
-    const startYear = +start.substring(0, 4);
-    const endYear = +end.substring(0, 4);
+  getQuarters = (start: string, end: string, selectedYear: string) => {
+    const startYear = start.substring(0, 4);
+    const endYear = end.substring(0, 4);
     if (selectedYear === startYear) {
       return this.minYearQuarters(+start.substring(5, 7));
     }
@@ -171,10 +130,10 @@ export class DateRangeSelectorComponent implements OnInit {
     return this.QUARTERS;
   }
 
-  getMonths = (start: string, end: string, selectedYear: number) => {
+  getMonths = (start: string, end: string, selectedYear: string) => {
     const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-    const startYear = +start.substring(0, 4);
-    const endYear = +end.substring(0, 4);
+    const startYear = start.substring(0, 4);
+    const endYear = end.substring(0, 4);
     if (selectedYear === startYear) {
       return months.slice(months.indexOf(start.substring(5, 7)));
     }
