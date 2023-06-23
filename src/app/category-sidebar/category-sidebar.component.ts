@@ -1,16 +1,23 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 
 import { ApiService } from '../api.service';
-import { Category } from '../category';
-import { TREE_ACTIONS, IActionMapping, TreeComponent, TreeNode } from '@circlon/angular-tree-component';
-declare var $: any;
+import { TreeNode } from 'primeng/api';
+import { TreeNodeSelectEvent } from 'primeng/tree';
+import { Subscription } from 'rxjs';
+import { Category } from 'app/category';
 
-const actionMapping: IActionMapping = {
-  mouse: {
-    click: TREE_ACTIONS.TOGGLE_ACTIVE_MULTI,
-    expanderClick: TREE_ACTIONS.TOGGLE_ACTIVE_MULTI
-  }
-};
+interface CustomTreeNode extends TreeNode {
+  parentId: number;
+  id: number;
+  name: string;
+  parent: CustomTreeNode;
+  children: CustomTreeNode[];
+  isIndicator: boolean;
+}
+
+interface CustomTreeNodeEvent extends TreeNodeSelectEvent {
+  node: CustomTreeNode;
+}
 
 @Component({
   selector: 'app-category-sidebar',
@@ -19,71 +26,94 @@ const actionMapping: IActionMapping = {
   encapsulation: ViewEncapsulation.None
 })
 export class CategorySidebarComponent implements OnInit, OnDestroy {
-  private subCategories; // Subscription to categories
-  public nodes;
+  private categorySubscription: Subscription;
+  categories: Category[];
   public ids: Array<any> = [];
-  private error: string;
-  public options;
   // Emit ids of selected categories to app.component
   @Output() selectedCatIds = new EventEmitter();
-  @ViewChild(TreeComponent, { static: true })
-  public tree: TreeComponent;
+  selectedNodes: CustomTreeNode[];
 
   constructor(private _apiService: ApiService) { }
 
   ngOnInit() {
-    this.subCategories = this._apiService.fetchCategories().subscribe((categories) => {
-      categories.forEach((category) => {
-        category.children.forEach((child) => {
-          child.hasChildren = true;
-        });
-      });
-      this.nodes = categories;
+    this.categorySubscription = this._apiService.fetchCategories().subscribe((data) => {
+      this.categories = data;
     });
-
-    this.options = {
-      getChildren: (node: TreeNode) => {
-        return this._apiService.fetchCategoryMeasures(node.id).toPromise();
-      },
-      actionMapping
-    };
   }
 
   ngOnDestroy() {
-    this.subCategories.unsubscribe();
+    this.categorySubscription.unsubscribe();
   }
 
-  activateNode(e) {
-    if (e.node.hasChildren) {
-      e.node.expand();
+  nodeExpand(event: CustomTreeNodeEvent) {
+    const { node } = event;
+    const { children, id } = node;
+    if (!children) {
+      this._apiService.fetchCategoryMeasures(id).subscribe((data) => {
+        node.children = data.map((d: CustomTreeNode) => {
+          return { ...d, key: d.id, label: d.name, isIndicator: true };
+        });
+      });
     }
-    if (!e.node.hasChildren) {
-      const indicator = this.tree.treeModel.getNodeById(e.node.id);
-      const subcategory = $(`tree-node-content > span:contains(${indicator.parent.data.name})`);
-      const category = $(`tree-node-content > span:contains(${indicator.parent.parent.data.name})`);
+  }
+
+  nodeSelect(event: CustomTreeNodeEvent, categories: Category[]) {
+    const { node } = event;
+    if (!node.isIndicator) {
+      node.expanded = !node.expanded;
+    }
+    if (node.parent && !node.isIndicator) {
+      this.nodeExpand(event);
+    }
+    if (node.isIndicator) {
       // create tracking for node position, used for table ordering
-      const indices = [];
-      const categoryId = e.node.parent.parent.data.id;
-      const subcategoryId = e.node.parent.data.id;
-      const indicatorId = e.node.data.id;
-      const tree = e.node.treeModel.nodes;
-      const cat = tree.find(node => node.id === categoryId);
-      const subcat = cat.children.find(node => node.id === subcategoryId);
-      const ind = subcat.children.find(node => node.id === indicatorId);
-      indices.push(tree.indexOf(cat));
-      indices.push(cat.children.indexOf(subcat));
-      indices.push(subcat.children.indexOf(ind));
+      const { parentId: categoryId, id: subcategoryId } = node.parent;
+      const indicatorId = node.id;
+      const categoryIndex = categories.findIndex(node => node.id === categoryId);
+      const subcatIndex = categories[categoryIndex]
+        .children
+        .findIndex(node => node.id === subcategoryId);
+      const indicatorIndex = categories[categoryIndex]
+        .children[subcatIndex]
+        .children
+        .findIndex(node => node.id === indicatorId);
+      const indices = [categoryIndex, subcatIndex, indicatorIndex];
       const position = this.nodePosition(indices);
-      // Bold the text of the subcategory and top level category when selecting an indicator
-      this.toggleBoldClass(subcategory, category, this.addBold)
-      this.ids.push({id: e.node.id, position: position});
-      setTimeout(() => {
-        this.selectedCatIds.emit(this.ids);
-      }, 20);
+      if (!this.ids.find(({ id }) => id === node.id)) {
+        this.ids.push({id: node.id, position });
+      }
+      this.selectedCatIds.emit(this.ids);
     }
   }
 
-  nodePosition(indices) {
+  nodeSelectionChange(nodes: CustomTreeNode[]) {
+    // All parent nodes (i.e. major category and subcategory) should be highlighted
+    // for a selected indicator
+    const indicators = nodes.filter(node => node.isIndicator);
+    const parentNodes = indicators.reduce((list, currentInd) => {
+      list.push(currentInd.parent);
+      list.push(currentInd.parent.parent);
+      return list;
+    }, []);
+    this.selectedNodes = [...parentNodes, ...indicators];
+  }
+
+  nodeUnselect(event: CustomTreeNodeEvent) {
+    const { node } = event;
+    if (!node.isIndicator) {
+      node.expanded = !node.expanded;
+      return;
+    }
+    const deactivated = this.ids.find(id => id.id === node.id);
+    const idIndex = this.ids.indexOf(deactivated);
+    if (idIndex > -1) {
+      // Remove deactivated node from list of ids
+      this.ids.splice(idIndex, 1);
+      this.selectedCatIds.emit(this.ids);
+    }
+  }
+
+  nodePosition(indices: number[]) {
     const pad = '00';
     let result = '';
     indices.forEach((index) => {
@@ -94,68 +124,18 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  removeBold(subcategoryElement, categoryElement) {
-    subcategoryElement.removeClass('bold-selected');
-    categoryElement.removeClass('bold-selected');
-  }
-
-  addBold(subcategoryElement, categoryElement) {
-    subcategoryElement.addClass('bold-selected');
-    categoryElement.addClass('bold-selected');
-  }
-
-  toggleBoldClass(subcategory, category, callback) {
-    const ignoreClasses = '.toggle-children-wrapper, .toggle-children, .toggle-children-placeholder';
-    callback(subcategory.not(ignoreClasses).first(), category.not(ignoreClasses).first());
-  }
-
-  deactivateNode(e) {
-    if (e.node.hasChildren) {
-      e.node.collapse();
-    }
-    if (!e.node.hasChildren) {
-      const indicator = this.tree.treeModel.getNodeById(e.node.id);
-      const subcategory = indicator.parent;
-      const activeIndicator = this.checkActiveIndicators(subcategory);
-      const category = indicator.parent.level === 1 ? indicator.parent : indicator.parent.parent;
-      if (!activeIndicator) {
-        const subcategoryLabel = $(`tree-node-content > span:contains(${subcategory.data.name})`);
-        const categoryLabel = $(`tree-node-content > span:contains(${category.data.name})`);
-        this.toggleBoldClass(subcategoryLabel, categoryLabel, this.removeBold);
+  collapseAll(categories: Category[]) {
+    categories.forEach((category) => {
+      category.expanded = false;
+      if (category.children) {
+        this.collapseAll(category.children);
       }
-      const deactivated = this.ids.find(id => id.id === e.node.id);
-      const idIndex = this.ids.indexOf(deactivated);
-      if (idIndex > -1) {
-        // Remove deactivated node from list of ids
-        this.ids.splice(idIndex, 1);
-        setTimeout(() => {
-          this.selectedCatIds.emit(this.ids);
-        }, 20);
-      }
-    }
-  }
-
-  checkActiveIndicators(subcategory) {
-    let activeIndicator = false;
-    if (subcategory.children) {
-      subcategory.children.forEach((indicator) => {
-        if (indicator.isActive) {
-          activeIndicator = true;
-        }
-      });
-    }
-    return activeIndicator;
+    });
   }
 
   // Deactivate nodes when clicking on Clear All Selections
   reset() {
-    const active = this.tree.treeModel.activeNodes;
-    if (active) {
-      $('.bold-selected').removeClass('bold-selected');
-      active.forEach((node) => {
-        node.setIsActive(false);
-        node.blur();
-      });
-    }
+    this.selectedNodes = [];
+    this.collapseAll(this.categories);
   }
 }

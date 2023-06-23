@@ -16,15 +16,7 @@ export class GeoSelectorComponent {
 
   constructor() { }
 
-  toggle(geo, event) {
-    const index = this.selectedGeos.indexOf(geo);
-    if (index === -1) {
-      this.selectedGeos.push(geo);
-    } else {
-      this.selectedGeos.splice(index, 1);
-    }
-    setTimeout(() => {
-      this.selectedGeoList.emit(this.selectedGeos);
-    }, 20);
+  toggle(geos) {
+    this.selectedGeoList.emit(geos)
   }
 }

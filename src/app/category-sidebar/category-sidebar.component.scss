@@ -1,15 +1,25 @@
-@import '~@circlon/angular-tree-component/css/angular-tree-component.css';
 
 .sidebar {
     height: 440px;
     overflow: auto;
     margin-left: 5px;
-    
-    .node-content-wrapper {
-        padding: 0px 5px;
+
+    .p-tree {
+        border: none;
+        padding: 0;
+        font-size: 0.75rem;
     }
-     
-    .bold-selected {
-        font-weight: 600;
+
+    .p-icon {
+        width: 0.75rem;
+        height: 0.75rem;
+    }
+
+    .p-tree .p-tree-container .p-treenode .p-treenode-content.p-highlight {
+        font-weight: bold;
+    }
+
+    .p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler {
+        margin-right: 0;
     }
 }

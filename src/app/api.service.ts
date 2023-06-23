@@ -13,7 +13,7 @@ export class ApiService {
     this.baseUrl = environment['apiUrl'];
   }
 
-  //  Get data from API
+  // Get data from API
   // Gets all available categories. Used for navigation & displaying sublists
   fetchCategories(): Observable<Category[]> {
     let categories$ = this.http.get(`${this.baseUrl}/category?u=DBEDT`).pipe(
@@ -49,23 +49,29 @@ export class ApiService {
 // And side bar navigation on single-series & table views
 function mapCategories(response): Array<Category> {
   const categories = response.data;
-  const dataMap = categories.reduce((map, value) => (map[value.id] = value, map), {});
+  const dataMap = mapCategoryIds(categories);
+  return buildCategoryTree(categories, dataMap);
+}
+
+const mapData = (response): any => response.data;
+
+const mapCategoryIds = (categories: Category[]) => {
+  return categories.reduce((map, value) => (map[value.id] = value, map), {})
+};
+
+const buildCategoryTree = (categories: Category[], idMap: {}) => {
   const categoryTree = [];
   categories.forEach((value) => {
-    const parent = dataMap[value.parentId];
+    const parent = idMap[value.parentId];
+    value.label = value.name;
+    value.key = value.id;
+    value.leaf = false;
+    value.expanded = false;
     if (parent) {
       (parent.children || (parent.children = [])).push(value);
     } else {
       categoryTree.push(value);
     }
   });
-  let result = categoryTree;
-  categoryTree.forEach((category) => {
-    if (category.id === 60) {
-      result = category.children;
-    }
-  });
-  return result;
+  return categoryTree;
 }
-
-const mapData = (response): any => response.data;

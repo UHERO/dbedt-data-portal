@@ -20,34 +20,23 @@
         Division, DBEDT at 808-586-2466.</p>
 
     </div>
-    <app-indicator-table *ngIf="displayTable" [dateArray]="dateArray" [tableData]="tableData"></app-indicator-table>
+    <app-indicator-table *ngIf="displayTable" [dateArray]="dateArray"
+      [displayedSeries]="displayedSeries"></app-indicator-table>
   </div>
   <div class="selectors">
     <app-geo-selector id="area-selector" class="dropdown" [indicator]="indicatorSelected" [regions]="regions"
-      [(selectedGeos)]="selectedGeos" (selectedGeoList)="geoChange($event)"></app-geo-selector>
+      (selectedGeoList)="geoChange($event)"></app-geo-selector>
     <app-freq-selector id="freq-selector" class="dropdown" [indicator]="indicatorSelected" [freqs]="frequencies"
-      [(selectedFreqs)]="selectedFreqs" (selectedFreqList)="freqChange($event)"></app-freq-selector>
-    <app-year-selector class="dropdown" *ngIf="annualSelected && !noSeries" [rangeLabel]="'From'"
-      (selectedYearChange)="startYearChange($event)"></app-year-selector>
-    <app-quarter-selector class="dropdown" *ngIf="quarterSelected && !noSeries" [rangeLabel]="'From Quarter'"
-      [selectedYear]="datesSelected.selectedStartYear" [currentQuarter]="datesSelected.selectedStartQuarter"
-      (selectedQuarterChange)="startQuarterChange($event)"></app-quarter-selector>
-    <app-month-selector class="dropdown" *ngIf="monthSelected && !noSeries" [rangeLabel]="'From Month'"
-      [selectedYear]="datesSelected.selectedStartYear" [currentMonth]="datesSelected.selectedStartMonth"
-      (selectedMonthChange)="startMonthChange($event)"></app-month-selector>
-    <app-year-selector class="dropdown" *ngIf="annualSelected && !noSeries" [rangeLabel]="'To'"
-      (selectedYearChange)="endYearChange($event)"></app-year-selector>
-    <app-quarter-selector class="dropdown" *ngIf="quarterSelected && !noSeries" [rangeLabel]="'To Quarter'"
-      [selectedYear]="datesSelected.selectedEndYear" [currentQuarter]="datesSelected.selectedEndQuarter"
-      (selectedQuarterChange)="endQuarterChange($event)"></app-quarter-selector>
-    <app-month-selector class="dropdown" *ngIf="monthSelected && !noSeries" [rangeLabel]="'To Month'"
-      [selectedYear]="datesSelected.selectedEndYear" [currentMonth]="datesSelected.selectedEndMonth"
-      (selectedMonthChange)="endMonthChange($event)"></app-month-selector>
-    <p class="text-danger" *ngIf="invalidDates">{{invalidDates}}</p>
-    <p class="text-danger" *ngIf="noSeries">{{noSeries}}</p>
+      (selectedFreqList)="freqChange($event)"></app-freq-selector>
+    <app-date-range-selector id="date-selector" (throwDateError)="dateSelectionError($event)"
+      (dateChange)="dateSelectionChange($event)" *ngIf="displayDateRangeSelector" [displayQuarterly]="quarterSelected"
+      [displayMonthly]="monthSelected"></app-date-range-selector>
+      <p class="text-danger" *ngIf="invalidDates">{{invalidDates}}</p>
+      <p class="text-danger" *ngIf="noSeries">{{noSeries}}</p>
     <div class="get-data">
-      <span class="loading"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" aria-hidden="true"></i></span>
-      <button *ngIf="!invalidDates" type="button" class="btn btn-secondary" (click)="showTable()" [disabled]="checkSelections()">Get
+      <span *ngIf="displayLoading" class="loading"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" aria-hidden="true"></i></span>
+      <button *ngIf="!invalidDates" type="button" class="btn btn-secondary" (click)="showTable()"
+        [disabled]="checkSelections()">Get
         Data</button>
     </div>
   </div>

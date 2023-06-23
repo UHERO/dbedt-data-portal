@@ -1,4 +1,5 @@
-import { Component, Input, OnChanges, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnChanges, ViewEncapsulation, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import { HelperService } from '../helper.service';
 
 import * as $ from 'jquery';
 import 'datatables.net';
@@ -16,17 +17,60 @@ import 'datatables.net-buttons/js/buttons.print.js';
 })
 export class IndicatorTableComponent implements OnChanges {
   @Input() dateArray;
-  @Input() tableData;
+  @Input() displayedSeries;
+  tableData = [];
   private tableWidget: any;
 
-  constructor() { }
+  constructor(private _helper: HelperService) {}
 
   ngOnChanges() {
-    $('span.loading').css('display', 'inline-block');
-    setTimeout(() => {
-      this.initDatatable();
-    }, 20);
+    this.formatTableData(this.displayedSeries)
+    this.initDatatable();
   }
+
+  formatTableData(seriesData) {
+    // Format data for datatables module (indicator-table component)
+    this.tableData = [];
+    seriesData.forEach((series) => {
+      const result = {};
+      this.dateArray.forEach((date) => {
+        result[date.tableDate] = ' ';
+      });
+      // If decimal value is not specified, round values to 2 decimal places
+      const decimals = this.setDecimals(series.decimals);
+      const exist = this.tableData.findIndex(data => data.indicator === series.title && data.region === series.geography.name);
+      // If exists, add observations corresponding to the series frequency
+      if (exist !== -1) {
+        this._helper.formatLevelData(
+          series.seriesObservations,
+          series.observations,
+          series.frequencyShort,
+          decimals,
+          this.tableData[exist].observations
+        );
+      } else {
+        this.tableData.push({
+          position: series.position,
+          indicator: series.title,
+          region: series.geography.name,
+          units: series.unitsLabelShort,
+          source: series.source_description ? series.source_description : ' ',
+          observations: this._helper.formatLevelData(
+            series.seriesObservations,
+            series.observations,
+            series.frequencyShort,
+            decimals,
+            result
+          )
+        });
+      }
+    });
+  }
+
+  setDecimals(seriesDecimals: number) {
+    return (seriesDecimals || seriesDecimals === 0) ? seriesDecimals : 2;
+  }
+
 
   initDatatable(): void {
     const tableColumns = [];
@@ -335,9 +379,8 @@ export class IndicatorTableComponent implements OnChanges {
       searching: false,
       info: false,
       fixedColumns: {
-        'leftColumns': 4
+        'leftColumns': 3
       },
     });
-    $('span.loading').css('display', 'none');
   }
 }

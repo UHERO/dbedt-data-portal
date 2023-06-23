@@ -1,0 +1,44 @@
+<form [formGroup]="dateRangeForm">
+  <div class="form-group">
+    <div class="dropdown"><label>From Year</label>
+      <select (change)="changeDate($event, 'startYear')" class="custom-select" formControlName="startYear">
+        <option [value]="year" *ngFor="let year of years">{{year}}</option>
+      </select>
+    </div>
+    <ng-template ngIf [ngIf]="displayQuarterly">
+      <div class="dropdown"><label>Quarter</label>
+        <select (change)="changeDate($event, 'startQuarter')" class="custom-select" formControlName="startQuarter">
+          <option [value]="quarter.value" *ngFor="let quarter of startQuarters">{{quarter.label}}</option>
+        </select>
+      </div>
+    </ng-template>
+    <ng-template ngIf [ngIf]="displayMonthly">
+      <div class="dropdown"><label>Month</label>
+        <select (change)="changeDate($event, 'startMonth')" class="custom-select" formControlName="startMonth">
+          <option [value]="month" *ngFor="let month of startMonths">{{month}}</option>
+        </select>
+      </div>
+    </ng-template>
+    <div class="dropdown">
+      <label>To Year</label>
+      <select (change)="changeDate($event, 'endYear')" class="custom-select" formControlName="endYear">
+        <option [value]="year" *ngFor="let year of years">{{year}}</option>
+      </select>
+    </div>
+    <ng-template ngIf [ngIf]="displayQuarterly">
+      <div class="dropdown"><label>Quarter</label>
+        <select (change)="changeDate($event, 'endQuarter')" class="custom-select" formControlName="endQuarter">
+          <option [value]="quarter.value" *ngFor="let quarter of endQuarters">{{quarter.label}}</option>
+        </select>
+      </div>
+    </ng-template>
+    <ng-template ngIf [ngIf]="displayMonthly">
+      <div class="dropdown">
+        <label>Month</label>
+        <select (change)="changeDate($event, 'endMonth')" class="custom-select" formControlName="endMonth">
+          <option [value]="month" *ngFor="let month of endMonths">{{month}}</option>
+        </select>
+      </div>
+    </ng-template>
+  </div>
+</form>

@@ -18,15 +18,7 @@ export class FreqSelectorComponent {
 
   constructor() { }
 
-  toggle(freq, event) {
-    const index = this.selectedFreqs.indexOf(freq);
-    if (index === -1) {
-      this.selectedFreqs.push(freq);
-    } else {
-      this.selectedFreqs.splice(index, 1);
-    }
-    setTimeout(() => {
-      this.selectedFreqList.emit(this.selectedFreqs);
-    }, 20);
+  toggle(freqs) {
+    this.selectedFreqList.emit(freqs)
   }
 }
