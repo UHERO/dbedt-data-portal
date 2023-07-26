@@ -34,11 +34,13 @@ body {
     border: 1px solid #ABABAB;
     background-color: #FFFFFF;
     width: 180px;
+    margin-left: 0.7em;
 
     label, label span {
         display: block;
         width: 100%;
         margin-bottom: 0;
+        padding: 0 1px;
     }
 
     input[type="checkbox"] {
@@ -61,3 +63,5 @@ body {
     height: 80px;
     width: 175px;
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

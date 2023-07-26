@@ -1,25 +1,41 @@
-
 .sidebar {
-    height: 440px;
-    overflow: auto;
-    margin-left: 5px;
+  height: 440px;
+  overflow: auto;
+  margin-left: 5px;
 
-    .p-tree {
-        border: none;
-        padding: 0;
-        font-size: 0.75rem;
-    }
+  .p-tree {
+    border: none;
+    padding: 0;
+    font-size: 0.75rem;
+  }
 
-    .p-icon {
-        width: 0.75rem;
-        height: 0.75rem;
-    }
+  .p-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
 
-    .p-tree .p-tree-container .p-treenode .p-treenode-content.p-highlight {
-        font-weight: bold;
-    }
+  .p-tree .p-tree-container .p-treenode .p-treenode-content.p-highlight {
+    font-weight: bold;
+    background: #beebff;
+    color: #000000;
 
-    .p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler {
-        margin-right: 0;
+    .p-treenode-icon {
+        color: #000000;
     }
+  }
+
+  .svg-inline--fa {
+    height: 0.9em;
+  }
+
+  .p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler {
+    height: 1.2rem;
+    width: 1.2rem;
+    margin-right: 0;
+    color: #000000;
+
+    &:hover {
+        color: #000000;
+    }
+  }
 }

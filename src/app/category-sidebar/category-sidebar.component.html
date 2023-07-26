@@ -1,6 +1,12 @@
 <div class="sidebar">
 	<p-tree [metaKeySelection]="false" [value]="categories" selectionMode="multiple" [(selection)]="selectedNodes"
 		(onNodeExpand)="nodeExpand($event)" (onNodeSelect)="nodeSelect($event, categories)"
-		(onNodeUnselect)="nodeUnselect($event)" (selectionChange)="nodeSelectionChange($event)"
-		[loading]="!categories"></p-tree>
+		(onNodeUnselect)="nodeUnselect($event)" (selectionChange)="nodeSelectionChange($event)" [loading]="!categories">
+		<ng-template let-expanded pTemplate="togglericon">
+			<fa-icon [icon]="expanded ? faCaretDown : faCaretRight"></fa-icon>
+		</ng-template>
+		<ng-template let-category pTemplate="default">
+			{{ category.label }}
+		</ng-template>
+	</p-tree>
 </div>
