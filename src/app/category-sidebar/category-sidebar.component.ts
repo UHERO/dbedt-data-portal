@@ -41,7 +41,6 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.categorySubscription = this._apiService.fetchCategories().subscribe((data) => {
       this.categories = data;
-      console.log(data)
     });
   }
 
