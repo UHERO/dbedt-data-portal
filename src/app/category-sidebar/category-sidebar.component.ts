@@ -5,6 +5,7 @@ import { TreeNode } from 'primeng/api';
 import { TreeNodeSelectEvent } from 'primeng/tree';
 import { Subscription } from 'rxjs';
 import { Category } from 'app/category';
+import { faCaretRight, faCaretDown } from '@fortawesome/free-solid-svg-icons';
 
 interface CustomTreeNode extends TreeNode {
   parentId: number;
@@ -32,6 +33,8 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   // Emit ids of selected categories to app.component
   @Output() selectedCatIds = new EventEmitter();
   selectedNodes: CustomTreeNode[];
+  faCaretRight = faCaretRight;
+  faCaretDown = faCaretDown;
 
   constructor(private _apiService: ApiService) { }
 

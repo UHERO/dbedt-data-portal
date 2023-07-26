@@ -14,6 +14,7 @@ import { RequestCache } from './request-cache';
 import { CacheInterceptor } from './cache.interceptor';
 import { DateRangeSelectorComponent } from './date-range-selector/date-range-selector.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
     ReactiveFormsModule,
     HttpClientModule,
     TreeModule,
+    FontAwesomeModule
   ],
   providers: [
     ApiService,
