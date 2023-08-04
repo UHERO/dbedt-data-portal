@@ -136,7 +136,10 @@ export class AppComponent {
   dateSelectionChange(event) {
     if (this.checkValidDates(event)) {
       this.invalidDates = null;
-      this.dateArray = this._helper.setDateArray(event, this.frequencies.some(freq => freq.id === 'Q' && freq.state), this.frequencies.some(freq => freq.id === 'M' && freq.state));
+      const annualSelected = this.frequencies.some(freq => freq.id === 'A' && freq.state);
+      const quarterlySelected = this.frequencies.some(freq => freq.id === 'Q' && freq.state);
+      const monthlySelected = this.frequencies.some(freq => freq.id === 'M' && freq.state);
+      this.dateArray = this._helper.setDateArray(event, annualSelected, quarterlySelected, monthlySelected);
     } else {
       this.invalidDates = 'Invalid date selection';
       this.displayTable = false;
