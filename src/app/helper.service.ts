@@ -16,7 +16,7 @@ export class HelperService {
     return newDateRange;
   }
 
-  setDateArray = (dateFormValues, quarterSelected: boolean, monthSelected: boolean) => {
+  setDateArray = (dateFormValues, annualSelected: boolean, quarterSelected: boolean, monthSelected: boolean) => {
     const dateArray = [];
     const m = { 1: '01', 2: '02', 3: '03', 4: '04', 5: '05', 6: '06', 7: '07', 8: '08', 9: '09', 10: '10', 11: '11', 12: '12' };
     const q = { 1: 'Q1', 4: 'Q2', 7: 'Q3', 10: 'Q4' };
@@ -35,9 +35,11 @@ export class HelperService {
           dateArray.push({date: `${minYear}-${m[qMonth]}-01`, tableDate: `${minYear} ${q[qMonth]}`});
         }
       }
-      const addAnnual = this.addAnnualObs(minMonth, monthSelected, quarterSelected);
-      if (addAnnual) {
-        dateArray.push({date: `${minYear}-01-01`, tableDate: `${minYear}`});
+      if (annualSelected) {
+        const addAnnual = this.addAnnualObs(minMonth, monthSelected, quarterSelected);
+        if (addAnnual) {
+          dateArray.push({date: `${minYear}-01-01`, tableDate: `${minYear}`});
+        }
       }
       minYear = minMonth === 12 ? minYear += 1 : minYear;
       minMonth = minMonth === 12 ? 1 : minMonth += 1;
