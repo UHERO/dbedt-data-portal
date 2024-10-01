@@ -16,7 +16,8 @@
               "mobx"
             ],
             "outputPath": {
-              "base": "dist"
+              "base": "dist",
+              "browser": ""
             },
             "index": "src/index.html",
             "tsConfig": "src/tsconfig.app.json",
@@ -53,7 +54,14 @@
             ],
             "extractLicenses": false,
             "sourceMap": true,
-            "optimization": false,
+            "optimization": {
+              "scripts": true,
+              "styles": {
+                "minify": true,
+                "inlineCritical": false
+              },
+              "fonts": true
+            },
             "namedChunks": true,
             "browser": "src/main.ts"
           },
