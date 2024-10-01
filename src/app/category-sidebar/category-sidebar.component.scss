@@ -14,6 +14,14 @@
     height: 0.75rem;
   }
 
+  .p-tree ul.p-tree-container {
+    padding: 0;
+  }
+
+  .p-tree ul.p-treenode-children {
+    padding-left: 10px;
+  }
+
   .p-tree .p-tree-container .p-treenode .p-treenode-content.p-highlight {
     font-weight: bold;
     background: #beebff;

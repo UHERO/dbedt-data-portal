@@ -40,6 +40,8 @@
     color: #292b2c;
     background-color: #fff;
     border-color: #ccc;
+    position: relative;
+    z-index: 100;
 
     &:hover {
       background-color: #e6e6e6;

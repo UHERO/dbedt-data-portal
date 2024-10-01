@@ -18,6 +18,7 @@
       "dom"
     ],
     "module": "esnext",
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "allowSyntheticDefaultImports": true
   }
 }

@@ -15,6 +15,7 @@ import { CacheInterceptor } from './cache.interceptor';
 import { DateRangeSelectorComponent } from './date-range-selector/date-range-selector.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { DataTablesModule } from 'angular-datatables';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -25,12 +26,17 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
         IndicatorTableComponent,
         DateRangeSelectorComponent
     ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
+    bootstrap: [AppComponent],
+    imports: [
+        BrowserModule,
+        DataTablesModule,
         BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule,
         TreeModule,
-        FontAwesomeModule], providers: [
+        FontAwesomeModule
+    ],
+    providers: [
         ApiService,
         HelperService,
         RequestCache,
