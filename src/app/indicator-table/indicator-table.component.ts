@@ -1,14 +1,6 @@
 import { Component, Input, OnChanges, ViewEncapsulation, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { HelperService } from '../helper.service';
 
-import * as $ from 'jquery';
-import 'datatables.net';
-import 'datatables.net-fixedcolumns';
-import 'datatables.net-buttons/js/dataTables.buttons.js';
-import 'datatables.net-buttons/js/buttons.html5.js';
-import 'datatables.net-buttons/js/buttons.flash.js';
-import 'datatables.net-buttons/js/buttons.print.js';
-
 @Component({
   selector: 'app-indicator-table',
   templateUrl: './indicator-table.component.html',
@@ -91,6 +83,7 @@ export class IndicatorTableComponent implements OnChanges {
     });
     tableColumns.push({ title: 'Source', data: 'source' });
     const tableData = this.tableData;
+    const exportFooter = 'Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information please visit: http://dbedt.hawaii.gov/economic';
     this.tableWidget = indicatorTable.DataTable({
       data: this.tableData,
       dom: 'Bt',
@@ -100,22 +93,6 @@ export class IndicatorTableComponent implements OnChanges {
           text: '<i class="fa fa-file-excel-o" aria-hidden="true" title="Excel"></i>',
           exportOptions: {
             columns: ':visible'
-          },
-          customizeData: function(xlsx) {
-            const cols = xlsx.header.length;
-            const dbedtFooter = [];
-            const uheroFooter = [];
-            const addRow = [];
-            // Rows with different lengths break export
-            for (let i = 0; i < cols; i++) {
-              dbedtFooter.push('');
-              uheroFooter.push('');
-              addRow.push('');
-            }
-            dbedtFooter.unshift('Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information please visit: http://dbedt.hawaii.gov/economic');
-            // Add an empty row before DBEDT and UHERO credit
-            xlsx.body.push(addRow);
-            xlsx.body.push(dbedtFooter);
           },
           customize: function(xlsx) {
             const sheet = xlsx.xl.worksheets['sheet1.xml'];
@@ -133,7 +110,8 @@ export class IndicatorTableComponent implements OnChanges {
               $(textCells[i].parentElement).attr('s', 52);
               i++;
             }
-          }
+          },
+          messageBottom: exportFooter,
         },
         {
           extend: 'csv',
@@ -142,7 +120,7 @@ export class IndicatorTableComponent implements OnChanges {
             columns: ':visible'
           },
           customize: function(csv) {
-            return csv + '\n\n Compiled by Research & Economic Analysis Division State of Hawaii Department of Business Economic Development and Tourism. For more information please visit: http://dbedt.hawaii.gov/economic';
+            return `${csv} \n\n ${exportFooter.replace(/,/g, '')}`;
           }
         },
         {
@@ -150,7 +128,7 @@ export class IndicatorTableComponent implements OnChanges {
           text: '<i class="fa fa-file-pdf-o" aria-hidden="true" title="PDF"></i>',
           orientation: 'landscape',
           pageSize: 'letter',
-          message: 'Research & Economic Analysis Division, DBEDT',
+          messageTop: 'Research & Economic Analysis Division, DBEDT',
           exportOptions: {
             columns: ':visible'
           },
@@ -243,7 +221,7 @@ export class IndicatorTableComponent implements OnChanges {
             docContent.table.headerRows = 0;
             docContent.table.body = formattedTable;
             doc.content.push({
-              text: 'Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/economic',
+              text: exportFooter,
             });
           }
         },
@@ -357,9 +335,9 @@ export class IndicatorTableComponent implements OnChanges {
               });
             });
             $(win.document.body)
-              .find('br:last-child')
-              .after('<p>Compiled by Research & Economic Analysis Division, State of Hawaii Department of Business, Economic Development and Tourism. For more information, please visit: http://dbedt.hawaii.gov/economic</p>');
-          }
+              .find('table:last-child')
+              .after(`<p>${exportFooter}</p>`);
+          },
         }],
       columns: tableColumns,
       columnDefs: [
@@ -379,7 +357,7 @@ export class IndicatorTableComponent implements OnChanges {
       searching: false,
       info: false,
       fixedColumns: {
-        'leftColumns': 3
+        left: 3
       },
     });
   }

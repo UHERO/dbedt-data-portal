@@ -28,24 +28,30 @@ table.dataTable.no-footer {
     border-bottom: 0;
 }
 
+table.dataTable.dtfc-scrolling-left tr > .dtfc-fixed-left::after {
+    box-shadow: none;
+}
+
+div.dt-buttons {
+    width: 200px;
+
+    .dt-button {
+        font-size: 16pt;
+        color: #505050;
+        padding: 0 0.25em;
+        border: 1px solid transparent;
+        background: transparent;
+        &:hover {
+            color: #000000;
+            border: 1px solid transparent !important;
+            background: transparent !important;    
+        }
+    }
+}
+
 .datatbles_wrapper, .no-footer {
     height: 0;
     overflow: visible;
-
-    .dt-buttons {
-        width: 200px;
-
-        .dt-button {
-            font-size: 16pt;
-            color: #505050;
-            padding: 0 0.25em;
-            border: 1px solid transparent;
-            background-color: transparent;
-            &:hover {
-                color: #000000;
-            }
-        }
-    }
 
     .DTFC_ScrollWrapper {
         .DTFC_RightBodyLiner {
