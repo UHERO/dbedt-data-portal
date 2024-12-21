@@ -1,4 +1,6 @@
 export const environment = {
     production: false,
-    apiUrl: 'https://stage-api.uhero.hawaii.edu/v1',
+    // Change to staging API URL when API gets setup on staging
+    // apiUrl: 'https://stage-api.uhero.hawaii.edu/v1'
+    apiUrl: 'https://api.uhero.hawaii.edu/v1'
   };
