@@ -1,11 +1,18 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Output,
+  EventEmitter,
+  ViewEncapsulation,
+} from "@angular/core";
 
-import { ApiService } from '../api.service';
-import { TreeNode } from 'primeng/api';
-import { TreeNodeSelectEvent } from 'primeng/tree';
-import { Subscription } from 'rxjs';
-import { Category } from 'app/category';
-import { faCaretRight, faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { ApiService } from "../api.service";
+import { TreeNode } from "primeng/api";
+import { TreeNodeSelectEvent } from "primeng/tree";
+import { Subscription } from "rxjs";
+import { Category } from "app/category";
+import { faCaretRight, faCaretDown } from "@fortawesome/free-solid-svg-icons";
 
 interface CustomTreeNode extends TreeNode {
   parentId: number;
@@ -21,10 +28,10 @@ interface CustomTreeNodeEvent extends TreeNodeSelectEvent {
 }
 
 @Component({
-  selector: 'app-category-sidebar',
-  templateUrl: './category-sidebar.component.html',
-  styleUrls: ['./category-sidebar.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  selector: "app-category-sidebar",
+  templateUrl: "./category-sidebar.component.html",
+  styleUrls: ["./category-sidebar.component.scss"],
+  encapsulation: ViewEncapsulation.None,
 })
 export class CategorySidebarComponent implements OnInit, OnDestroy {
   private categorySubscription: Subscription;
@@ -36,12 +43,15 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   faCaretRight = faCaretRight;
   faCaretDown = faCaretDown;
 
-  constructor(private _apiService: ApiService) { }
+  constructor(private _apiService: ApiService) {}
 
   ngOnInit() {
-    this.categorySubscription = this._apiService.fetchCategories().subscribe((data) => {
-      this.categories = data;
-    });
+    this.categorySubscription = this._apiService
+      .fetchCategories()
+      .subscribe((data) => {
+        this.categories = data;
+        console.log(this.categories);
+      });
   }
 
   ngOnDestroy() {
@@ -54,7 +64,9 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
     if (!children) {
       this._apiService.fetchCategoryMeasures(id).subscribe((data) => {
         node.children = data.map((d: CustomTreeNode) => {
-          return { ...d, key: d.id, label: d.name, isIndicator: true };
+          const result = { ...d, key: d.id, label: d.name, isIndicator: true };
+          console.log("category measures", result);
+          return result;
         });
       });
     }
@@ -72,18 +84,19 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       // create tracking for node position, used for table ordering
       const { parentId: categoryId, id: subcategoryId } = node.parent;
       const indicatorId = node.id;
-      const categoryIndex = categories.findIndex(node => node.id === categoryId);
-      const subcatIndex = categories[categoryIndex]
-        .children
-        .findIndex(node => node.id === subcategoryId);
-      const indicatorIndex = categories[categoryIndex]
-        .children[subcatIndex]
-        .children
-        .findIndex(node => node.id === indicatorId);
+      const categoryIndex = categories.findIndex(
+        (node) => node.id === categoryId
+      );
+      const subcatIndex = categories[categoryIndex].children.findIndex(
+        (node) => node.id === subcategoryId
+      );
+      const indicatorIndex = categories[categoryIndex].children[
+        subcatIndex
+      ].children.findIndex((node) => node.id === indicatorId);
       const indices = [categoryIndex, subcatIndex, indicatorIndex];
       const position = this.nodePosition(indices);
       if (!this.ids.find(({ id }) => id === node.id)) {
-        this.ids.push({id: node.id, position });
+        this.ids.push({ id: node.id, position });
       }
       this.selectedCatIds.emit(this.ids);
     }
@@ -92,7 +105,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   nodeSelectionChange(nodes: CustomTreeNode[]) {
     // All parent nodes (i.e. major category and subcategory) should be highlighted
     // for a selected indicator
-    const indicators = nodes.filter(node => node.isIndicator);
+    const indicators = nodes.filter((node) => node.isIndicator);
     const parentNodes = indicators.reduce((list, currentInd) => {
       list.push(currentInd.parent);
       list.push(currentInd.parent.parent);
@@ -107,7 +120,7 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
       node.expanded = !node.expanded;
       return;
     }
-    const deactivated = this.ids.find(id => id.id === node.id);
+    const deactivated = this.ids.find((id) => id.id === node.id);
     const idIndex = this.ids.indexOf(deactivated);
     if (idIndex > -1) {
       // Remove deactivated node from list of ids
@@ -117,10 +130,10 @@ export class CategorySidebarComponent implements OnInit, OnDestroy {
   }
 
   nodePosition(indices: number[]) {
-    const pad = '00';
-    let result = '';
+    const pad = "00";
+    let result = "";
     indices.forEach((index) => {
-      const str = '' + index;
+      const str = "" + index;
       const paddedStr = pad.substring(0, pad.length - str.length) + str;
       result += paddedStr;
     });

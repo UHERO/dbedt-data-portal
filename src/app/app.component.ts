@@ -1,14 +1,14 @@
-import { Component, ViewChild } from '@angular/core';
-import { ApiService } from './api.service';
-import { HelperService } from './helper.service';
-import { Geography } from './geography';
-import { Frequency } from './frequency';
-import { CategorySidebarComponent } from './category-sidebar/category-sidebar.component';
+import { Component, ViewChild } from "@angular/core";
+import { ApiService } from "./api.service";
+import { HelperService } from "./helper.service";
+import { Geography } from "./geography";
+import { Frequency } from "./frequency";
+import { CategorySidebarComponent } from "./category-sidebar/category-sidebar.component";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent {
   private errorMsg: string;
@@ -39,8 +39,8 @@ export class AppComponent {
     private _apiService: ApiService,
     private _helper: HelperService
   ) {}
- 
-  getSelectedIndicators(selectedMeasurements) {    
+
+  getSelectedIndicators(selectedMeasurements) {
     this.selectedIndicators = [];
     this.displayLoading = true;
     selectedMeasurements.forEach((measurement, index) => {
@@ -59,34 +59,46 @@ export class AppComponent {
   }
 
   fetchSeries(measurement, startFormat: boolean) {
-    this._apiService.fetchMeasurementSeries(measurement.id).subscribe((series) => {
-      series.forEach((serie) => {
-        this.selectedIndicators.push(serie);
-        serie.position = measurement.position;
-        const { geography, frequencyShort, frequency } = serie;
-        if (!this.frequencies.some(freq => freq.id === frequencyShort)) {
-          this.frequencies.push(this._helper.formatFreqs({freq: frequencyShort, label: frequency}))
+    this._apiService.fetchMeasurementSeries(measurement.id).subscribe(
+      (series) => {
+        series.forEach((serie) => {
+          this.selectedIndicators.push(serie);
+          serie.position = measurement.position;
+          const { geography, frequencyShort, frequency } = serie;
+          if (!this.frequencies.some((freq) => freq.id === frequencyShort)) {
+            this.frequencies.push(
+              this._helper.formatFreqs({
+                freq: frequencyShort,
+                label: frequency,
+              })
+            );
+          }
+          if (!this.regions.some((geo) => geo.id === geography.handle)) {
+            this.regions.push(this._helper.formatGeos(geography));
+          }
+        });
+        console.log("frequencies", this.frequencies);
+        console.log("regions", this.regions);
+      },
+      (error) => {
+        this.errorMsg = error;
+      },
+      () => {
+        this.indicatorSelected = true;
+        if (startFormat) {
+          this.setFreqSelectorList(this.frequencies, this.selectedIndicators);
+          this.setGeoSelectorList(this.regions, this.selectedIndicators);
+          this.displayLoading = false;
         }
-        if (!this.regions.some(geo => geo.id === geography.handle)) {
-          this.regions.push(this._helper.formatGeos(geography));
-        } 
-      });
-    },
-    (error) => {
-      this.errorMsg = error;
-    },
-    () => {
-      this.indicatorSelected = true;
-      if (startFormat) {
-        this.setFreqSelectorList(this.frequencies, this.selectedIndicators);
-        this.setGeoSelectorList(this.regions, this.selectedIndicators);
-        this.displayLoading = false;
+        if (
+          this.frequencies.some((freq) => freq.state) &&
+          this.regions.some((geo) => geo.state) &&
+          startFormat
+        ) {
+          this.filterDisplayedSeries();
+        }
       }
-      if (this.frequencies.some(freq => freq.state) && this.regions.some(geo => geo.state) && startFormat) {
-        this.filterDisplayedSeries();
-        
-      }
-    });
+    );
   }
 
   setFreqSelectorList(freqArray: Array<Frequency>, selectedIndicators) {
@@ -94,7 +106,9 @@ export class AppComponent {
     // remove frequencies that are no longer needed
     // when updating indicator selection
     if (this.frequencies.length) {
-      this.frequencies = this.frequencies.filter(freq => selectedIndicators.some(s => s.frequencyShort === freq.id));
+      this.frequencies = this.frequencies.filter((freq) =>
+        selectedIndicators.some((s) => s.frequencyShort === freq.id)
+      );
     }
   }
 
@@ -103,17 +117,22 @@ export class AppComponent {
     // remove regions that are no longer needed
     // when updating indicator selection
     if (this.regions.length) {
-      this.regions = this.regions.filter(geo => selectedIndicators.some(s => s.geography.handle === geo.id));
+      this.regions = this.regions.filter((geo) =>
+        selectedIndicators.some((s) => s.geography.handle === geo.id)
+      );
     }
   }
 
   geoChange(geos) {
     this.regions = geos;
-    if (!this.regions.some(geo => geo.state)) {
+    if (!this.regions.some((geo) => geo.state)) {
       this.displayTable = false;
       this.toggleDateSelectors();
     }
-    if (this.selectedIndicators.length && this.frequencies.some(freq => freq.state)) {
+    if (
+      this.selectedIndicators.length &&
+      this.frequencies.some((freq) => freq.state)
+    ) {
       this.filterDisplayedSeries();
       this.toggleDateSelectors();
     }
@@ -121,11 +140,14 @@ export class AppComponent {
 
   freqChange(frequencies) {
     this.frequencies = frequencies;
-    if (this.selectedIndicators.length && this.regions.some(geo => geo.state)) {
+    if (
+      this.selectedIndicators.length &&
+      this.regions.some((geo) => geo.state)
+    ) {
       this.filterDisplayedSeries();
       this.toggleDateSelectors();
     }
-    if (!this.frequencies.some(freq => freq.state)) {
+    if (!this.frequencies.some((freq) => freq.state)) {
       this.displayTable = false;
       this.annualSelected = false;
       this.quarterSelected = false;
@@ -136,48 +158,81 @@ export class AppComponent {
   dateSelectionChange(event) {
     if (this.checkValidDates(event)) {
       this.invalidDates = null;
-      const annualSelected = this.frequencies.some(freq => freq.id === 'A' && freq.state);
-      const quarterlySelected = this.frequencies.some(freq => freq.id === 'Q' && freq.state);
-      const monthlySelected = this.frequencies.some(freq => freq.id === 'M' && freq.state);
-      this.dateArray = this._helper.setDateArray(event, annualSelected, quarterlySelected, monthlySelected);
+      const annualSelected = this.frequencies.some(
+        (freq) => freq.id === "A" && freq.state
+      );
+      const quarterlySelected = this.frequencies.some(
+        (freq) => freq.id === "Q" && freq.state
+      );
+      const monthlySelected = this.frequencies.some(
+        (freq) => freq.id === "M" && freq.state
+      );
+      this.dateArray = this._helper.setDateArray(
+        event,
+        annualSelected,
+        quarterlySelected,
+        monthlySelected
+      );
     } else {
-      this.invalidDates = 'Invalid date selection';
+      this.invalidDates = "Invalid date selection";
       this.displayTable = false;
     }
   }
 
   toggleDateSelectors() {
-    const qSelected = this.frequencies.find(freq => freq.id === 'Q' && freq.state);
-    const mSelected = this.frequencies.find(freq => freq.id === 'M' && freq.state);
-    this.annualSelected = this.frequencies.some(freq => freq.state) && this.selectedIndicators.length > 0 && this.regions.some(geo => geo.state);
+    const qSelected = this.frequencies.find(
+      (freq) => freq.id === "Q" && freq.state
+    );
+    const mSelected = this.frequencies.find(
+      (freq) => freq.id === "M" && freq.state
+    );
+    this.annualSelected =
+      this.frequencies.some((freq) => freq.state) &&
+      this.selectedIndicators.length > 0 &&
+      this.regions.some((geo) => geo.state);
     this.quarterSelected = qSelected && !mSelected ? true : false;
     this.monthSelected = mSelected ? true : false;
   }
 
   filterDisplayedSeries() {
+    console.log("selected indicators", this.selectedIndicators);
     this.displayedSeries = this.selectedIndicators.filter((indicator) => {
-      const levelData = indicator.seriesObservations.transformationResults.find(transforms => transforms.transformation === 'lvl');
+      const levelData = indicator.seriesObservations.transformationResults.find(
+        (transforms) => transforms.transformation === "lvl"
+      );
       indicator.observations = this.formatObservations(levelData);
-      return this.regions.some(geo => geo.id === indicator.geography.handle && geo.state) &&
-        this.frequencies.some(freq => freq.id === indicator.frequencyShort && freq.state) &&
-        levelData?.dates && levelData?.values;
+      return (
+        this.regions.some(
+          (geo) => geo.id === indicator.geography.handle && geo.state
+        ) &&
+        this.frequencies.some(
+          (freq) => freq.id === indicator.frequencyShort && freq.state
+        ) &&
+        levelData?.dates &&
+        levelData?.values
+      );
     });
-    const obsStartDates = this.displayedSeries.map(series => series.seriesObservations.observationStart);
-    const obsEndDates = this.displayedSeries.map(series => series.seriesObservations.observationEnd);
+    const obsStartDates = this.displayedSeries.map(
+      (series) => series.seriesObservations.observationStart
+    );
+    const obsEndDates = this.displayedSeries.map(
+      (series) => series.seriesObservations.observationEnd
+    );
     const minObsDate = obsStartDates.reduce((min, curr) => {
-      return min === '' ? curr : curr.localeCompare(min) < 0 ? curr : min;
-    }, '');
+      return min === "" ? curr : curr.localeCompare(min) < 0 ? curr : min;
+    }, "");
     const maxObsDate = obsEndDates.reduce((max, curr) => {
-      return max === '' ? curr : curr.localeCompare(max) > 0 ? curr : max;
-    }, '');
-    this._helper.updateMaxDateRange({start: minObsDate, end: maxObsDate});
+      return max === "" ? curr : curr.localeCompare(max) > 0 ? curr : max;
+    }, "");
+    this._helper.updateMaxDateRange({ start: minObsDate, end: maxObsDate });
     if (this.displayedSeries.length) {
       this.noSeries = null;
       this.displayDateRangeSelector = true;
     } else {
       // Display warning, if no series exists for selected indicators, areas, and frequencies
-      this.noSeries = 'Selection Not Available';
+      this.noSeries = "Selection Not Available";
     }
+    console.log("displayed series", this.displayedSeries);
   }
 
   showTable() {
@@ -188,7 +243,7 @@ export class AppComponent {
     // Return array of of dates with their corresponding values
     const { dates, values } = indicatorLevel;
     const formattedResults = dates.map((d, index) => {
-      const entry = { date: '', value: '' };
+      const entry = { date: "", value: "" };
       entry.date = d;
       entry.value = values[index];
       return entry;
@@ -199,7 +254,13 @@ export class AppComponent {
   checkSelections() {
     let disable = true;
     // Enable Get Data button if selections have been made in indicators, frequencies, and areas
-    if (this.selectedIndicators.length && this.frequencies.some(freq => freq.state) && this.regions.some(geo => geo.state) && !this.noSeries && !this.invalidDates) {
+    if (
+      this.selectedIndicators.length &&
+      this.frequencies.some((freq) => freq.state) &&
+      this.regions.some((geo) => geo.state) &&
+      !this.noSeries &&
+      !this.invalidDates
+    ) {
       disable = false;
     }
     return disable;
@@ -226,13 +287,13 @@ export class AppComponent {
       startQuarter,
       endQuarter,
       startMonth,
-      endMonth
+      endMonth,
     } = dates;
     if (startYear > endYear) {
       return false;
     }
     if (startYear === endYear) {
-      if ((startQuarter > endQuarter) || (startMonth > endMonth)) {
+      if (startQuarter > endQuarter || startMonth > endMonth) {
         return false;
       }
     }
